@@ -1,0 +1,51 @@
+{
+  "story": "This is a sample story.",
+  "duration": 1.619563,
+  "words": [
+    {
+      "word": "This",
+      "start": 0.099,
+      "end": 0.239
+    },
+    {
+      "word": " ",
+      "start": 0.239,
+      "end": 0.28
+    },
+    {
+      "word": "is",
+      "start": 0.28,
+      "end": 0.359
+    },
+    {
+      "word": " ",
+      "start": 0.359,
+      "end": 0.419
+    },
+    {
+      "word": "a",
+      "start": 0.419,
+      "end": 0.5
+    },
+    {
+      "word": " ",
+      "start": 0.5,
+      "end": 0.519
+    },
+    {
+      "word": "sample",
+      "start": 0.519,
+      "end": 0.839
+    },
+    {
+      "word": " ",
+      "start": 0.839,
+      "end": 0.919
+    },
+    {
+      "word": "story.",
+      "start": 0.919,
+      "end": 1.279
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "voiceoverPath": "reddit.mp3",
+  "duration": 21,
+  "fontSize": 56,
+  "fontFamily": "'Russo One', sans-serif",
+  "fontColor": "#eeff00",
+  "sentenceBgColor": "transparent",
+  "backgroundVideo": "videos/ss2.mp4",
+  "backgroundMusicPath": "bgmusic/bg11.mp3"
+}

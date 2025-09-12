@@ -1,0 +1,6 @@
+{
+  "watch": ["server"],
+  "ignore": ["server/remotion_templates/*", "server/outputs/*", "server/public/*"],
+  "ext": "ts,js,json",
+  "exec": "ts-node server/index.ts"
+}

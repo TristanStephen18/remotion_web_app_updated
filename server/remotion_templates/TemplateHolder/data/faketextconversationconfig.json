@@ -1,0 +1,19 @@
+{
+  "chatPath": "chats.json",
+  "bgVideo": "videos/m1.mp4",
+  "chatAudio": "fakeconvo.mp3",
+  "musicAudio": "bgmusic/bg10.mp3",
+  "musicBase": 0.12,
+  "musicWhileTalking": 0.06,
+  "duckAttackMs": 120,
+  "duckReleaseMs": 240,
+  "timeShiftSec": 0,
+  "fontFamily": "Inter, sans-serif",
+  "fontSize": 28,
+  "fontColor": "",
+  "chatTheme": "discord",
+  "avatars": {
+    "left": "http://localhost:3000/images/vectors/v1.jpg",
+    "right": "http://localhost:3000/images/vectors/v8.jpg"
+  }
+}

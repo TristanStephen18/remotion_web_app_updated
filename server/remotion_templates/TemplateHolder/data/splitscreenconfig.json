@@ -1,0 +1,12 @@
+{
+  "bottomHeightPercent": 40,
+  "bottomOpacity": 1,
+  "bottomVideoUrl": "videos/m1.mp4",
+  "bottomVolume": 0.45,
+  "swap": false,
+  "topHeightPercent": 60,
+  "topOpacity": 1,
+  "topVideoUrl": "videos/204ed53d-0b0a-45c4-a1c4-0c2a3d85b83f.mp4",
+  "topVolume": 1,
+  "duration": 4
+}

@@ -1,0 +1,8 @@
+{
+  "quote": "All that is gold does not glitter, Not all those who wander are lost",
+  "author": "J.R.R. Tolkien",
+  "backgroundImage": "http://localhost:3000/bgimages/colors/bg1.jpg",
+  "fontFamily": "'Dancing Script', cursive",
+  "fontSize": 1,
+  "fontColor": "white"
+}

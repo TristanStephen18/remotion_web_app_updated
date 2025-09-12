@@ -1,0 +1,47 @@
+{
+  "data": [
+    {
+      "name": "Data1",
+      "value": 124500
+    },
+    {
+      "name": "Data2",
+      "value": 110200
+    },
+    {
+      "name": "Data3",
+      "value": 87300
+    },
+    {
+      "name": "Data4",
+      "value": 76500
+    },
+    {
+      "name": "Data5",
+      "value": 54200
+    },
+    {
+      "name": "Data6",
+      "value": 49800
+    },
+    {
+      "name": "yttuuy",
+      "value": 3876654
+    }
+  ],
+  "title": "Your title",
+  "titleFontColor": "white",
+  "backgroundImage": "http://localhost:3000/bgimages/colors/bg1.jpg",
+  "accent": "#3B82F6",
+  "subtitle": "Your subtitle",
+  "currency": "",
+  "titleFontSize": 80,
+  "subtitleFontSize": 50,
+  "subtitleColor": "white",
+  "barHeight": 100,
+  "barGap": 36,
+  "barLabelFontSize": 36,
+  "barValueFontSize": 36,
+  "fontFamily": "Inter, sans-serif",
+  "duration": 9
+}

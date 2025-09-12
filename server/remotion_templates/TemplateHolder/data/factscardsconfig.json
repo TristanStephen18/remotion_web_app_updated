@@ -1,0 +1,24 @@
+{
+  "intro": {
+    "title": "Your intro title",
+    "subtitle": "Your intro subtitle"
+  },
+  "outro": {
+    "title": "Your outro title",
+    "subtitle": "Your outro subtitle"
+  },
+  "facts": [
+    {
+      "title": "Your fact no.1",
+      "description": "The moon is made up of cheese"
+    }
+  ],
+  "backgroundImage": "http://localhost:3000/bgimages/colors/bg1.jpg",
+  "fontSizeTitle": 80,
+  "fontSizeSubtitle": 50,
+  "fontFamilyTitle": "Russo",
+  "fontColorTitle": "white",
+  "fontColorSubtitle": "white",
+  "fontFamilySubtitle": "Russo",
+  "duration": 20
+}

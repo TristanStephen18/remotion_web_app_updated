@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reddit Post UI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #dae0e6;
+      padding: 20px;
+    }
+    .post {
+      display: flex;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      max-width: 600px;
+      margin: auto;
+      overflow: hidden;
+    }
+    .votes {
+      background: #f8f9fa;
+      padding: 10px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 14px;
+      color: #878a8c;
+    }
+    .votes button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      margin: 4px 0;
+    }
+    .post-body {
+      flex: 1;
+      padding: 10px 15px;
+    }
+    .post-header {
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      color: #787c7e;
+      margin-bottom: 8px;
+    }
+    .post-header img {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .post-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .flair {
+      display: inline-block;
+      background: #f6f7f8;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 11px;
+      margin-left: 6px;
+    }
+    .post-media img {
+      max-width: 100%;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+    .post-footer {
+      display: flex;
+      gap: 15px;
+      font-size: 12px;
+      color: #878a8c;
+      margin-top: 10px;
+    }
+    .post-footer span {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="reddit-post"></div>
+
+  <script>
+    const postUrl = "https://www.reddit.com/r/ChikaPH/comments/1n84n7t.json";
+
+    async function fetchPost() {
+      const res = await fetch(postUrl);
+      const json = await res.json();
+      const post = json[0].data.children[0].data;
+
+      let authorIcon = "";
+      try {
+        const userRes = await fetch(`https://www.reddit.com/user/${post.author}/about.json`);
+        const userJson = await userRes.json();
+        authorIcon = userJson.data.icon_img || "";
+      } catch (e) {
+        console.warn("Could not fetch author avatar", e);
+      }
+
+      let mediaHtml = "";
+      if (post.is_gallery && post.gallery_data && post.media_metadata) {
+        const items = post.gallery_data.items;
+        mediaHtml = items.map(it => {
+          const meta = post.media_metadata[it.media_id];
+          return `<img src="${meta.s.u.replace(/&amp;/g, "&")}" alt="gallery image">`;
+        }).join("");
+      } else if (post.post_hint === "image" && post.url) {
+        mediaHtml = `<img src="${post.url}" alt="post image">`;
+      }
+
+      const html = `
+        <div class="post">
+          <div class="votes">
+            <button>⬆️</button>
+            <div>${post.ups}</div>
+            <button>⬇️</button>
+          </div>
+          <div class="post-body">
+            <div class="post-header">
+              <img src="${authorIcon}" alt="avatar">
+              <span><b>${post.author}</b></span> •
+              <span>r/${post.subreddit}</span>
+            </div>
+            <div class="post-title">
+              ${post.title}
+              ${post.link_flair_text ? `<span class="flair">${post.link_flair_text}</span>` : ""}
+            </div>
+            <div class="post-media">${mediaHtml}</div>
+            <div class="post-footer">
+              <span>💬 ${post.num_comments} Comments</span>
+              <span>🔗 Share</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("reddit-post").innerHTML = html;
+    }
+
+    fetchPost();
+  </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+/* ----------------------
+   Light Theme (default)
+---------------------- */
+:root {
+  --bg-color: #f5f5f5;
+  --text-color: #213547;
+  --card-bg: #ffffff;
+  --input-bg: #fff;
+  --border-color: #ddd;
+  --btn-primary-bg: linear-gradient(90deg, #a855f7, #3b82f6);
+  --btn-primary-text: #fff;
+}
+
+/* ----------------------
+   Dark Theme
+---------------------- */
+[data-theme="dark"] {
+  --bg-color: #18181b; /* dark neutral */
+  --text-color: #f5f5f5;
+  --card-bg: #242424;
+  --input-bg: #2c2c2c;
+  --border-color: #444;
+  --btn-primary-bg: linear-gradient(90deg, #6366f1, #8b5cf6);
+  --btn-primary-text: #fff;
+}
+
+/* Apply background + text globally */
+body,
+.auth__bg {
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Card styling */
+.auth__card {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 420px;
+  margin: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s, color 0.3s, border 0.3s;
+}
+
+/* Inputs */
+.input {
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  width: 100%;
+  transition: background 0.3s, color 0.3s, border 0.3s;
+}
+
+/* Buttons */
+.btn--primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem;
+  width: 100%;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+

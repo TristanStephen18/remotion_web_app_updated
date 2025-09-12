@@ -1,0 +1,23 @@
+{
+  "language_code": "eng",
+  "segments": [
+    {
+      "text": "Hey, have you tried The Green Fork yet?",
+      "start_time": 0,
+      "end_time": 2.4555,
+      "speaker": {
+        "id": "person_1",
+        "name": "person 1"
+      }
+    },
+    {
+      "text": "Not yet. Is it any good?",
+      "start_time": 2.4555,
+      "end_time": 4.257937,
+      "speaker": {
+        "id": "person_2",
+        "name": "person 2"
+      }
+    }
+  ]
+}

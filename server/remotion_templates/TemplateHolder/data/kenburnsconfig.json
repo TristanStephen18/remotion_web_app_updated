@@ -1,0 +1,16 @@
+{
+  "images": [
+    "http://localhost:3000/kenburnsimages/8769c6a3-aa30-4093-b4f4-7672da870f8f.jpg",
+    "http://localhost:3000/kenburnsimages/de9e68a7-4917-40f0-8b12-d14674c5e55b.jpg",
+    "http://localhost:3000/kenburnsimages/336dca67-3abc-4a7f-80ec-dfaaccce9484.jpg",
+    "http://localhost:3000/kenburnsimages/f6ba39d9-6a5b-43e7-929d-00feb2219eac.jpg",
+    "http://localhost:3000/kenburnsimages/448715cd-a4f5-4c4f-87a2-ed2fe543424a.jpg",
+    "http://localhost:3000/kenburnsimages/202fa2c9-d03f-4776-901d-e273a5cf4b9b.jpg",
+    "http://localhost:3000/kenburnsimages/ca2b81f5-2e9d-46cf-89fe-5d269d6afb40.jpg",
+    "http://localhost:3000/kenburnsimages/08140ea1-4dda-41de-b7c7-5c2f4fe0dac5.jpg",
+    "http://localhost:3000/kenburnsimages/aeec8291-25d6-4558-a928-ad81db5a19ae.jpg"
+  ],
+  "cardWidthRatio": 0.72,
+  "cardHeightRatio": 0.62,
+  "duration": 27
+}

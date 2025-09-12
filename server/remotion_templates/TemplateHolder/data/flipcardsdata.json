@@ -1,0 +1,101 @@
+{
+  "backgroundImage": "http://localhost:3000/bgimages/colors/bg6.jpg",
+  "title": "Performance\nDashboard",
+  "titleFontSize": 96,
+  "titleFontColor": "#FFFFFF",
+  "titleFontFamily": "'Silkscreen', sans-serif",
+  "subtitle": "Real-time Analytics",
+  "subtitleFontSize": 43,
+  "subtitleFontColor": "#E5E7EB",
+  "subtitleFontFamily": "'Silkscreen', sans-serif",
+  "cardsData": [
+    {
+      "front": {
+        "label": "CTR",
+        "value": "12.5%",
+        "color": "#3B82F6"
+      },
+      "back": {
+        "label": "Clicks",
+        "value": "2.4K",
+        "color": "#10B981"
+      }
+    },
+    {
+      "front": {
+        "label": "CPA",
+        "value": "$24",
+        "color": "#8B5CF6"
+      },
+      "back": {
+        "label": "ROAS",
+        "value": "4.2x",
+        "color": "#F59E0B"
+      }
+    },
+    {
+      "front": {
+        "label": "CR",
+        "value": "8.7%",
+        "color": "#EF4444"
+      },
+      "back": {
+        "label": "AOV",
+        "value": "$156",
+        "color": "#06B6D4"
+      }
+    },
+    {
+      "front": {
+        "label": "CPC",
+        "value": "$1.92",
+        "color": "#84CC16"
+      },
+      "back": {
+        "label": "CPM",
+        "value": "$12.5",
+        "color": "#F97316"
+      }
+    },
+    {
+      "front": {
+        "label": "Pacman",
+        "value": "C",
+        "color": "#fbff00"
+      },
+      "back": {
+        "label": "Black Pacman",
+        "value": "C",
+        "color": "#000000"
+      }
+    },
+    {
+      "front": {
+        "label": "Pink Pacman",
+        "value": "C",
+        "color": "#ff00ae"
+      },
+      "back": {
+        "label": "Blue Pacman",
+        "value": "C",
+        "color": "#584dff"
+      }
+    }
+  ],
+  "cardWidth": 360,
+  "cardHeight": 220,
+  "cardBorderRadius": 28,
+  "cardBorderColor": "#000000",
+  "cardLabelColor": "#6B7280",
+  "cardLabelFontSize": 36,
+  "cardContentFontFamily": "'Silkscreen', sans-serif",
+  "cardGrid": {
+    "rows": 2,
+    "cols": 2
+  },
+  "delayStart": 0.5,
+  "delayStep": 1,
+  "cardColorBack": "#FFFF",
+  "cardColorFront": "#ffff",
+  "valueFontSize": 64
+}
