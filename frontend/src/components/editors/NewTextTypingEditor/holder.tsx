@@ -11,6 +11,7 @@ import { PhraseSideNav } from "./sidenav_sections/phrase";
 import { FontSideNavTextTyping } from "./sidenav_sections/fonts";
 import { BackgroundSideNav } from "./sidenav_sections/backgrounds";
 import { SoundSideNav } from "./sidenav_sections/sounds";
+import { TemplateOptionsSection } from "../Global/templatesettings";
 
 export const NewTypingEditor: React.FC = () => {
   const defaultphrasedata = {
@@ -18,6 +19,9 @@ export const NewTypingEditor: React.FC = () => {
     category: "wisdom",
     mood: "iconic",
   };
+
+  const [templateName, setTemplateName] = useState("🎬 Text Typing Template");
+
   const [mood, setMood] = useState(defaultphrasedata.mood);
   const [category, setCategory] = useState(defaultphrasedata.category);
   const [phrase, setPhrase] = useState<string[]>(defaultphrasedata.lines);
@@ -34,7 +38,7 @@ export const NewTypingEditor: React.FC = () => {
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    "phrase" | "fonts" | "background" | "sound" | "export"
+    "phrase" | "fonts" | "background" | "sound" | "template" | "export"
   >("phrase");
   const [collapsed, setCollapsed] = useState(false);
 
@@ -105,7 +109,8 @@ export const NewTypingEditor: React.FC = () => {
       }
       const data = await response.json();
       console.log(data.phrase);
-      setPhrase(data.phrase.toString().replaceAll("'", "").split("\n"));
+      // console.log()
+      setPhrase(data.phrase);
       // setTextContent(data.textcontent);
     } catch (error) {
       console.error("error generating ai suggestion");
@@ -200,7 +205,7 @@ export const NewTypingEditor: React.FC = () => {
               WebkitTextFillColor: "transparent",
             }}
           >
-            🎬 Text Typing Template
+            {templateName}
           </h2>
           {activeSection === "phrase" && (
             <PhraseSideNav
@@ -232,6 +237,18 @@ export const NewTypingEditor: React.FC = () => {
             <SoundSideNav
               setSoundIndex={setSoundIndex}
               soundIndex={soundIndex}
+            />
+          )}
+
+          {activeSection === "template" && (
+            <TemplateOptionsSection
+              onEnterBatchRender={() => {
+                window.location.assign(
+                  "/template/newtexttyping/mode/batchrendering"
+                );
+              }}
+              setTemplateName={setTemplateName}
+              templateName={templateName}
             />
           )}
 

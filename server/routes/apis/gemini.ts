@@ -1,6 +1,16 @@
 import { Router } from "express";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
+import {
+  QuoteDataPropsSchema,
+  TextTypingTemplatePhraseSchema,
+  TextTypingTemplateSchema,
+} from "../../models/gemini_schemas.ts";
+import { serverImages } from "../../data/localimages.ts";
+import {
+  CategoryOptions,
+  MoodOptions,
+} from "../../data/texttyping_moods_categories.ts";
 
 dotenv.config();
 
@@ -91,13 +101,102 @@ router.post("/generate-story", async (req, res) => {
 router.post("/generate-phrase", async (req, res) => {
   const { category, mood } = req.body;
 
-  const newprompt = `Generate a phrase using the category ${category} and mood ${mood}. This will be in a template so you have to use '\n' to break the phrase when you think it is better to have it in a new line. The maximum characters per line should be 13, spaces will count as a character. And just the phrase,no addition '', "", ' signs.`;
+  // const newprompt = `Generate a phrase using the category ${category} and mood ${mood}. This will be in a template so you have to use '\n' to break the phrase when you think it is better to have it in a new line. The maximum characters per line should be 13, spaces will count as a character. And just the phrase,no addition '', "", ' signs.`;
 
   try {
-    const result = await model.generateContent(newprompt);
+    const result = await model.generateContent({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `Generate a phrase using the category ${category} and mood ${mood}.Break the lines of the phrases where you want to to make the array of lines. Try not to make each line too long,just make it sufficient and proper like this "Dream big, start small".`,
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: TextTypingTemplatePhraseSchema,
+      },
+    });
     const text = result.response.text();
+    const data = JSON.parse(text);
     console.log(text);
-    res.json({ phrase: text });
+    res.json({ phrase: data });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ textcontent: "Error creating story. Please try again." });
+  }
+});
+
+router.post("/batch-quotejson-trial", async (req, res) => {
+  const { quantity } = req.body;
+  console.log("Generating datasets");
+
+  try {
+    const result = await model.generateContent({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `Generate ${quantity} random quotes from philosophers, actors, teachers, from anyone, with author.`,
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: QuoteDataPropsSchema,
+      },
+    });
+
+    const text = result.response.text();
+    const data = JSON.parse(text);
+
+    console.log(data);
+    res.json({ phrase: data });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ textcontent: "Error creating story. Please try again." });
+  }
+});
+
+router.post("/generate/texttypingdataset", async (req, res) => {
+  const { quantity } = req.body;
+  console.log("Generating datasets for texttyping template");
+
+  try {
+    const result = await model.generateContent({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `Generate ${quantity} random short phrases, with mood and category. Break the lines of the phrases where you want to to make the array of lines. Try not to make each line too long,just make it sufficient and proper like this "Dream big, start small". Choose only from this moods ${MoodOptions} and categories ${CategoryOptions}. Use this as your basis for the line breaks in the lines array "lines": [
+      "Dream big, start small",
+      "but start today"
+    ]`,
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: TextTypingTemplateSchema,
+      },
+    });
+
+    const text = result.response.text();
+    const data = JSON.parse(text);
+
+    console.log(data);
+    res.json({ phrase: data });
   } catch (error) {
     console.error(error);
     res

@@ -29,8 +29,10 @@ import {
 } from "./components/CurveLineTrend/SimplifierComponent";
 import curveLineTrendProps from "../data/curvelinetrendconfig.json";
 import { NewTypingAnimation } from "./components/NewTextTyping/TypingAnimation";
-import { calculateDuration } from "./helpers";
+import { calculateDuration, durationIndicatorQuote } from "./helpers";
 import newtexttypingconfigs from "../data/newtexttypingconfig.json";
+// import { duration } from '@mui/material';
+
 
 type Derived = React.ComponentProps<typeof ChatVideo3>;
 
@@ -124,7 +126,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="QuoteComposition"
         component={QuoteComposition}
-        durationInFrames={210}
+        durationInFrames={durationIndicatorQuote(quoteData.quote.length) * 30}
         fps={30}
         height={1920}
         width={1080}

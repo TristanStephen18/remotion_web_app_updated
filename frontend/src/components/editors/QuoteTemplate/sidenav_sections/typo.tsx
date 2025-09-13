@@ -107,8 +107,8 @@ export const TypographySectionQuote: React.FC<TypoSectionProps> = ({
         </div>
         <input
           type="range"
-          min={1}
-          max={3}
+          min={0.9}
+          max={1.5}
           step={0.1}
           value={fontSize}
           onChange={(e) => setFontSize(Number(e.target.value))}

@@ -1,13 +1,14 @@
 {
   "phrase": {
     "lines": [
-      "Dream big, start small",
-      "but start today"
+      "Innovate for",
+      "a better",
+      "tomorrow"
     ],
-    "category": "wisdom",
-    "mood": "iconic"
+    "category": "innovation",
+    "mood": "hopeful"
   },
-  "backgroundIndex": 5,
-  "fontIndex": 5,
-  "audioIndex": 1
+  "backgroundIndex": 7,
+  "fontIndex": 10,
+  "audioIndex": 0
 }

@@ -14,14 +14,16 @@ import GraphEditor from "./components/editors/trials/clt.tsx";
 import { SplitScreenEditor } from "./components/editors/SplitScreen/holder.tsx";
 import { KpiFlipCardEditor } from "./components/editors/KpiFlipCards/holder.tsx";
 import { KernBurnsEditor } from "./components/editors/KenBurnsCarousel/holder.tsx";
-// import { CurveLineTrendEditor } from "./components/editors/CurveLineTrend/holder.tsx";
 import { Fakeconvo } from "./components/editors/trials/fconvo.tsx";
 import { FakeTextConversationEditor } from "./components/editors/FakeTextConversation/holder.tsx";
 import { RedditVideoEditor } from "./components/editors/RedditTemplate/holder.tsx";
 import { StoryTellingVideoEditor } from "./components/editors/StoryTellingVideo/holder.tsx";
-import { SimpleGraphLiveEditor } from "./components/editors/CurveLineTrend/holder2.tsx";
 import { CurveLineTrendEditor } from "./components/editors/CurveLineTrend/holder.tsx";
 import { NewTypingEditor } from "./components/editors/NewTextTypingEditor/holder.tsx";
+import QuoteGenerator from "./trials/geminischematester.tsx";
+import QuoteTester from "./trials/quotesapitester.tsx";
+import { QuoteSpotlightBatchRendering } from "./pages/batchrendering/QuoteSpotlight.tsx";
+import { TextTypingTemplateBatchRendering } from "./pages/batchrendering/TextTyping.tsx";
 
 function App() {
   return (
@@ -32,8 +34,14 @@ function App() {
           path="/template/quotetemplate"
           element={<QuoteTemplateEditor />}
         />
+        <Route
+          path="/template/quotetemplate/mode/batchrendering"
+          element={<QuoteSpotlightBatchRendering />}
+        />
         <Route path="/template/splitscreen" element={<SplitScreenEditor />} />
         <Route path="/template/texttypingtemplate" element={<TypingEditor />} />
+        <Route path="/template/newtexttyping/mode/batchrendering" element={<TextTypingTemplateBatchRendering />} />
+
         <Route path="/template/factcards" element={<FactCardsEditor />} />
         <Route path="/template/bargraph" element={<BarGraphEditor />} />
         <Route path="/template/kpiflipcards" element={<KpiFlipCardEditor />} />
@@ -61,6 +69,10 @@ function App() {
 
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/tester" element={<QuoteGenerator />} />
+        <Route path="/qtester" element={<QuoteTester />} />
+
+
       </Routes>
     </BrowserRouter>
   );

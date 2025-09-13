@@ -10,7 +10,7 @@ export interface BgProps {
   handleFileUpload: (file: File) => void;
 }
 
-const TABS = ["aesthetic", "colors", "sceneries"];
+const TABS = ["philosophy", "colors", "sceneries"];
 
 export const BackgroundSecTrial: React.FC<BgProps> = ({
   backgroundImage,
@@ -20,7 +20,7 @@ export const BackgroundSecTrial: React.FC<BgProps> = ({
   setBackgroundImage,
   setBackgroundSource,
 }) => {
-  const [activeTab, setActiveTab] = useState<string>("aesthetic");
+  const [activeTab, setActiveTab] = useState<string>("philosophy");
 
   return (
     <div
@@ -165,7 +165,7 @@ export const BackgroundSecTrial: React.FC<BgProps> = ({
               gap: "0.75rem",
             }}
           >
-            {Array.from({ length: 10 }).map((_, i) => {
+            {Array.from({ length: 21 }).map((_, i) => {
               const imgUrl = `/bgimages/${activeTab}/bg${i + 1}.jpg`;
               return (
                 <img

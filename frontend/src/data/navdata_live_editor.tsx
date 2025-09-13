@@ -1,7 +1,8 @@
 import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
 import ImageIcon from "@mui/icons-material/Image";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
-import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import TextSnippetIcon from "@mui/icons-material/TextSnippet";
+import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 // import SettingsIcon from "@mui/icons-material/Settings";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import TextFieldsSharpIcon from "@mui/icons-material/TextFieldsSharp";
@@ -35,6 +36,12 @@ export const quoteeditornavs = [
   { key: "quote", label: "Quote", icon: <FormatQuoteIcon /> },
   { key: "background", label: "Background", icon: <ImageIcon /> },
   { key: "typography", label: "Typography", icon: <TextFieldsIcon /> },
+  {
+    key: "template",
+    label: "Template Settings",
+    icon: <SettingsApplicationsIcon />,
+  },
+
   // { key: "options", label: "Options", icon: <SettingsIcon /> },
   { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
@@ -151,6 +158,11 @@ export const NewTextTypingNavs = [
   { key: "fonts", label: "Fonts", icon: <TextFieldsSharpIcon /> },
   { key: "background", label: "Themes", icon: <DarkModeIcon /> },
   { key: "sound", label: "Audio", icon: <LibraryMusicIcon /> },
+      {
+    key: "template",
+    label: "Template Settings",
+    icon: <SettingsApplicationsIcon />,
+  },
   // { key: "options", label: "Options", icon: <SettingsIcon /> },
   { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];

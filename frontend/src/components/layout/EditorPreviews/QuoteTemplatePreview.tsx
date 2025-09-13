@@ -1,6 +1,7 @@
 import React from "react";
 import { Player } from "@remotion/player";
 import { QuoteComposition } from "../../remotion_compositions/QuoteTemplate";
+// import { duration } from "@mui/material";
 
 // A wrapper around the Remotion composition so Player can inject props
 const QuoteCompositionComponent: React.FC<{
@@ -35,6 +36,7 @@ const RemotionQuotePlayer: React.FC<{
   autoPlay?: boolean;
   controls?: boolean;
   loop?: boolean;
+  duration:number;
 }> = ({
   quote,
   author,
@@ -45,6 +47,7 @@ const RemotionQuotePlayer: React.FC<{
   autoPlay = true,
   controls = true,
   loop = true,
+  duration
 }) => {
   return (
     <Player
@@ -57,7 +60,7 @@ const RemotionQuotePlayer: React.FC<{
         fontFamily,
         fontColor,
       }}
-      durationInFrames={270}
+      durationInFrames={duration * 30}
       compositionWidth={1080}
       compositionHeight={1920}
       fps={30}
@@ -85,6 +88,7 @@ export const QuoteSpotlightPreview: React.FC<{
   previewScale: number;
   onPreviewScaleChange: (value: number) => void;
   onToggleSafeMargins: (value: boolean) => void;
+  duration: number;
 }> = ({
   quote,
   author,
@@ -98,6 +102,7 @@ export const QuoteSpotlightPreview: React.FC<{
   previewScale,
   onPreviewScaleChange,
   onToggleSafeMargins,
+  duration
 }) => {
   return (
     <div
@@ -240,6 +245,7 @@ export const QuoteSpotlightPreview: React.FC<{
             fontSize={fontSize}
             fontFamily={fontFamily}
             fontColor={fontColor}
+            duration={duration}
           />
 
           {/* Optional safe margins overlay */}

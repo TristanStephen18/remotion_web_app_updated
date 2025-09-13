@@ -12,3 +12,13 @@ export const calculateDuration = (
   const typingFrames = Math.ceil((totalChars / typingSpeed) * fps);
   return typingFrames + DEFAULT_SETTINGS.holdDuration * fps;
 };
+
+export const durationIndicatorQuote = (size: number) => {
+    if(size <= 60){
+        return 7;
+    }else if(size > 60 && size < 80){
+        return 10;
+    }else{
+        return 14;
+    }
+}

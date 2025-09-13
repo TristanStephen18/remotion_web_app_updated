@@ -3,7 +3,7 @@ I had to delete all the node modules on these folders (root, server, frontend,Te
 
 open your terminal in the root of the project then run "npm i" and wait for it to finish
 after that run "cd server" then run "npm i" again then wait for it to finish
-after that run "cd.." to go back then "cd frontend" then run "npm i" and wait for it to finish
+after that run "cd.." to go back then "cd frontend" then run "npm i" and wait for it to finish, then also run "npm i --save-dev lucide-react" since I found out it is not being installed using npm i
 then for the last folder run "cd.." then "cd server", "cd remotion_templates", and "cd TemplateHolder" then run the last "npm i" 
 
 after that you can open a new terminal then run "npm start", go straight to the "/dashboard" route to test the app

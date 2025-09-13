@@ -9,10 +9,15 @@ import { ExportSecTrial } from "../Global/sidenav_sections/export";
 import { QuoteSpotlightPreview } from "../../layout/EditorPreviews/QuoteTemplatePreview";
 import { TypographySectionQuote } from "./sidenav_sections/typo";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
+import { TemplateOptionsSection } from "../Global/templatesettings";
+import { quoteSpotlightDurationCalculator } from "../../../utils/quotespotlighthelpers";
 
 export const QuoteTemplateEditor: React.FC = () => {
-    const [previewSize, setPreviewSize] = useState(1);
-  
+  const [previewSize, setPreviewSize] = useState(1);
+  const [templateName, setTemplateName] = useState(
+    "🎬 Quote Spotlight Template"
+  );
+
   const [quote, setQuote] = useState("Your Quote");
   const [author, setAuthor] = useState("Author");
   const [backgroundImage, setBackgroundImage] = useState(
@@ -28,7 +33,7 @@ export const QuoteTemplateEditor: React.FC = () => {
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    "quote" | "background" | "typography" | "options" | "export"
+    "quote" | "background" | "typography" | "options" | "template" | "export"
   >("quote");
   const [collapsed, setCollapsed] = useState(false);
 
@@ -42,6 +47,7 @@ export const QuoteTemplateEditor: React.FC = () => {
   const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
   const [isResizing, setIsResizing] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
+  const [duration, setDuration] = useState(9);
 
   // 🔹 Drag handlers
   useEffect(() => {
@@ -66,11 +72,21 @@ export const QuoteTemplateEditor: React.FC = () => {
     };
   }, [isResizing]);
 
+  const onSwitchMode = () => {
+    console.log("Entering Batch Rendering Mode");
+    window.location.assign("/template/quotetemplate/mode/batchrendering");
+  };
+
   const cycleBg = () => {
     if (previewBg === "dark") setPreviewBg("light");
     else if (previewBg === "light") setPreviewBg("grey");
     else setPreviewBg("dark");
   };
+
+  useEffect(() => {
+    setDuration(quoteSpotlightDurationCalculator(quote.length));
+    console.log(duration);
+  }, [quote]);
 
   const handleFileUpload = async (file: File) => {
     if (!file) return;
@@ -204,7 +220,7 @@ export const QuoteTemplateEditor: React.FC = () => {
               bottom: 0,
               width: "6px",
               cursor: "col-resize",
-              background:"#ddd",
+              background: "#ddd",
             }}
           />
 
@@ -218,7 +234,7 @@ export const QuoteTemplateEditor: React.FC = () => {
               WebkitTextFillColor: "transparent",
             }}
           >
-            🎬 Quote Spotlight Template
+            {templateName}
           </h2>
 
           {activeSection === "quote" && (
@@ -248,6 +264,13 @@ export const QuoteTemplateEditor: React.FC = () => {
               setFontColor={setFontColor}
               setFontFamily={setFontFamily}
               setFontSize={setFontSize}
+            />
+          )}
+          {activeSection === "template" && (
+            <TemplateOptionsSection
+              onEnterBatchRender={onSwitchMode}
+              setTemplateName={setTemplateName}
+              templateName={templateName}
             />
           )}
           {activeSection === "options" && (
@@ -282,6 +305,7 @@ export const QuoteTemplateEditor: React.FC = () => {
         previewScale={previewSize}
         onPreviewScaleChange={setPreviewSize}
         onToggleSafeMargins={setShowSafeMargins}
+        duration={duration}
       />
     </div>
   );
