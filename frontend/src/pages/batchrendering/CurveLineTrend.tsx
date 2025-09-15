@@ -14,6 +14,8 @@ import {
 import { LinearProgress } from "@mui/material";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import CloudIcon from "@mui/icons-material/Cloud";
+import AnimationIcon from "@mui/icons-material/Animation";
+
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
@@ -22,62 +24,51 @@ import DatasetIcon from "@mui/icons-material/Dataset";
 import SelectAllIcon from "@mui/icons-material/SelectAll";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
-import ColorLensIcon from "@mui/icons-material/ColorLens";
-import { serverImages } from "../../data/backgroundimages";
+// import ColorLensIcon from "@mui/icons-material/ColorLens";
 import { fontFamilies } from "../../data/fontfamilies";
-import { fontsSelections1 } from "../../data/fontcolors";
-import { fontSizeIndicatorQuote } from "../../utils/quotespotlighthelpers";
+import type { CurveLineTrendDataset } from "../../models/CurveLineTrend";
+import { graphThemes } from "../../data/curvelinethemes";
+import { durationCalculatorForCurveLineAnimationSpeeds } from "../../utils/curvelinetrendhelpers";
+import { curvelineDefaultdata } from '../../data/defaultvalues';
 
-export const QuoteSpotlightBatchRendering: React.FC = () => {
+type SpeedOption = "slow" | "normal" | "fast";
+
+const speedMap: Record<SpeedOption, number> = {
+  slow: 0.5,
+  normal: 1,
+  fast: 1.5,
+};
+
+export const CurveLineTrendBatchRendering: React.FC = () => {
+  //   const [curveLineData, setcurveLineData] = useState<curveLineDataset[]>([]);
+  const [curveLineData, setCurveLineData] = useState<CurveLineTrendDataset[]>(
+    []
+  );
+  const [animationSpeeds, setAnimationSpeed] = useState<string[]>([]);
   const [renderQueue, setRenderQueue] = useState<number[]>([]);
   const [isRendering, setIsRendering] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
-  const [selectedFontColors, setSelectedFontColors] = useState<string[]>([]);
+  //   const [selectedFontColors, setSelectedFontColors] = useState<string[]>([]);
 
   const [collapsed, setCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState<
-    "dataset" | "backgrounds" | "fonts" | "outputs" | "fontcolors"
+    "dataset" | "presets" | "fonts" | "animation" | "outputs"
   >("dataset");
 
-  const [datasetSource, setDatasetSource] = useState<"recite" | "ai">("recite");
   const [datasetQuantity, setDatasetQuantity] = useState<number>(5);
-  const [quotes, setQuotes] = useState<{ text: string; author: string }[]>([]);
+  //   const [quotes, setQuotes] = useState<{ text: string; author: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [showProgressCard, setShowProgressCard] = useState(true);
 
-  const [selectedBackgrounds, setSelectedBackgrounds] = useState<string[]>([]);
+  const [selectedPresets, setSelectedPresets] = useState<string[]>([]);
   const [selectedFonts, setSelectedFonts] = useState<string[]>([]);
 
   const [combinations, setCombinations] = useState<any[]>([]);
 
-  // dataset fetch
-  const fetchRecite = async (count: number = 1) => {
-    try {
-      setLoading(true);
-      const promises = Array.from({ length: count }, () =>
-        fetch("https://recite.onrender.com/api/v1/random").then((r) => {
-          if (!r.ok) throw new Error(`Recite error ${r.status}`);
-          return r.json();
-        })
-      );
-      const results = await Promise.all(promises);
-      const formatted = results.map((q: any) => ({
-        text: q.quote,
-        author: q.author,
-      }));
-      setQuotes(formatted);
-    } catch (err) {
-      console.error("fetchRecite error:", err);
-      alert("Failed to fetch from Recite");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const fetchAIDataset = async (quantity: number) => {
     setLoading(true);
     try {
-      const res = await fetch("/api/batch-quotejson-trial", {
+      const res = await fetch("/api/generate/curvelinedataset", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quantity }),
@@ -85,10 +76,9 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
       if (!res.ok) {
         throw new Error(`Server error: ${res.status}`);
       }
-
       const data = await res.json();
-      console.log(data.phrase);
-      setQuotes(data.phrase);
+      console.log(data.data);
+      setCurveLineData(data.data);
     } catch (err: any) {
       console.error(err.message);
     } finally {
@@ -98,32 +88,34 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
 
   const handleExportForCombination = async (combo: any, index: number) => {
     updateCombination(index, { status: "exporting" });
-
+    const dynamicduration = durationCalculatorForCurveLineAnimationSpeeds(combo.speed);
+    // const fontsizeindicator = titleAndSubtitleFontSizeIndicator(combo.bar.title);
     try {
-      let finalImageUrl = combo.background;
-      if (!finalImageUrl.startsWith("http://localhost:3000")) {
-        finalImageUrl = `http://localhost:3000${finalImageUrl}`;
-      }
-
-      const response = await fetch("/generatevideo/quotetemplatewchoices", {
+      const response = await fetch("/generatevideo/curvelinetrend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          quote: combo.quote.text,
-          author: combo.quote.author,
-          imageurl: finalImageUrl,
-          fontsize: fontSizeIndicatorQuote(combo.quote.text.length),
-          fontcolor: combo.color,
-          fontfamily: combo.font,
+          data: {
+            title: combo.cldata.title,
+            subtitle: combo.cldata.subtitle,
+            titleFontSize: curvelineDefaultdata.titleFontSize,
+            subtitleFontSize: curvelineDefaultdata.subtitleFontSize,
+            fontFamily: combo.font,
+            data: combo.cldata.data,
+            dataType:combo.cldata.dataType,
+            preset:combo.theme,
+            backgroundImage: "",
+            animationSpeed: combo.speed,
+            minimalMode: curvelineDefaultdata.minimalmode,
+            duration: dynamicduration,
+          },
           format: "mp4",
         }),
       });
-
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText);
       }
-
       const data = await response.json();
       updateCombination(index, { status: "ready", exportUrl: data.url });
     } catch (err) {
@@ -133,40 +125,31 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
   };
 
   const generateDataset = async () => {
-    setQuotes([]);
-    if (datasetSource === "recite") {
-      await fetchRecite(datasetQuantity);
-    } else {
-      await fetchAIDataset(datasetQuantity);
-    }
+    await fetchAIDataset(datasetQuantity);
   };
 
   // background/font selection helpers
   const toggleBackground = (bg: string) =>
-    setSelectedBackgrounds((prev) =>
+    setSelectedPresets((prev) =>
       prev.includes(bg) ? prev.filter((b) => b !== bg) : [...prev, bg]
     );
   const toggleFont = (font: string) =>
     setSelectedFonts((prev) =>
       prev.includes(font) ? prev.filter((f) => f !== font) : [...prev, font]
     );
-  const selectAllBackgrounds = () => setSelectedBackgrounds([...serverImages]);
-  const clearAllBackgrounds = () => setSelectedBackgrounds([]);
+  // const selectAllPresets = () => setSelectedPresets([...serverImages]);
+  const clearAllPresets = () => setSelectedPresets([]);
   const selectAllFonts = () => setSelectedFonts([...fontFamilies]);
   const clearAllFonts = () => setSelectedFonts([]);
 
-  // inside QuoteSpotlightBatchRendering component
-  const handleRemoveQuote = (index: number) => {
-    setQuotes((prev) => prev.filter((_, i) => i !== index));
-  };
 
   const handleGenerateBatch = () => {
     setShowProgressCard(true);
     if (
-      quotes.length === 0 ||
-      selectedBackgrounds.length === 0 ||
+      curveLineData.length === 0 ||
+      selectedPresets.length === 0 ||
       selectedFonts.length === 0 ||
-      selectedFontColors.length === 0
+      animationSpeeds.length === 0
     ) {
       alert(
         "You are missing some selections. Please complete all of the selections first."
@@ -175,15 +158,16 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
     }
 
     const combos: any[] = [];
-    quotes.forEach((quote) => {
-      selectedBackgrounds.forEach((bg) => {
+
+    curveLineData.forEach((dataset) => {
+      selectedPresets.forEach((themeName) => {
         selectedFonts.forEach((font) => {
-          selectedFontColors.forEach((color) => {
+          animationSpeeds.forEach((speed) => {
             combos.push({
-              quote,
-              background: bg,
-              font,
-              color,
+              cldata: dataset, // your dataset
+              theme: themeName, // picked theme
+              font, // picked font
+              speed, // animation speed
               status: "pending",
               exportUrl: null,
             });
@@ -192,6 +176,7 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
       });
     });
 
+    console.log("Generated combos:", combos);
     setCombinations(combos);
     setRenderQueue(combos.map((_, i) => i)); // indices in order
     setActiveSection("outputs");
@@ -231,9 +216,6 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
 
   return (
     <Box sx={{ display: "flex", height: "100vh", bgcolor: "#fafafa" }}>
-      {/* -------------------
-          Fixed SideNav
-          ------------------- */}
       <Box
         sx={{
           width: collapsed ? 72 : 260,
@@ -268,7 +250,7 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              🎬 Quote Template Batch Rendering
+              🎬 Curve Line Trend Batch Rendering
             </Typography>
           )}
         </Box>
@@ -284,10 +266,10 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
           />
           <NavItem
             icon={<WallpaperIcon />}
-            label="Backgrounds"
+            label="Presets/Themes"
             collapsed={collapsed}
-            active={activeSection === "backgrounds"}
-            onClick={() => setActiveSection("backgrounds")}
+            active={activeSection === "presets"}
+            onClick={() => setActiveSection("presets")}
           />
           <NavItem
             icon={<TextFieldsIcon />}
@@ -297,11 +279,11 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
             onClick={() => setActiveSection("fonts")}
           />
           <NavItem
-            icon={<ColorLensIcon />}
-            label="Font Colors"
+            icon={<AnimationIcon />}
+            label="Animation Speeds"
             collapsed={collapsed}
-            active={activeSection === "fontcolors"}
-            onClick={() => setActiveSection("fontcolors")}
+            active={activeSection === "animation"}
+            onClick={() => setActiveSection("animation")}
           />
           <NavItem
             icon={<ViewModuleIcon />}
@@ -312,7 +294,6 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
           />
         </Box>
 
-        {/* footer buttons */}
         <Box
           sx={{
             p: 2,
@@ -328,7 +309,7 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
             variant="outlined"
             startIcon={<SwapHorizIcon />}
             disabled={isRendering}
-            onClick={() => window.location.assign("/template/quotetemplate")}
+            onClick={() => window.location.assign("/template/curvelinetrend")}
             sx={{
               borderRadius: 2,
               py: 1.2,
@@ -486,15 +467,7 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                   >
                     Source
                   </Typography>
-                  <ToggleButtonGroup
-                    value={datasetSource}
-                    exclusive
-                    onChange={(_, v) => v && setDatasetSource(v)}
-                    size="medium"
-                  >
-                    <ToggleButton value="recite">
-                      <CloudIcon sx={{ mr: 1 }} /> Recite API
-                    </ToggleButton>
+                  <ToggleButtonGroup exclusive size="medium">
                     <ToggleButton value="ai">
                       <SmartToyIcon sx={{ mr: 1 }} /> AI Generated
                     </ToggleButton>
@@ -511,6 +484,7 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                     Quantity
                   </Typography>
                   <TextField
+                    disabled={isRendering}
                     type="number"
                     value={datasetQuantity}
                     onChange={(e) => setDatasetQuantity(Number(e.target.value))}
@@ -548,14 +522,14 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                 </Box>
               )}
 
-              {!loading && quotes.length > 0 && (
+              {!loading && curveLineData.length > 0 && (
                 <Box sx={{ mt: 3 }}>
                   <Typography
                     variant="h6"
                     fontWeight={600}
                     sx={{ mb: 2, color: "#1976d2" }}
                   >
-                    Generated Quotes ({quotes.length})
+                    Generated CurveLine Datasets ({curveLineData.length})
                   </Typography>
                   <Paper sx={{ width: "100%", overflow: "hidden" }}>
                     {/* Header row */}
@@ -568,40 +542,82 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                         fontWeight: 600,
                       }}
                     >
-                      <Box sx={{ flex: 1 }}>Quote</Box>
-                      <Box sx={{ width: "25%" }}>Author</Box>
+                      <Box sx={{ flex: 1 }}>Title</Box>
+                      <Box sx={{ width: "25%" }}>Subtitle</Box>
+                      <Box sx={{ width: "35%" }}>Data (label → value)</Box>
+                      <Box sx={{ width: 120 }}>Type</Box>
                       <Box sx={{ width: 80, textAlign: "center" }}>Action</Box>
                     </Box>
 
                     {/* Data rows */}
-                    {quotes.map((q, i) => (
+                    {curveLineData.map((dataset, idx) => (
                       <Box
-                        key={i}
+                        key={idx}
                         sx={{
                           display: "flex",
                           px: 2,
                           py: 1,
-                          borderTop: "1px solid #eee",
+                          borderBottom: "1px solid #eee",
                           alignItems: "center",
                         }}
                       >
-                        <Box sx={{ flex: 1, pr: 2, fontSize: "0.95rem" }}>
-                          "{q.text}"
+                        {/* Title */}
+                        <Box sx={{ flex: 1, fontWeight: 500 }}>
+                          {dataset.title}
                         </Box>
+
+                        {/* Subtitle */}
+                        <Box sx={{ width: "25%", color: "text.secondary" }}>
+                          {dataset.subtitle}
+                        </Box>
+
+                        {/* Data points */}
                         <Box
                           sx={{
-                            width: "25%",
-                            fontSize: "0.9rem",
+                            width: "35%",
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: 1,
+                          }}
+                        >
+                          {dataset.data.map((d, i) => (
+                            <Box
+                              key={i}
+                              sx={{
+                                px: 1,
+                                py: 0.5,
+                                borderRadius: 1,
+                                bgcolor: "#e3f2fd",
+                                fontSize: "0.8rem",
+                              }}
+                            >
+                              {d.label} → {d.value}
+                            </Box>
+                          ))}
+                        </Box>
+
+                        {/* Data Type */}
+                        <Box
+                          sx={{
+                            width: 120,
+                            fontSize: "0.85rem",
                             color: "text.secondary",
                           }}
                         >
-                          {q.author}
+                          {dataset.dataType}
                         </Box>
+
+                        {/* Actions */}
                         <Box sx={{ width: 80, textAlign: "center" }}>
                           <Button
                             size="small"
+                            variant="outlined"
                             color="error"
-                            onClick={() => handleRemoveQuote(i)}
+                            onClick={() =>
+                              setCurveLineData((prev) =>
+                                prev.filter((_, i) => i !== idx)
+                              )
+                            }
                           >
                             Remove
                           </Button>
@@ -613,10 +629,10 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
               )}
             </Box>
           )}
-
-          {/* Backgrounds Section */}
-          {activeSection === "backgrounds" && (
+          {/* Presets Section (refactored to themes) */}
+          {activeSection === "presets" && (
             <Box>
+              {/* Header */}
               <Box
                 sx={{
                   display: "flex",
@@ -626,13 +642,13 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                 }}
               >
                 <Typography variant="h5" fontWeight={700}>
-                  Background Selection
+                  Theme Selection
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1 }}>
                   <Button
                     size="small"
                     startIcon={<SelectAllIcon />}
-                    onClick={selectAllBackgrounds}
+                    onClick={() => setSelectedPresets(Object.keys(graphThemes))}
                     disabled={isRendering}
                   >
                     Select all
@@ -640,7 +656,7 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                   <Button
                     size="small"
                     startIcon={<ClearAllIcon />}
-                    onClick={clearAllBackgrounds}
+                    onClick={clearAllPresets}
                     disabled={isRendering}
                   >
                     Clear
@@ -648,70 +664,99 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                 </Box>
               </Box>
 
+              {/* Theme Cards */}
               <Box
                 sx={{
                   display: "grid",
                   gridTemplateColumns: {
-                    xs: "repeat(2, 1fr)",
-                    sm: "repeat(3, 1fr)",
-                    md: "repeat(5, 1fr)",
+                    xs: "repeat(1, 1fr)",
+                    sm: "repeat(2, 1fr)",
+                    md: "repeat(3, 1fr)",
+                    lg: "repeat(4, 1fr)",
                   },
-                  gap: 1.5,
+                  gap: 2,
                 }}
               >
-                {serverImages.map((bg) => {
-                  const selected = selectedBackgrounds.includes(bg);
+                {Object.entries(graphThemes).map(([themeName, theme]) => {
+                  const selected = selectedPresets.includes(themeName);
                   return (
                     <Box
-                      key={bg}
-                      onClick={() => toggleBackground(bg)}
+                      key={themeName}
+                      onClick={() => toggleBackground(themeName)}
                       sx={{
-                        pointerEvents: isRendering ? "none" : "auto", // disables hover/click
-                        opacity: isRendering ? 0.5 : 1, // faded look
-                        position: "relative",
-                        aspectRatio: "1 / 1",
-                        borderRadius: 2,
-                        overflow: "hidden",
                         cursor: "pointer",
-                        border: selected
-                          ? "3px solid #1976d2"
-                          : "1px solid #ddd",
+                        borderRadius: 3,
+                        overflow: "hidden",
+                        position: "relative",
+                        height: 140,
                         boxShadow: selected
-                          ? "0 4px 16px rgba(25,118,210,0.25)"
-                          : "none",
-                        transition: "all .2s",
-                        "&:hover": { transform: "scale(1.02)" },
+                          ? "0 6px 18px rgba(25,118,210,0.5)"
+                          : "0 2px 8px rgba(0,0,0,0.1)",
+                        border: selected
+                          ? "2px solid #1976d2"
+                          : "1px solid #e5e7eb",
+                        transition: "all 0.25s ease",
+                        "&:hover": {
+                          transform: "translateY(-4px)",
+                          boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+                        },
+                        pointerEvents: isRendering ? "none" : "auto",
+                        opacity: isRendering ? 0.6 : 1,
+                        background: theme.bgGradient,
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        p: 2,
+                        color: theme.labelText,
                       }}
                     >
-                      <img
-                        src={bg}
-                        alt="bg"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
+                      {/* Checkmark Overlay */}
                       {selected && (
                         <Box
                           sx={{
                             position: "absolute",
                             top: 8,
                             right: 8,
-                            bgcolor: "rgba(25,118,210,0.8)",
-                            color: "#fff",
+                            width: 28,
+                            height: 28,
                             borderRadius: "50%",
-                            width: 24,
-                            height: 24,
+                            bgcolor: "#1976d2",
+                            color: "#fff",
+                            fontWeight: "bold",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            fontSize: 14,
+                            fontSize: "0.9rem",
                           }}
                         >
                           ✓
                         </Box>
                       )}
+
+                      {/* Theme Name */}
+                      <Typography
+                        variant="subtitle1"
+                        fontWeight={700}
+                        sx={{ textTransform: "capitalize" }}
+                      >
+                        {themeName}
+                      </Typography>
+
+                      {/* Color Preview Row */}
+                      <Box sx={{ display: "flex", gap: 1 }}>
+                        {["dot", "axisText", "accent"].map((key) => (
+                          <Box
+                            key={key}
+                            sx={{
+                              width: 20,
+                              height: 20,
+                              borderRadius: "50%",
+                              bgcolor: (theme as any)[key],
+                              border: "1px solid rgba(0,0,0,0.2)",
+                            }}
+                          />
+                        ))}
+                      </Box>
                     </Box>
                   );
                 })}
@@ -843,8 +888,8 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
             </Box>
           )}
 
-          {/* Font Colors Section */}
-          {activeSection === "fontcolors" && (
+          {/* Animation Speeds Section */}
+          {activeSection === "animation" && (
             <Box>
               {/* Header */}
               <Box
@@ -855,19 +900,16 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                   mb: 3,
                 }}
               >
-                <Typography
-                  variant="h5"
-                  fontWeight={700}
-                  sx={{ letterSpacing: 0.5 }}
-                >
-                  Choose Font Colors
+                <Typography variant="h5" fontWeight={700}>
+                  Animation Speed Selection
                 </Typography>
-
                 <Box sx={{ display: "flex", gap: 1 }}>
                   <Button
                     size="small"
                     startIcon={<SelectAllIcon />}
-                    onClick={() => setSelectedFontColors([...fontsSelections1])}
+                    onClick={() =>
+                      setAnimationSpeed(["slow", "normal", "fast"])
+                    }
                     disabled={isRendering}
                   >
                     Select all
@@ -875,7 +917,7 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                   <Button
                     size="small"
                     startIcon={<ClearAllIcon />}
-                    onClick={() => setSelectedFontColors([])}
+                    onClick={() => setAnimationSpeed([])}
                     disabled={isRendering}
                   >
                     Clear
@@ -883,92 +925,109 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                 </Box>
               </Box>
 
+              {/* Speed Cards */}
               <Box
                 sx={{
                   display: "grid",
                   gridTemplateColumns: {
-                    xs: "repeat(2, 1fr)",
+                    xs: "repeat(1, 1fr)",
                     sm: "repeat(3, 1fr)",
-                    md: "repeat(4, 1fr)",
-                    lg: "repeat(5, 1fr)",
                   },
                   gap: 2,
                 }}
               >
-                {fontsSelections1.map((color) => {
-                  const selected = selectedFontColors.includes(color);
+                {(["slow", "normal", "fast"] as SpeedOption[]).map((speed) => {
+                  const selected = animationSpeeds.includes(speed);
                   return (
                     <Box
-                      key={color}
+                      key={speed}
                       onClick={() =>
-                        setSelectedFontColors((prev) =>
-                          prev.includes(color)
-                            ? prev.filter((c) => c !== color)
-                            : [...prev, color]
+                        setAnimationSpeed((prev) =>
+                          prev.includes(speed)
+                            ? prev.filter((s) => s !== speed)
+                            : [...prev, speed]
                         )
                       }
                       sx={{
-                        pointerEvents: isRendering ? "none" : "auto", // disables hover/click
-                        opacity: isRendering ? 0.5 : 1, // faded look
                         cursor: "pointer",
                         borderRadius: 3,
-                        boxShadow: selected
-                          ? "0 4px 12px rgba(25,118,210,0.5)"
-                          : "0 2px 6px rgba(0,0,0,0.15)",
                         overflow: "hidden",
+                        position: "relative",
+                        height: 200,
+                        boxShadow: selected
+                          ? "0 6px 18px rgba(25,118,210,0.5)"
+                          : "0 2px 8px rgba(0,0,0,0.1)",
+                        border: selected
+                          ? "2px solid #1976d2"
+                          : "1px solid #e5e7eb",
                         transition: "all 0.25s ease",
                         "&:hover": {
                           transform: "translateY(-4px)",
-                          boxShadow: "0 6px 14px rgba(0,0,0,0.25)",
+                          boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
                         },
-                        bgcolor: "#fff",
+                        pointerEvents: isRendering ? "none" : "auto",
+                        opacity: isRendering ? 0.6 : 1,
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        bgcolor: "#000",
                       }}
                     >
-                      {/* Color Block */}
-                      <Box
-                        sx={{
-                          height: 80,
-                          bgcolor: color,
-                          position: "relative",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
+                      {/* Checkmark */}
+                      {selected && (
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: 8,
+                            right: 8,
+                            width: 28,
+                            height: 28,
+                            borderRadius: "50%",
+                            bgcolor: "#1976d2",
+                            color: "#fff",
+                            fontWeight: "bold",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "0.9rem",
+                            zIndex: 2,
+                          }}
+                        >
+                          ✓
+                        </Box>
+                      )}
+
+                      {/* Video preview */}
+                      <video
+                        src="/animation.mp4"
+                        autoPlay
+                        loop
+                        muted
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
                         }}
-                      >
-                        {selected && (
-                          <Box
-                            sx={{
-                              position: "absolute",
-                              top: 8,
-                              right: 8,
-                              width: 24,
-                              height: 24,
-                              borderRadius: "50%",
-                              bgcolor: "#1976d2",
-                              color: "#fff",
-                              fontSize: "0.8rem",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            ✓
-                          </Box>
-                        )}
-                      </Box>
+                        onLoadedMetadata={(e) => {
+                          const vid = e.currentTarget;
+                          vid.playbackRate = speedMap[speed];
+                        }}
+                      />
 
                       {/* Label */}
                       <Box
                         sx={{
+                          position: "absolute",
+                          bottom: 0,
+                          width: "100%",
                           py: 1,
                           textAlign: "center",
+                          bgcolor: "rgba(0,0,0,0.5)",
+                          color: "#fff",
                           fontWeight: 600,
-                          fontSize: "0.9rem",
-                          color: "#333",
-                          textTransform: "capitalize",
                         }}
                       >
-                        {color}
+                        {speed.charAt(0).toUpperCase() + speed.slice(1)}
                       </Box>
                     </Box>
                   );
@@ -1067,14 +1126,14 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                           noWrap
                           sx={{ fontSize: "0.85rem" }}
                         >
-                          — {c.quote.author}
+                          — {c.cldata.title}
                         </Typography>
                         <Typography
                           variant="caption"
                           color="text.secondary"
                           sx={{ display: "block", fontSize: "0.75rem" }}
                         >
-                          Font: {c.font} | Color: {c.color}
+                          Font: {c.font} | Preset: {c.theme} | Speed: {c.speed} 
                         </Typography>
                       </Box>
                     </Box>
@@ -1089,9 +1148,6 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
   );
 };
 
-/* ---------------
-   NavItem button
-   --------------- */
 function NavItem({
   icon,
   label,

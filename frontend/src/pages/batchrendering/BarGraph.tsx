@@ -22,26 +22,29 @@ import DatasetIcon from "@mui/icons-material/Dataset";
 import SelectAllIcon from "@mui/icons-material/SelectAll";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
-import ColorLensIcon from "@mui/icons-material/ColorLens";
-import { serverImages } from "../../data/backgroundimages";
+// import ColorLensIcon from "@mui/icons-material/ColorLens";
+import { barGraphImages, serverImages } from "../../data/backgroundimages";
 import { fontFamilies } from "../../data/fontfamilies";
-import { fontsSelections1 } from "../../data/fontcolors";
-import { fontSizeIndicatorQuote } from "../../utils/quotespotlighthelpers";
+// import { fontsSelections1 } from "../../data/fontcolors";
+import type { BarGraphDataset } from "../../models/BarGraph";
+import { barGraphConfig } from "../../data/defaultvalues";
+import { calculateDurationBarGraph, titleAndSubtitleFontSizeIndicator } from "../../utils/bargraphhelpers";
+// import { fontSizeIndicatorQuote } from "../../utils/quotespotlighthelpers";
 
-export const QuoteSpotlightBatchRendering: React.FC = () => {
+export const BarGraphBatchRendering: React.FC = () => {
+  const [barGraphData, setBarGraphData] = useState<BarGraphDataset[]>([]);
   const [renderQueue, setRenderQueue] = useState<number[]>([]);
   const [isRendering, setIsRendering] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
-  const [selectedFontColors, setSelectedFontColors] = useState<string[]>([]);
+  //   const [selectedFontColors, setSelectedFontColors] = useState<string[]>([]);
 
   const [collapsed, setCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState<
-    "dataset" | "backgrounds" | "fonts" | "outputs" | "fontcolors"
+    "dataset" | "backgrounds" | "fonts" | "outputs"
   >("dataset");
 
-  const [datasetSource, setDatasetSource] = useState<"recite" | "ai">("recite");
   const [datasetQuantity, setDatasetQuantity] = useState<number>(5);
-  const [quotes, setQuotes] = useState<{ text: string; author: string }[]>([]);
+  //   const [quotes, setQuotes] = useState<{ text: string; author: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [showProgressCard, setShowProgressCard] = useState(true);
 
@@ -50,34 +53,10 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
 
   const [combinations, setCombinations] = useState<any[]>([]);
 
-  // dataset fetch
-  const fetchRecite = async (count: number = 1) => {
-    try {
-      setLoading(true);
-      const promises = Array.from({ length: count }, () =>
-        fetch("https://recite.onrender.com/api/v1/random").then((r) => {
-          if (!r.ok) throw new Error(`Recite error ${r.status}`);
-          return r.json();
-        })
-      );
-      const results = await Promise.all(promises);
-      const formatted = results.map((q: any) => ({
-        text: q.quote,
-        author: q.author,
-      }));
-      setQuotes(formatted);
-    } catch (err) {
-      console.error("fetchRecite error:", err);
-      alert("Failed to fetch from Recite");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const fetchAIDataset = async (quantity: number) => {
     setLoading(true);
     try {
-      const res = await fetch("/api/batch-quotejson-trial", {
+      const res = await fetch("/api/generate/bargraphdataset", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quantity }),
@@ -85,10 +64,9 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
       if (!res.ok) {
         throw new Error(`Server error: ${res.status}`);
       }
-
       const data = await res.json();
-      console.log(data.phrase);
-      setQuotes(data.phrase);
+      console.log(data.data);
+      setBarGraphData(data.data);
     } catch (err: any) {
       console.error(err.message);
     } finally {
@@ -98,32 +76,39 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
 
   const handleExportForCombination = async (combo: any, index: number) => {
     updateCombination(index, { status: "exporting" });
-
+    const fontsizeindicator = titleAndSubtitleFontSizeIndicator(combo.bar.title);
     try {
-      let finalImageUrl = combo.background;
+      let finalImageUrl = combo.bg;
       if (!finalImageUrl.startsWith("http://localhost:3000")) {
         finalImageUrl = `http://localhost:3000${finalImageUrl}`;
       }
-
-      const response = await fetch("/generatevideo/quotetemplatewchoices", {
+      const response = await fetch("/generatevideo/bargraph", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          quote: combo.quote.text,
-          author: combo.quote.author,
-          imageurl: finalImageUrl,
-          fontsize: fontSizeIndicatorQuote(combo.quote.text.length),
-          fontcolor: combo.color,
-          fontfamily: combo.font,
+          data: combo.bar.data,
+          title: combo.bar.title,
+          titleFontColor: barGraphConfig.titleFontColor,
+          backgroundImage: finalImageUrl,
+          accent: barGraphConfig.accent,
+          subtitle: combo.bar.subtitle,
+          currency: "",
+          titleFontSize: fontsizeindicator.titlefontsize,
+          subtitleFontSize: fontsizeindicator.subtitlefontsize,
+          subtitleColor: barGraphConfig.subtitleColor,
+          barHeight: barGraphConfig.barHeight,
+          barGap: barGraphConfig.barGap,
+          barLabelFontSize: barGraphConfig.barLabelFontSize,
+          barValueFontSize: barGraphConfig.barValueFontSize,
+          fontFamily: combo.font,
+          duration: calculateDurationBarGraph(combo.bar.data.length),
           format: "mp4",
         }),
       });
-
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText);
       }
-
       const data = await response.json();
       updateCombination(index, { status: "ready", exportUrl: data.url });
     } catch (err) {
@@ -133,12 +118,7 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
   };
 
   const generateDataset = async () => {
-    setQuotes([]);
-    if (datasetSource === "recite") {
-      await fetchRecite(datasetQuantity);
-    } else {
-      await fetchAIDataset(datasetQuantity);
-    }
+    await fetchAIDataset(datasetQuantity);
   };
 
   // background/font selection helpers
@@ -157,41 +137,37 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
 
   // inside QuoteSpotlightBatchRendering component
   const handleRemoveQuote = (index: number) => {
-    setQuotes((prev) => prev.filter((_, i) => i !== index));
+    setBarGraphData((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleGenerateBatch = () => {
     setShowProgressCard(true);
     if (
-      quotes.length === 0 ||
+      barGraphData.length === 0 ||
       selectedBackgrounds.length === 0 ||
-      selectedFonts.length === 0 ||
-      selectedFontColors.length === 0
+      selectedFonts.length === 0
     ) {
       alert(
         "You are missing some selections. Please complete all of the selections first."
       );
       return;
     }
-
     const combos: any[] = [];
-    quotes.forEach((quote) => {
+    barGraphData.forEach((bar) => {
       selectedBackgrounds.forEach((bg) => {
         selectedFonts.forEach((font) => {
-          selectedFontColors.forEach((color) => {
-            combos.push({
-              quote,
-              background: bg,
-              font,
-              color,
-              status: "pending",
-              exportUrl: null,
-            });
+          combos.push({
+            bar,
+            bg,
+            font,
+            status: "pending",
+            exportUrl: null,
           });
         });
       });
     });
 
+    console.log(combos);
     setCombinations(combos);
     setRenderQueue(combos.map((_, i) => i)); // indices in order
     setActiveSection("outputs");
@@ -231,9 +207,6 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
 
   return (
     <Box sx={{ display: "flex", height: "100vh", bgcolor: "#fafafa" }}>
-      {/* -------------------
-          Fixed SideNav
-          ------------------- */}
       <Box
         sx={{
           width: collapsed ? 72 : 260,
@@ -268,7 +241,7 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              🎬 Quote Template Batch Rendering
+              🎬 Bar Graph Template Batch Rendering
             </Typography>
           )}
         </Box>
@@ -297,13 +270,6 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
             onClick={() => setActiveSection("fonts")}
           />
           <NavItem
-            icon={<ColorLensIcon />}
-            label="Font Colors"
-            collapsed={collapsed}
-            active={activeSection === "fontcolors"}
-            onClick={() => setActiveSection("fontcolors")}
-          />
-          <NavItem
             icon={<ViewModuleIcon />}
             label="Batch Outputs"
             collapsed={collapsed}
@@ -312,7 +278,6 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
           />
         </Box>
 
-        {/* footer buttons */}
         <Box
           sx={{
             p: 2,
@@ -328,7 +293,7 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
             variant="outlined"
             startIcon={<SwapHorizIcon />}
             disabled={isRendering}
-            onClick={() => window.location.assign("/template/quotetemplate")}
+            onClick={() => window.location.assign("/template/bargraph")}
             sx={{
               borderRadius: 2,
               py: 1.2,
@@ -486,15 +451,7 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                   >
                     Source
                   </Typography>
-                  <ToggleButtonGroup
-                    value={datasetSource}
-                    exclusive
-                    onChange={(_, v) => v && setDatasetSource(v)}
-                    size="medium"
-                  >
-                    <ToggleButton value="recite">
-                      <CloudIcon sx={{ mr: 1 }} /> Recite API
-                    </ToggleButton>
+                  <ToggleButtonGroup exclusive size="medium">
                     <ToggleButton value="ai">
                       <SmartToyIcon sx={{ mr: 1 }} /> AI Generated
                     </ToggleButton>
@@ -511,6 +468,7 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                     Quantity
                   </Typography>
                   <TextField
+                    disabled={isRendering}
                     type="number"
                     value={datasetQuantity}
                     onChange={(e) => setDatasetQuantity(Number(e.target.value))}
@@ -548,14 +506,14 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                 </Box>
               )}
 
-              {!loading && quotes.length > 0 && (
+              {!loading && barGraphData.length > 0 && (
                 <Box sx={{ mt: 3 }}>
                   <Typography
                     variant="h6"
                     fontWeight={600}
                     sx={{ mb: 2, color: "#1976d2" }}
                   >
-                    Generated Quotes ({quotes.length})
+                    Generated BarGraph Datasets ({barGraphData.length})
                   </Typography>
                   <Paper sx={{ width: "100%", overflow: "hidden" }}>
                     {/* Header row */}
@@ -568,26 +526,30 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                         fontWeight: 600,
                       }}
                     >
-                      <Box sx={{ flex: 1 }}>Quote</Box>
-                      <Box sx={{ width: "25%" }}>Author</Box>
+                      <Box sx={{ flex: 1 }}>Title</Box>
+                      <Box sx={{ width: "25%" }}>Subtitle</Box>
+                      <Box sx={{ width: "35%" }}>Data (name → value)</Box>
                       <Box sx={{ width: 80, textAlign: "center" }}>Action</Box>
                     </Box>
 
                     {/* Data rows */}
-                    {quotes.map((q, i) => (
+                    {barGraphData.map((dataset, i) => (
                       <Box
                         key={i}
                         sx={{
                           display: "flex",
                           px: 2,
-                          py: 1,
+                          py: 1.5,
                           borderTop: "1px solid #eee",
                           alignItems: "center",
                         }}
                       >
+                        {/* Title */}
                         <Box sx={{ flex: 1, pr: 2, fontSize: "0.95rem" }}>
-                          "{q.text}"
+                          "{dataset.title}"
                         </Box>
+
+                        {/* Subtitle */}
                         <Box
                           sx={{
                             width: "25%",
@@ -595,8 +557,38 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                             color: "text.secondary",
                           }}
                         >
-                          {q.author}
+                          {dataset.subtitle}
                         </Box>
+
+                        {/* Data preview */}
+                        <Box
+                          sx={{
+                            width: "35%",
+                            fontSize: "0.85rem",
+                            color: "text.secondary",
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: 1,
+                          }}
+                        >
+                          {dataset.data.map((d, idx) => (
+                            <Box
+                              key={idx}
+                              sx={{
+                                bgcolor: "#f1f5ff",
+                                px: 1.2,
+                                py: 0.5,
+                                borderRadius: 1,
+                                fontSize: "0.8rem",
+                                fontWeight: 500,
+                              }}
+                            >
+                              {d.name}: {d.value}
+                            </Box>
+                          ))}
+                        </Box>
+
+                        {/* Remove */}
                         <Box sx={{ width: 80, textAlign: "center" }}>
                           <Button
                             size="small"
@@ -659,7 +651,7 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                   gap: 1.5,
                 }}
               >
-                {serverImages.map((bg) => {
+                {barGraphImages.map((bg) => {
                   const selected = selectedBackgrounds.includes(bg);
                   return (
                     <Box
@@ -842,141 +834,6 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
               </Box>
             </Box>
           )}
-
-          {/* Font Colors Section */}
-          {activeSection === "fontcolors" && (
-            <Box>
-              {/* Header */}
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mb: 3,
-                }}
-              >
-                <Typography
-                  variant="h5"
-                  fontWeight={700}
-                  sx={{ letterSpacing: 0.5 }}
-                >
-                  Choose Font Colors
-                </Typography>
-
-                <Box sx={{ display: "flex", gap: 1 }}>
-                  <Button
-                    size="small"
-                    startIcon={<SelectAllIcon />}
-                    onClick={() => setSelectedFontColors([...fontsSelections1])}
-                    disabled={isRendering}
-                  >
-                    Select all
-                  </Button>
-                  <Button
-                    size="small"
-                    startIcon={<ClearAllIcon />}
-                    onClick={() => setSelectedFontColors([])}
-                    disabled={isRendering}
-                  >
-                    Clear
-                  </Button>
-                </Box>
-              </Box>
-
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: {
-                    xs: "repeat(2, 1fr)",
-                    sm: "repeat(3, 1fr)",
-                    md: "repeat(4, 1fr)",
-                    lg: "repeat(5, 1fr)",
-                  },
-                  gap: 2,
-                }}
-              >
-                {fontsSelections1.map((color) => {
-                  const selected = selectedFontColors.includes(color);
-                  return (
-                    <Box
-                      key={color}
-                      onClick={() =>
-                        setSelectedFontColors((prev) =>
-                          prev.includes(color)
-                            ? prev.filter((c) => c !== color)
-                            : [...prev, color]
-                        )
-                      }
-                      sx={{
-                        pointerEvents: isRendering ? "none" : "auto", // disables hover/click
-                        opacity: isRendering ? 0.5 : 1, // faded look
-                        cursor: "pointer",
-                        borderRadius: 3,
-                        boxShadow: selected
-                          ? "0 4px 12px rgba(25,118,210,0.5)"
-                          : "0 2px 6px rgba(0,0,0,0.15)",
-                        overflow: "hidden",
-                        transition: "all 0.25s ease",
-                        "&:hover": {
-                          transform: "translateY(-4px)",
-                          boxShadow: "0 6px 14px rgba(0,0,0,0.25)",
-                        },
-                        bgcolor: "#fff",
-                      }}
-                    >
-                      {/* Color Block */}
-                      <Box
-                        sx={{
-                          height: 80,
-                          bgcolor: color,
-                          position: "relative",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {selected && (
-                          <Box
-                            sx={{
-                              position: "absolute",
-                              top: 8,
-                              right: 8,
-                              width: 24,
-                              height: 24,
-                              borderRadius: "50%",
-                              bgcolor: "#1976d2",
-                              color: "#fff",
-                              fontSize: "0.8rem",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            ✓
-                          </Box>
-                        )}
-                      </Box>
-
-                      {/* Label */}
-                      <Box
-                        sx={{
-                          py: 1,
-                          textAlign: "center",
-                          fontWeight: 600,
-                          fontSize: "0.9rem",
-                          color: "#333",
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        {color}
-                      </Box>
-                    </Box>
-                  );
-                })}
-              </Box>
-            </Box>
-          )}
-
           {/* Batch Outputs Section */}
           {activeSection === "outputs" && (
             <Box>
@@ -1067,7 +924,7 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
                           noWrap
                           sx={{ fontSize: "0.85rem" }}
                         >
-                          — {c.quote.author}
+                          — {c.bar.title}
                         </Typography>
                         <Typography
                           variant="caption"
@@ -1089,9 +946,6 @@ export const QuoteSpotlightBatchRendering: React.FC = () => {
   );
 };
 
-/* ---------------
-   NavItem button
-   --------------- */
 function NavItem({
   icon,
   label,

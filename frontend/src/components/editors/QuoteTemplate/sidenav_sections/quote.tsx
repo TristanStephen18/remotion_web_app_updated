@@ -6,6 +6,7 @@ export interface QuoteProps {
   setQuote: React.Dispatch<React.SetStateAction<string>>;
   setAuthor: React.Dispatch<React.SetStateAction<string>>;
   handleAISuggestion: () => void;
+  isGenerating: boolean;
 }
 
 export const QuoteSecTrial: React.FC<QuoteProps> = ({
@@ -14,6 +15,7 @@ export const QuoteSecTrial: React.FC<QuoteProps> = ({
   author,
   quote,
   handleAISuggestion,
+  isGenerating,
 }) => {
   return (
     <div
@@ -39,7 +41,7 @@ export const QuoteSecTrial: React.FC<QuoteProps> = ({
           placeholder="e.g. The best way to predict the future is to create it."
           style={{
             width: "100%",
-            height: 200,
+            height: 100,
             padding: "0.8rem",
             borderRadius: "8px",
             border: "1px solid #ddd",
@@ -89,12 +91,14 @@ export const QuoteSecTrial: React.FC<QuoteProps> = ({
           cursor: "pointer",
           color: "white",
           fontWeight: 600,
-          background: "linear-gradient(90deg,#ff4fa3,#8a4dff,#0077ff)",
+          background: isGenerating
+            ? "#999"
+            : "linear-gradient(90deg,#ff4fa3,#8a4dff,#0077ff)",
           boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
           width: "100%",
         }}
       >
-        ✨ Generate Quote using AI
+        {isGenerating ? "⏳ Generating quote..." : "✨ Generate Quote using AI"}
       </button>
 
       <p style={{ fontSize: "0.85rem", color: "#666", marginTop: "0.75rem" }}>

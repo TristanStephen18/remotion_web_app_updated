@@ -2,7 +2,7 @@ import type React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 // import { quoteeditornavs } from "../../../data/navdata_live_editor.tsx";
-import { KenBurnsNav, KpiFlipCardsNavs } from "../../../data/navdata_live_editor";
+import { KenBurnsNav } from "../../../data/navdata_live_editor";
 
 interface SidenavProps {
   collapsed: boolean;
@@ -10,7 +10,7 @@ interface SidenavProps {
   activeSection: string;
   setActiveSection: React.Dispatch<
     React.SetStateAction<
-      "images" | "proportions" |  "options" | "export"
+      "images" | "proportions" |  "template" | "export"
     >
   >;
 }

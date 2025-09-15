@@ -1,47 +1,51 @@
 {
   "data": [
     {
-      "name": "Data1",
-      "value": 124500
+      "name": "Product X",
+      "value": 31500
     },
     {
-      "name": "Data2",
-      "value": 110200
+      "name": "Product Y",
+      "value": 29800
     },
     {
-      "name": "Data3",
-      "value": 87300
+      "name": "Service A",
+      "value": 33200
     },
     {
-      "name": "Data4",
-      "value": 76500
+      "name": "Product Z",
+      "value": 28500
     },
     {
-      "name": "Data5",
-      "value": 54200
+      "name": "Service B",
+      "value": 30500
     },
     {
-      "name": "Data6",
-      "value": 49800
+      "name": "Accessory K",
+      "value": 27900
     },
     {
-      "name": "yttuuy",
-      "value": 3876654
+      "name": "Software L",
+      "value": 32100
+    },
+    {
+      "name": "Consulting M",
+      "value": 31000
     }
   ],
-  "title": "Your title",
+  "title": "Top Performing Offerings by Sales Volume",
   "titleFontColor": "white",
-  "backgroundImage": "http://localhost:3000/bgimages/colors/bg1.jpg",
+  "backgroundImage": "http://localhost:3000/bgimages/colors/bg9.jpg",
   "accent": "#3B82F6",
-  "subtitle": "Your subtitle",
+  "subtitle": "Year-to-Date Figures for Q2 2024",
   "currency": "",
-  "titleFontSize": 80,
-  "subtitleFontSize": 50,
+  "titleFontSize": 60,
+  "subtitleFontSize": 38,
   "subtitleColor": "white",
   "barHeight": 100,
   "barGap": 36,
   "barLabelFontSize": 36,
   "barValueFontSize": 36,
-  "fontFamily": "Inter, sans-serif",
-  "duration": 9
+  "fontFamily": "'Playfair Display', serif",
+  "duration": 10
 }

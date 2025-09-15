@@ -1,7 +1,7 @@
 import type React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { factCardsnavitems, typingtemplatenavs } from "../../../data/navdata_live_editor";
+import { factCardsnavitems } from "../../../data/navdata_live_editor";
 // import { quoteeditornavs } from "../../../data/navdata_live_editor.tsx";
 // import 
 
@@ -10,7 +10,7 @@ interface SidenavProps {
     collapsed: boolean;
     setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
     activeSection: string;
-    setActiveSection: React.Dispatch<React.SetStateAction<  "background" | "typography" | "options" | "export" | "endpoints"| "facts"| "duration">>;
+    setActiveSection: React.Dispatch<React.SetStateAction< "template" | "background" | "typography" | "export" | "endpoints"| "facts"| "duration">>;
 }
 
 export const FactCardsSidenav: React.FC<SidenavProps>=({collapsed, setCollapsed, activeSection, setActiveSection})=>{

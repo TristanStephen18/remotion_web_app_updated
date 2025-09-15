@@ -11,7 +11,7 @@ interface SidenavProps {
   activeSection: string;
   setActiveSection: React.Dispatch<
     React.SetStateAction<
-      "text" | "data" | "background" | "animation" | "options" | "export"
+      "text" | "data" | "background" | "animation" | "template" | "export"
     >
   >;
 }

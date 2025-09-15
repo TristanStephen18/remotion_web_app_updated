@@ -6,7 +6,7 @@ import { SimpleTrendGraphPreview } from "../../layout/EditorPreviews/SimpleTrend
 import type { SimpleGraphProps } from "../../remotion_compositions/Curvelinetrend/SimplifiedTemplateHolder";
 import { CurveLineTextPanel } from "./sidenav_sections/titleandsubtitle";
 import { ExportSecTrial } from "../Global/sidenav_sections/export";
-import { OptionSectionTrial } from "../Global/sidenav_sections/options";
+// import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import {
   CurveLineTrendDataPanel,
   type DataPoint,
@@ -14,6 +14,7 @@ import {
 import { PresetPanel, type GraphThemeKey } from "./sidenav_sections/themes";
 import { AnimationPanel } from "./sidenav_sections/animation";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
+import { TemplateOptionsSection } from "../Global/templatesettings";
 
 const initialData = [
   { label: 2015, value: 100 },
@@ -29,6 +30,9 @@ const initialData = [
 ];
 
 export const CurveLineTrendEditor: React.FC = () => {
+  const [templateName, setTemplateName] = useState(
+    "🎬 Curve Line Trend Template"
+  );
   const [fontFamily, setFontfamily] = useState("Arial, sans-serif");
   const [title, setTitle] = useState("Revenue Growth");
   const [subtitle, setSubtitle] = useState("2015–2024 • Journey");
@@ -43,8 +47,6 @@ export const CurveLineTrendEditor: React.FC = () => {
   const [titleFontSize, setTitleFontSize] = useState(50);
   const [subtitleFontSize, setSubtitleFontSize] = useState(30);
   const [previewSize, setPreviewSize] = useState(1);
-
-  //   const [backgroundImage, setBackgroundImage] = useState("");
   const backgroundImage = "";
 
   const graphProps: SimpleGraphProps = {
@@ -64,7 +66,7 @@ export const CurveLineTrendEditor: React.FC = () => {
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    "text" | "data" | "background" | "animation" | "options" | "export"
+    "text" | "data" | "background" | "animation" | "template" | "export"
   >("text");
   const [collapsed, setCollapsed] = useState(false);
 
@@ -72,7 +74,7 @@ export const CurveLineTrendEditor: React.FC = () => {
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isExporting, setIsExporting] = useState<string | null>(null);
-  const [autoSave, setAutoSave] = useState(false);
+  // const [autoSave, setAutoSave] = useState(false);
   const [duration, setDuration] = useState(13);
 
   // 🔹 Resizable panel state
@@ -203,7 +205,7 @@ export const CurveLineTrendEditor: React.FC = () => {
               WebkitTextFillColor: "transparent",
             }}
           >
-            🎬 Curve Line Trend Template
+            {templateName}
           </h2>
 
           {activeSection == "text" && (
@@ -245,16 +247,16 @@ export const CurveLineTrendEditor: React.FC = () => {
             />
           )}
 
-          {activeSection === "options" && (
-            <OptionSectionTrial
-              setShowSafeMargins={setShowSafeMargins}
-              showSafeMargins={showSafeMargins}
-              setAutoSave={setAutoSave}
-              autoSave={autoSave}
-              previewSize={previewSize}
-              setPreviewSize={setPreviewSize}
+          {activeSection === "template" && (
+            <TemplateOptionsSection
+              onEnterBatchRender={() => {
+                window.location.assign("/template/curvelinetrend/mode/batchrendering");
+              }}
+              setTemplateName={setTemplateName}
+              templateName={templateName}
             />
           )}
+
           {activeSection === "export" && (
             <ExportSecTrial
               handleExport={handleExport}

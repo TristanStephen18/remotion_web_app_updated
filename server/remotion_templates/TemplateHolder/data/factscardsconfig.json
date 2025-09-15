@@ -1,24 +1,40 @@
 {
   "intro": {
-    "title": "Your intro title",
-    "subtitle": "Your intro subtitle"
+    "title": "Linguistic Wonders",
+    "subtitle": "Fascinating facts about the world's languages."
   },
   "outro": {
-    "title": "Your outro title",
-    "subtitle": "Your outro subtitle"
+    "title": "Linguistic Wonders",
+    "subtitle": "Fascinating facts about the world's languages."
   },
   "facts": [
     {
-      "title": "Your fact no.1",
-      "description": "The moon is made up of cheese"
+      "title": "Most Speakers?",
+      "description": "Mandarin Chinese has the most native speakers, with over 1.1 billion people speaking it as their first language."
+    },
+    {
+      "title": "Longest Alphabet?",
+      "description": "The Khmer language of Cambodia holds the record for the longest alphabet, with 74 letters."
+    },
+    {
+      "title": "No 'A' or 'B'?",
+      "description": "The Pirahã language spoken in the Amazon has no numbers, colors, or concepts of time."
+    },
+    {
+      "title": "Click Languages",
+      "description": "Some African languages, like Xhosa and Zulu, use click consonants as part of their phonology."
+    },
+    {
+      "title": "Evolving English",
+      "description": "The English language adds approximately 4,000 new words to its dictionary each year."
     }
   ],
-  "backgroundImage": "http://localhost:3000/bgimages/colors/bg1.jpg",
-  "fontSizeTitle": 80,
-  "fontSizeSubtitle": 50,
-  "fontFamilyTitle": "Russo",
+  "backgroundImage": "http://localhost:3000/bgimages/philosophy/bg20.jpg",
+  "fontSizeTitle": 68,
+  "fontSizeSubtitle": 49,
+  "fontFamilyTitle": "'Dancing Script', cursive",
   "fontColorTitle": "white",
   "fontColorSubtitle": "white",
-  "fontFamilySubtitle": "Russo",
-  "duration": 20
+  "fontFamilySubtitle": "'Dancing Script', cursive",
+  "duration": 7
 }

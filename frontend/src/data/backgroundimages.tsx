@@ -65,3 +65,27 @@ export const serverImages: string[] = [
   "/bgimages/sceneries/bg20.jpg",
   "/bgimages/sceneries/bg21.jpg",
 ];
+
+
+export const barGraphImages: string[] = [
+  "/bgimages/colors/bg1.jpg",
+  "/bgimages/colors/bg2.jpg",
+  "/bgimages/colors/bg3.jpg",
+  "/bgimages/colors/bg4.jpg",
+  "/bgimages/colors/bg5.jpg",
+  "/bgimages/colors/bg6.jpg",
+  "/bgimages/colors/bg7.jpg",
+  "/bgimages/colors/bg8.jpg",
+  "/bgimages/colors/bg9.jpg",
+  "/bgimages/colors/bg11.jpg",
+  "/bgimages/colors/bg12.jpg",
+  "/bgimages/colors/bg13.jpg",
+  "/bgimages/colors/bg14.jpg",
+  "/bgimages/colors/bg15.jpg",
+  "/bgimages/colors/bg16.jpg",
+  "/bgimages/colors/bg17.jpg",
+  "/bgimages/colors/bg18.jpg",
+  "/bgimages/colors/bg19.jpg",
+  "/bgimages/colors/bg20.jpg",
+  "/bgimages/colors/bg21.jpg",
+];

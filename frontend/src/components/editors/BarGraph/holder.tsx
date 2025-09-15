@@ -10,10 +10,14 @@ import { TypographyPanelBarGraphTemplate } from "./sidenav_sections/header";
 import { DataPanel } from "./sidenav_sections/dataenrty";
 import { BarGraphControlsPanel } from "./sidenav_sections/bargraphconfig";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
+import { TemplateOptionsSection } from "../Global/templatesettings";
 
 export const BarGraphEditor: React.FC = () => {
-    const [previewSize, setPreviewSize] = useState(1);
-  
+  const [templateName, setTemplateName] = useState(
+    "🎬 Bar Graph Analytics Template"
+  );
+  const [previewSize, setPreviewSize] = useState(1);
+
   //header states
   const [title, setTitle] = useState("Your title");
   const [subTitle, setSubtitle] = useState("Your subtitle");
@@ -50,7 +54,7 @@ export const BarGraphEditor: React.FC = () => {
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    "title" | "graph" | "data" | "background" | "options" | "export"
+    "title" | "graph" | "data" | "background" | "template" | "export"
   >("title");
   const [collapsed, setCollapsed] = useState(false);
 
@@ -151,7 +155,7 @@ export const BarGraphEditor: React.FC = () => {
           barValueFontSize,
           fontFamily,
           duration,
-          format
+          format,
         }),
       });
       if (!response.ok) {
@@ -210,7 +214,7 @@ export const BarGraphEditor: React.FC = () => {
               bottom: 0,
               width: "6px",
               cursor: "col-resize",
-              background: "#ddd" ,
+              background: "#ddd",
             }}
           />
 
@@ -224,7 +228,7 @@ export const BarGraphEditor: React.FC = () => {
               WebkitTextFillColor: "transparent",
             }}
           >
-            🎬 Bar Graph Analytics Template
+            {templateName}
           </h2>
 
           {activeSection === "title" && (
@@ -249,7 +253,12 @@ export const BarGraphEditor: React.FC = () => {
           )}
 
           {activeSection === "data" && (
-            <DataPanel data={data} setData={setData} duration={duration} setDuration={setDuration} />
+            <DataPanel
+              data={data}
+              setData={setData}
+              duration={duration}
+              setDuration={setDuration}
+            />
           )}
 
           {activeSection === "graph" && (
@@ -275,17 +284,18 @@ export const BarGraphEditor: React.FC = () => {
               setBackgroundSource={setBackgroundSource}
             />
           )}
-
-          {activeSection === "options" && (
-            <OptionSectionTrial
-              setShowSafeMargins={setShowSafeMargins}
-              showSafeMargins={showSafeMargins}
-              setAutoSave={setAutoSave}
-              autoSave={autoSave}
-              previewSize={previewSize}
-              setPreviewSize={setPreviewSize}
+          {activeSection === "template" && (
+            <TemplateOptionsSection
+              setTemplateName={setTemplateName}
+              templateName={templateName}
+              onEnterBatchRender={() => {
+                window.location.assign(
+                  "/template/bargraph/mode/batchrendering"
+                );
+              }}
             />
           )}
+
           {activeSection === "export" && (
             <ExportSecTrial
               handleExport={handleExport}

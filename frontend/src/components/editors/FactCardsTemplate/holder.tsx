@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { DisplayerModal } from "../Global/modal";
 import { BackgroundSecTrial } from "../Global/sidenav_sections/bg";
 import { ExportSecTrial } from "../Global/sidenav_sections/export";
-import { OptionSectionTrial } from "../Global/sidenav_sections/options";
+// import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import { FactCardsSidenav } from "./sidenav";
 import { IntroOutroPanel } from "./sidenave_sections/endpoints";
 import type { Slide } from "../../layout/EditorPreviews/FacstCardTemplate";
@@ -11,8 +11,10 @@ import { TypographyPanelFactsTemplate } from "./sidenave_sections/typo";
 import { FacstCardPreview } from "../../layout/EditorPreviews/FacstCardTemplate";
 import { DurationSection } from "./sidenave_sections/duration";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
+import { TemplateOptionsSection } from "../Global/templatesettings";
 
 export const FactCardsEditor: React.FC = () => {
+  const [templateName, setTemplateName] = useState("🎬 Fact Cards Template");
   const [intro, setIntro] = useState<Slide>({
     title: "Your intro title",
     subtitle: "Your intro subtitle",
@@ -31,8 +33,8 @@ export const FactCardsEditor: React.FC = () => {
   const [subtitleFontSize, setSubtitleFontSize] = useState(50);
   const [titleFontColor, setTitleFontColor] = useState("white");
   const [subtitleFontColor, setSubtitleFontColor] = useState("white");
-    const [previewSize, setPreviewSize] = useState(1);
-  
+  const [previewSize, setPreviewSize] = useState(1);
+
   const [titlefontFamily, setTitleFontFamily] = useState("Russo");
   const [subtitleFontFamily, setSubtitleFontFamily] = useState("Russo");
   const [backgroundImage, setBackgroundImage] = useState(
@@ -47,11 +49,11 @@ export const FactCardsEditor: React.FC = () => {
   const [activeSection, setActiveSection] = useState<
     | "background"
     | "typography"
-    | "options"
     | "export"
     | "endpoints"
     | "facts"
     | "duration"
+    | "template"
   >("endpoints");
   const [collapsed, setCollapsed] = useState(false);
 
@@ -59,7 +61,7 @@ export const FactCardsEditor: React.FC = () => {
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isExporting, setIsExporting] = useState<string | null>(null);
-  const [autoSave, setAutoSave] = useState(false);
+  // const [autoSave, setAutoSave] = useState(false);
   const [duration, setDuration] = useState(20);
 
   // 🔹 Resizable panel state
@@ -206,7 +208,7 @@ export const FactCardsEditor: React.FC = () => {
               bottom: 0,
               width: "6px",
               cursor: "col-resize",
-              background:  "#ddd",
+              background: "#ddd",
             }}
           />
 
@@ -220,7 +222,7 @@ export const FactCardsEditor: React.FC = () => {
               WebkitTextFillColor: "transparent",
             }}
           >
-            🎬 Fact Cards Template
+            {templateName}
           </h2>
 
           {activeSection === "facts" && (
@@ -268,16 +270,18 @@ export const FactCardsEditor: React.FC = () => {
             <DurationSection duration={duration} setDuration={setDuration} />
           )}
 
-          {activeSection === "options" && (
-            <OptionSectionTrial
-              setShowSafeMargins={setShowSafeMargins}
-              showSafeMargins={showSafeMargins}
-              setAutoSave={setAutoSave}
-              autoSave={autoSave}
-              previewSize={previewSize}
-              setPreviewSize={setPreviewSize}
+          {activeSection === "template" && (
+            <TemplateOptionsSection
+              onEnterBatchRender={() => {
+                window.location.assign(
+                  "/template/factcards/mode/batchrendering"
+                );
+              }}
+              setTemplateName={setTemplateName}
+              templateName={templateName}
             />
           )}
+
           {activeSection === "export" && (
             <ExportSecTrial
               handleExport={handleExport}

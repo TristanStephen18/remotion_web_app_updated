@@ -10,7 +10,7 @@ interface SidenavProps {
     collapsed: boolean;
     setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
     activeSection: string;
-    setActiveSection: React.Dispatch<React.SetStateAction< "title" | "graph" | "data" | "background"  | "options" | "export" >>;
+    setActiveSection: React.Dispatch<React.SetStateAction< "title" | "graph" | "data" | "background"  | "template" | "export" >>;
 }
 
 export const BarGraphNavs: React.FC<SidenavProps>=({collapsed, setCollapsed, activeSection, setActiveSection})=>{

@@ -294,7 +294,7 @@ export const BACKGROUNDS = [
   }
 ];
 
-// Audio files configuration with metadata
+
 export const AUDIO_FILES = [
   { 
     id: 'typing-1', 

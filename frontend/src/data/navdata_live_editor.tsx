@@ -30,6 +30,7 @@ import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import PanoramaWideAngleIcon from "@mui/icons-material/PanoramaWideAngle";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import GridViewIcon from "@mui/icons-material/GridView";
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 // import TimerSharpIcon from '@mui/icons-material/TimerSharp';
 
 export const quoteeditornavs = [
@@ -40,6 +41,11 @@ export const quoteeditornavs = [
     key: "template",
     label: "Template Settings",
     icon: <SettingsApplicationsIcon />,
+  },
+  {
+    key: "ai",
+    label: "Ai",
+    icon: <AutoAwesomeIcon />,
   },
 
   // { key: "options", label: "Options", icon: <SettingsIcon /> },
@@ -65,6 +71,11 @@ export const factCardsnavitems = [
   { key: "background", label: "Background", icon: <ImageIcon /> },
   { key: "typography", label: "Typography", icon: <TextFieldsIcon /> },
   { key: "duration", label: "Duration", icon: <TimerIcon /> },
+  {
+    key: "template",
+    label: "Template Settings",
+    icon: <SettingsApplicationsIcon />,
+  },
   // { key: "options", label: "Options", icon: <SettingsIcon /> },
   { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
@@ -74,6 +85,11 @@ export const BarChartNavItems = [
   { key: "data", label: "Data", icon: <DataArrayIcon /> },
   { key: "graph", label: "Bar Graph", icon: <BarChartIcon /> },
   { key: "background", label: "Background", icon: <ImageIcon /> },
+  {
+    key: "template",
+    label: "Template Settings",
+    icon: <SettingsApplicationsIcon />,
+  },
   // { key: "options", label: "Options", icon: <SettingsIcon /> },
   { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
@@ -109,6 +125,11 @@ export const KenBurnsNav = [
     label: "Proportions",
     icon: <PhotoSizeSelectLargeIcon />,
   },
+    {
+    key: "template",
+    label: "Template Settings",
+    icon: <SettingsApplicationsIcon />,
+  },
   // { key: "options", label: "Options", icon: <SettingsIcon /> },
   { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
@@ -118,6 +139,11 @@ export const CurveLineTrendNavs = [
   { key: "data", label: "Data", icon: <DataArrayIcon /> },
   { key: "background", label: "Presets/Background", icon: <DarkModeIcon /> },
   { key: "animation", label: "Animarion & Timing", icon: <AnimationIcon /> },
+  {
+    key: "template",
+    label: "Template Settings",
+    icon: <SettingsApplicationsIcon />,
+  },
   // { key: "options", label: "Options", icon: <SettingsIcon /> },
   { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
@@ -158,7 +184,7 @@ export const NewTextTypingNavs = [
   { key: "fonts", label: "Fonts", icon: <TextFieldsSharpIcon /> },
   { key: "background", label: "Themes", icon: <DarkModeIcon /> },
   { key: "sound", label: "Audio", icon: <LibraryMusicIcon /> },
-      {
+  {
     key: "template",
     label: "Template Settings",
     icon: <SettingsApplicationsIcon />,

@@ -101,7 +101,7 @@ router.post("/upload-kenburns-image", MulterUtil.uploadKenBurns.single("image"),
 // ✅ Multiple images (folder or multi-select upload)
 router.post(
   "/upload-kenburns-folder",
-  MulterUtil.uploadKenBurns.array("images", 5), // max 5 images
+  MulterUtil.uploadKenBurns.array("images"), // max 5 images
   (req, res) => {
     try {
       if (!req.files || (req.files as Express.Multer.File[]).length === 0) {

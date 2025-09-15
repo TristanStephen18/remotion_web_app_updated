@@ -24,6 +24,10 @@ import QuoteGenerator from "./trials/geminischematester.tsx";
 import QuoteTester from "./trials/quotesapitester.tsx";
 import { QuoteSpotlightBatchRendering } from "./pages/batchrendering/QuoteSpotlight.tsx";
 import { TextTypingTemplateBatchRendering } from "./pages/batchrendering/TextTyping.tsx";
+import { BarGraphBatchRendering } from "./pages/batchrendering/BarGraph.tsx";
+import { CurveLineTrendBatchRendering } from "./pages/batchrendering/CurveLineTrend.tsx";
+import { KenBurnsSwipeBatchRendering } from "./pages/batchrendering/KenburnsStack.tsx";
+import { FactCardsBatchRendering } from "./pages/batchrendering/FactCardsTemplate.tsx";
 
 function App() {
   return (
@@ -40,18 +44,33 @@ function App() {
         />
         <Route path="/template/splitscreen" element={<SplitScreenEditor />} />
         <Route path="/template/texttypingtemplate" element={<TypingEditor />} />
-        <Route path="/template/newtexttyping/mode/batchrendering" element={<TextTypingTemplateBatchRendering />} />
+        <Route
+          path="/template/newtexttyping/mode/batchrendering"
+          element={<TextTypingTemplateBatchRendering />}
+        />
 
         <Route path="/template/factcards" element={<FactCardsEditor />} />
+        <Route path="/template/factcards/mode/batchrendering" element={<FactCardsBatchRendering />} />
+
         <Route path="/template/bargraph" element={<BarGraphEditor />} />
+        <Route path="/template/bargraph/mode/batchrendering" element={<BarGraphBatchRendering />} />
+
         <Route path="/template/kpiflipcards" element={<KpiFlipCardEditor />} />
         <Route
           path="/template/kenburnscarousel"
           element={<KernBurnsEditor />}
         />
         <Route
+          path="/template/kenburnscarousel/mode/batchrendering"
+          element={<KenBurnsSwipeBatchRendering />}
+        />
+        <Route
           path="/template/curvelinetrend"
           element={<CurveLineTrendEditor />}
+        />
+        <Route
+          path="/template/curvelinetrend/mode/batchrendering"
+          element={<CurveLineTrendBatchRendering />}
         />
 
         <Route
@@ -59,20 +78,19 @@ function App() {
           element={<FakeTextConversationEditor />}
         />
         <Route path="/template/redditvideo" element={<RedditVideoEditor />} />
-        <Route path="/template/storytelling" element={<StoryTellingVideoEditor />} />
+        <Route
+          path="/template/storytelling"
+          element={<StoryTellingVideoEditor />}
+        />
         <Route path="/template/newtexttyping" element={<NewTypingEditor />} />
 
-
         <Route path="/" element={<LoginPage />} />
-        <Route path="/sound" element={<Fakeconvo/>} />
-
+        <Route path="/sound" element={<Fakeconvo />} />
 
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/tester" element={<QuoteGenerator />} />
         <Route path="/qtester" element={<QuoteTester />} />
-
-
       </Routes>
     </BrowserRouter>
   );

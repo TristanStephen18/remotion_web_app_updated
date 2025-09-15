@@ -2,7 +2,11 @@ import { Router } from "express";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 import {
+  BarGraphDataSchema,
+  CurveLineTrendSchema,
+  FactCardsTemplateDatasetSchema,
   QuoteDataPropsSchema,
+  SingleOutputQuoteSpotlightSchema,
   TextTypingTemplatePhraseSchema,
   TextTypingTemplateSchema,
 } from "../../models/gemini_schemas.ts";
@@ -11,12 +15,14 @@ import {
   CategoryOptions,
   MoodOptions,
 } from "../../data/texttyping_moods_categories.ts";
+import { curveLineDataTypes } from "../../data/curvelinetrendsymbols.ts";
+import { fonts, fontValues } from "../../data/fonst.ts";
 
 dotenv.config();
 
 const router = Router();
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY_2!);
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 router.get("/reddit", async (req, res) => {
   //   const { niche, template } = req.body;
@@ -197,6 +203,157 @@ router.post("/generate/texttypingdataset", async (req, res) => {
 
     console.log(data);
     res.json({ phrase: data });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ textcontent: "Error creating story. Please try again." });
+  }
+});
+
+router.post("/generate/bargraphdataset", async (req, res) => {
+  const { quantity } = req.body;
+  const sampledata = {
+    name: "Milkshake",
+    value: 10002,
+  };
+  console.log("Generating datasets for bargraph template");
+
+  try {
+    const result = await model.generateContent({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `Generate ${quantity} datasets that has a title, subtitle and the data. The title should be an analytics title, and the subtitle will support the title as if completing the whole header like, title: "Top Selling Items for Mcdo", subtitle: "For the month of March 2025" but don't use this as the first one okay? This is just an example. For the data, is it an array of ${sampledata}. The name should be acquinted with the title and so as the value. The maximum number of items in the data array is 8 and a minimum of 6.The difference between the values should not be wide, meaning if one value is 1092, the other ones should be 2001, 3100,1892 something like this, because if the gap is so wide the value will not be visible in the bargraph okay? Those values are just examples don't make them the basis of min and max values. You can create your own just don't make the gap between the values too wide.`,
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: BarGraphDataSchema,
+      },
+    });
+
+    const text = result.response.text();
+    const data = JSON.parse(text);
+
+    console.log(data);
+    res.json({ data });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ textcontent: "Error creating story. Please try again." });
+  }
+});
+
+router.post("/generate/curvelinedataset", async (req, res) => {
+  const { quantity } = req.body;
+  const sampledata = {
+    label: 2025,
+    value: 10002,
+  };
+  console.log("Generating datasets for curveline template");
+
+  try {
+    const result = await model.generateContent({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `Generate ${quantity} datasets that has a title, subtitle, dataType and the data. The title should be an analytics title, and the subtitle will support the title as if completing the whole header like, title: "Revenue Growth", subtitle: "2015–2024 • Journey" but don't use this as the first one okay? This is just an example. For the dataType, choose from this ${curveLineDataTypes}. For the data, is it an array of ${sampledata}. The label should be a year (it is not limited to the 20th century, it can be from the 90s or lower) that keeps progressing and the value is up to you, you just have to show the value over the progressing years supporting the analytics. The maximum number of items in the data array is 20 and a minimum of 10.`,
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: CurveLineTrendSchema,
+      },
+    });
+
+    const text = result.response.text();
+    const data = JSON.parse(text);
+
+    console.log(data);
+    res.json({ data });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ textcontent: "Error creating story. Please try again." });
+  }
+});
+
+router.post("/generate/factcardsdataset", async (req, res) => {
+  const { quantity, niches } = req.body;
+
+  console.log("Generating datasets for fact cards template");
+
+  try {
+    const result = await model.generateContent({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `Generate ${quantity} trivia datasets for each niche from this selected ${niches} by the user. The dataset shall include a introductory title with a subtitle to follow up the title. And an outro title and subtitle that you will find most fitting, it could be a learn more type outro or a description type, it is up to you but keep it minimal. For the array of facts, it should be according to the niches, the title for the facts should be more or less miminal it should hook the viewers attention to it and the description should be truthful and short. `,
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: FactCardsTemplateDatasetSchema,
+      },
+    });
+
+    const text = result.response.text();
+    const data = JSON.parse(text);
+
+    console.log(data);
+    res.json({ data });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ textcontent: "Error creating story. Please try again." });
+  }
+});
+
+//ai setup routes
+
+router.post("/setup/quotetemplate", async (req, res) => {
+  const { preferences } = req.body;
+  console.log("Generating ai setup data for quote template");
+
+  try {
+    const result = await model.generateContent({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `Generate a dataset that has a quote, author, backgroundImage url, fontColor and fontfamily using this ${preferences} preferences from the user. The quotes and authors must depend on the chosen preferences, there shall be no repeated quotes. Choose from this images for the backgroundImage ${serverImages}(choose randomly) and the fontFamily will be from this array of fonts ${fontValues}(it will be depending on the preferences also) but choose the whole string value not just the fontfamily from the string okay?In the fontfamily don'tbe fixated on Arial and playfair display there are many fonts available. You can decide the fontcolor depending on the user preferences, but it must be light colors, like white, yellow, yellowgreen, pink, skyblue, and more, not dark colors.`,
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: SingleOutputQuoteSpotlightSchema,
+      },
+    });
+
+    const text = result.response.text();
+    const data = JSON.parse(text);
+
+    console.log(data);
+    res.json({ data });
   } catch (error) {
     console.error(error);
     res

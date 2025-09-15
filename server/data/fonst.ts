@@ -1,4 +1,4 @@
-export const fontOptions = [
+export const fonts = [
   { label: "Arial", value: "Arial, sans-serif" },
   { label: "Playfair Display", value: "'Playfair Display', serif" },
   { label: "Kode Mono", value: "Kode Mono, monospace" },
@@ -21,4 +21,30 @@ export const fontOptions = [
   { label: "Oleo Script", value: "'Oleo Script', system-ui" },
   { label: "Bitcount Grid Double", value: "'Bitcount Grid Double', system-ui" },
   {label: "Silkscreen", value: "'Silkscreen', sans-serif"},
+];
+
+
+export const fontValues = [
+  "'Arial', sans-serif",
+  "'Playfair Display', serif",
+  "'Kode Mono', monospace",
+  "'Asimovian', sans-serif",
+  "'Roboto', sans-serif",
+  "'Bebas Neue', sans-serif",
+  "'Russo One', sans-serif",
+  "'Lilita One', sans-serif",
+  "'Changa One', sans-serif",
+  "'Archivo Black', sans-serif",
+  "'Gravitas One', serif",
+  "'Bungee', sans-serif",
+  "'Luckiest Guy', sans-serif",
+  "'Amatic SC', cursive",
+  "'Tagesschrift', system-ui",
+  "'Satisfy', cursive",
+  "'Pacifico', cursive",
+  "'Dancing Script', cursive",
+  "'Story Script', sans-serif",
+  "'Oleo Script', system-ui",
+  "'Bitcount Grid Double', system-ui",
+  "'Silkscreen', sans-serif",
 ];

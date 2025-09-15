@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { DisplayerModal } from "../Global/modal";
-import { OptionSectionTrial } from "../Global/sidenav_sections/options";
+// import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import { ExportSecTrial } from "../Global/sidenav_sections/export";
 import { KenBurnsSideNav } from "./sidenav";
 import { KenBurnsCarouselPreview } from "../../layout/EditorPreviews/KenBurnsCarouselPreview";
 import { KenBurnsImagesPanel } from "./sidenav_sections/images";
 import { ProportionsPanel } from "./sidenav_sections/proportions";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
+import { TemplateOptionsSection } from "../Global/templatesettings";
 
 export const KernBurnsEditor: React.FC = () => {
+  const [templateName, setTemplateName] = useState("🎬 Ken Burns Swipe Template");
   const [previewSize, setPreviewSize] = useState(1);
 
   const [images, setImages] = React.useState<string[]>([
@@ -22,12 +24,12 @@ export const KernBurnsEditor: React.FC = () => {
   const [cardWidthRatio, setCardWidthRatio] = React.useState<number>(0.75);
 
   const [cardHeightRatio, setCardHeightRatio] = React.useState<number>(0.75);
-
-  const [blurBgOpacity, setBlurBgOpacity] = React.useState<number>(0.0);
+  const blurBgOpacity =0.0;
+  // const [blurBgOpacity, setBlurBgOpacity] = React.useState<number>(0.0);
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    "images" | "proportions" | "options" | "export"
+    "images" | "proportions" | "template" | "export"
   >("images");
   const [collapsed, setCollapsed] = useState(false);
 
@@ -35,7 +37,6 @@ export const KernBurnsEditor: React.FC = () => {
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isExporting, setIsExporting] = useState<string | null>(null);
-  const [autoSave, setAutoSave] = useState(false);
 
   // 🔹 Resizable panel state
   const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
@@ -160,7 +161,7 @@ export const KernBurnsEditor: React.FC = () => {
               WebkitTextFillColor: "transparent",
             }}
           >
-            🎬 Ken Burns Swipe Template
+            {templateName}
           </h2>
 
           {activeSection === "images" && (
@@ -176,14 +177,13 @@ export const KernBurnsEditor: React.FC = () => {
             />
           )}
 
-          {activeSection === "options" && (
-            <OptionSectionTrial
-              setShowSafeMargins={setShowSafeMargins}
-              showSafeMargins={showSafeMargins}
-              setAutoSave={setAutoSave}
-              autoSave={autoSave}
-              previewSize={previewSize}
-              setPreviewSize={setPreviewSize}
+          {activeSection === "template" && (
+            <TemplateOptionsSection
+            onEnterBatchRender={()=>{
+              window.location.assign("/template/kenburnscarousel/mode/batchrendering")
+            }}
+            setTemplateName={setTemplateName}
+            templateName={templateName}
             />
           )}
           {activeSection === "export" && (

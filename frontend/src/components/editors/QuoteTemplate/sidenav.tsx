@@ -8,7 +8,7 @@ interface SidenavProps {
     collapsed: boolean;
     setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
     activeSection: string;
-    setActiveSection: React.Dispatch<React.SetStateAction<"quote" | "background" | "typography" | "options" |"template"| "export">>;
+    setActiveSection: React.Dispatch<React.SetStateAction<"quote" | "background" | "typography" | "options" |"template"| "ai" | "export">>;
 }
 
 export const SideNavTrial: React.FC<SidenavProps>=({collapsed, setCollapsed, activeSection, setActiveSection})=>{

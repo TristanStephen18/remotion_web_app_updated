@@ -10,9 +10,21 @@ import { QuoteSpotlightPreview } from "../../layout/EditorPreviews/QuoteTemplate
 import { TypographySectionQuote } from "./sidenav_sections/typo";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
 import { TemplateOptionsSection } from "../Global/templatesettings";
-import { quoteSpotlightDurationCalculator } from "../../../utils/quotespotlighthelpers";
+import {
+  fontSizeIndicatorQuote,
+  quoteSpotlightDurationCalculator,
+} from "../../../utils/quotespotlighthelpers";
+import type { QuoteConfigDataset } from "../../../models/QuoteSpotlight";
+import { AiSetupPanel } from "./sidenav_sections/aisetup";
 
 export const QuoteTemplateEditor: React.FC = () => {
+  // add this new state
+  const [aiMessage, setAiMessage] = useState<string | null>(null);
+
+  const [aiSetupData, setAiSetupData] = useState<QuoteConfigDataset>();
+  const [selectedNiches, setSelectedNiches] = useState<string[]>([]);
+  const [isSettingUp, setIsSettingUp] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [previewSize, setPreviewSize] = useState(1);
   const [templateName, setTemplateName] = useState(
     "🎬 Quote Spotlight Template"
@@ -33,7 +45,13 @@ export const QuoteTemplateEditor: React.FC = () => {
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    "quote" | "background" | "typography" | "options" | "template" | "export"
+    | "quote"
+    | "background"
+    | "typography"
+    | "options"
+    | "template"
+    | "ai"
+    | "export"
   >("quote");
   const [collapsed, setCollapsed] = useState(false);
 
@@ -116,7 +134,87 @@ export const QuoteTemplateEditor: React.FC = () => {
     }
   };
 
+  const handleAiSetup = async () => {
+    // setIsSettingUp(true);
+    setAiMessage(null);
+
+    if (selectedNiches.length === 0) {
+      // aiMessage = "";
+      setAiMessage("You must select a niche first");
+      return;
+    } else {
+      setIsSettingUp(true);
+      try {
+        const response = await fetch("/api/setup/quotetemplate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            preferences: selectedNiches,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(
+            `HTTP error! status: ${response.status}, message: ${errorText}`
+          );
+        }
+
+        const result = await response.json();
+        const configdata: QuoteConfigDataset = result.data;
+        setAiSetupData(configdata);
+
+        // Simulate AI stepping through panels
+        const steps: { section: typeof activeSection; action: () => void }[] = [
+          {
+            section: "quote",
+            action: () => {
+              setFontSize(fontSizeIndicatorQuote(configdata.quote.length));
+              setQuote(configdata.quote);
+              setAuthor(configdata.author);
+            },
+          },
+          {
+            section: "background",
+            action: () => {
+              setBackgroundImage(configdata.backgroundImage);
+              setBackgroundSource("default");
+            },
+          },
+          {
+            section: "typography",
+            action: () => {
+              setFontFamily(configdata.fontFamily);
+              setFontColor(configdata.fontColor);
+            },
+          },
+        ];
+
+        let stepIndex = 0;
+        const interval = setInterval(() => {
+          if (stepIndex < steps.length) {
+            const { section, action } = steps[stepIndex];
+            setActiveSection(section);
+            action();
+            stepIndex++;
+          } else {
+            clearInterval(interval);
+            setActiveSection("ai");
+            setAiMessage(
+              "✅ AI has completed setting up your template based on your selected niches!"
+            );
+            setIsSettingUp(false);
+          }
+        }, 1500); // 1.5s delay between each panel
+      } catch (err: any) {
+        console.error(err.message);
+        setIsSettingUp(false);
+      }
+    }
+  };
+
   const handleAISuggestion = async () => {
+    setIsGenerating(true);
     try {
       const response = await fetch("/api/generate-quote", {
         method: "POST",
@@ -136,6 +234,8 @@ export const QuoteTemplateEditor: React.FC = () => {
     } catch (error) {
       console.error("error generating ai suggestion");
       alert(error);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -244,6 +344,7 @@ export const QuoteTemplateEditor: React.FC = () => {
               setAuthor={setAuthor}
               setQuote={setQuote}
               handleAISuggestion={handleAISuggestion}
+              isGenerating={isGenerating}
             />
           )}
           {activeSection === "background" && (
@@ -271,6 +372,16 @@ export const QuoteTemplateEditor: React.FC = () => {
               onEnterBatchRender={onSwitchMode}
               setTemplateName={setTemplateName}
               templateName={templateName}
+            />
+          )}
+
+          {activeSection === "ai" && (
+            <AiSetupPanel
+              handleAiSetup={handleAiSetup}
+              isSettingUp={isSettingUp}
+              selectedNiches={selectedNiches}
+              setSelectedNiches={setSelectedNiches}
+              aiMessage={aiMessage}
             />
           )}
           {activeSection === "options" && (
