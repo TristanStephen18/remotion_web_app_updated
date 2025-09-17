@@ -13,9 +13,22 @@ export const barGraphConfig = {
   barValueFontSize: 36,
 };
 
-
 export const curvelineDefaultdata = {
   minimalmode: false,
   titleFontSize: 50,
-  subtitleFontSize: 30
-}
+  subtitleFontSize: 30,
+};
+
+export const kpiFlipDefaultValues = {
+  titleFontSize: 96,
+  subtitleFontSize: 36,
+  cardWidth: 360,
+  cardHeight: 220,
+  cardBorderRadius: 28,
+  cardGrid: {
+    rows: 2,
+    cols: 2,
+  },
+  delayStart: 0.5,
+  delayStep: 1,
+};

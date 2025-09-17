@@ -1,101 +1,89 @@
 {
-  "backgroundImage": "http://localhost:3000/bgimages/colors/bg6.jpg",
-  "title": "Performance\nDashboard",
-  "titleFontSize": 96,
-  "titleFontColor": "#FFFFFF",
-  "titleFontFamily": "'Silkscreen', sans-serif",
-  "subtitle": "Real-time Analytics",
-  "subtitleFontSize": 43,
-  "subtitleFontColor": "#E5E7EB",
-  "subtitleFontFamily": "'Silkscreen', sans-serif",
+  "backgroundImage": "http://localhost:3000/bgimages/colors/bg21.jpg",
+  "title": "Website Traffic Analysis",
+  "titleFontSize": 93,
+  "titleFontColor": "white",
+  "titleFontFamily": "'Russo One', sans-serif",
+  "subtitle": "Key Metrics for User Engagement",
+  "subtitleFontSize": 36,
+  "subtitleFontColor": "white",
+  "subtitleFontFamily": "'Russo One', sans-serif",
   "cardsData": [
     {
       "front": {
-        "label": "CTR",
-        "value": "12.5%",
-        "color": "#3B82F6"
+        "label": "Unique Visitors",
+        "value": "120,560",
+        "color": "#FFFFFF"
       },
       "back": {
-        "label": "Clicks",
-        "value": "2.4K",
-        "color": "#10B981"
+        "label": "Change vs Prev Month",
+        "value": "+8.2%",
+        "color": "#FFFFFF"
       }
     },
     {
       "front": {
-        "label": "CPA",
-        "value": "$24",
-        "color": "#8B5CF6"
+        "label": "Page Views",
+        "value": "350,890",
+        "color": "#FFFFFF"
       },
       "back": {
-        "label": "ROAS",
-        "value": "4.2x",
-        "color": "#F59E0B"
+        "label": "Average Session Duration",
+        "value": "00:04:35",
+        "color": "#FFFFFF"
       }
     },
     {
       "front": {
-        "label": "CR",
-        "value": "8.7%",
-        "color": "#EF4444"
+        "label": "Bounce Rate",
+        "value": "48.7%",
+        "color": "#FFFFFF"
       },
       "back": {
-        "label": "AOV",
-        "value": "$156",
-        "color": "#06B6D4"
+        "label": "New vs Returning",
+        "value": "65% New",
+        "color": "#FFFFFF"
       }
     },
     {
       "front": {
-        "label": "CPC",
-        "value": "$1.92",
-        "color": "#84CC16"
+        "label": "Conversion Rate",
+        "value": "3.15%",
+        "color": "#FFFFFF"
       },
       "back": {
-        "label": "CPM",
-        "value": "$12.5",
-        "color": "#F97316"
+        "label": "Goal Completions",
+        "value": "3,800",
+        "color": "#FFFFFF"
       }
     },
     {
       "front": {
-        "label": "Pacman",
-        "value": "C",
-        "color": "#fbff00"
+        "label": "Top Source",
+        "value": "Organic Search",
+        "color": "#FFFFFF"
       },
       "back": {
-        "label": "Black Pacman",
-        "value": "C",
-        "color": "#000000"
-      }
-    },
-    {
-      "front": {
-        "label": "Pink Pacman",
-        "value": "C",
-        "color": "#ff00ae"
-      },
-      "back": {
-        "label": "Blue Pacman",
-        "value": "C",
-        "color": "#584dff"
+        "label": "Traffic Share",
+        "value": "45%",
+        "color": "#FFFFFF"
       }
     }
   ],
   "cardWidth": 360,
   "cardHeight": 220,
   "cardBorderRadius": 28,
-  "cardBorderColor": "#000000",
-  "cardLabelColor": "#6B7280",
-  "cardLabelFontSize": 36,
-  "cardContentFontFamily": "'Silkscreen', sans-serif",
+  "cardBorderColor": "#F39C12",
+  "cardLabelColor": "#FFFFFF",
+  "cardLabelFontSize": 29,
+  "cardContentFontFamily": "'Russo One', sans-serif",
   "cardGrid": {
     "rows": 2,
     "cols": 2
   },
   "delayStart": 0.5,
   "delayStep": 1,
-  "cardColorBack": "#FFFF",
-  "cardColorFront": "#ffff",
-  "valueFontSize": 64
+  "cardColorBack": "#E67E22",
+  "cardColorFront": "#9B59B6",
+  "valueFontSize": 42
 }

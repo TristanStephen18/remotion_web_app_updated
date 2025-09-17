@@ -113,6 +113,52 @@ export const FactCardsTemplateDatasetSchema: Schema = {
         },
       },
     },
+    required: ["intro", 'outro', "facts"]
+  },
+};
+
+export const KpiFlipCardsDatasetSchema: Schema = {
+  type: SchemaType.ARRAY,
+  items: {  
+    type: SchemaType.OBJECT,
+    properties: {
+      cardBorderColor: {type: SchemaType.STRING}, 
+      valueFontSize: { type: SchemaType.NUMBER },
+      cardLabelFontSize: { type: SchemaType.NUMBER },
+      cardLabelColor: { type: SchemaType.STRING },
+      cardColorBack: { type: SchemaType.STRING },
+      cardColorFront: { type: SchemaType.STRING },
+      title: { type: SchemaType.STRING },   
+      subtitle: { type: SchemaType.STRING },
+      cardsData: {
+        type: SchemaType.ARRAY,
+        items: {
+          type: SchemaType.OBJECT,
+          properties: {
+            front: {
+              type: SchemaType.OBJECT,
+              properties: {
+                label: { type: SchemaType.STRING },
+                value: { type: SchemaType.STRING },
+                color: { type: SchemaType.STRING },
+              },
+              required: ["label", "value", "color"],
+            },
+            back: {
+              type: SchemaType.OBJECT,
+              properties: {
+                label: { type: SchemaType.STRING },
+                value: { type: SchemaType.STRING },
+                color: { type: SchemaType.STRING },
+              },  
+              required: ["label", "value", "color"],
+            },
+          },
+          required: ["front", "back"],
+        },
+      },
+    },
+    required: ["title", "subtitle", "cardsData", "cardLabelColor", "cardLabelFontSize", "cardColorBack", "cardColorFront", "valueFontSize", "cardBorderColor"],
   },
 };
 

@@ -33,6 +33,8 @@ import { BACKGROUNDS } from "../../data/texttypingbg";
 import { FONTS } from "../../data/texttypingfonts";
 import { AUDIO_FILES } from "../../data/texttypingaudios";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
+import NavItem from "../../components/navigations/batchrendering/NavItems";
+import { DownloadIcon } from "lucide-react";
 
 export const TextTypingTemplateBatchRendering: React.FC = () => {
   const [backgroundsSelected, setBackgroundSelected] = useState<number[]>([]);
@@ -55,6 +57,28 @@ export const TextTypingTemplateBatchRendering: React.FC = () => {
   const [isRendering, setIsRendering] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [showProgressCard, setShowProgressCard] = useState(true);
+  const [loaderLabel, setLoaderLabel] = useState("Fetching datasets...");
+
+  useEffect(() => {
+    if (loading) {
+      const messages = [
+        "Fetching datasets...",
+        "Still working...",
+        "Crunching numbers...",
+        "Almost done...",
+      ];
+      let index = 0;
+
+      const interval = setInterval(() => {
+        index = (index + 1) % messages.length;
+        setLoaderLabel(messages[index]);
+      }, 4000); // change message every 4s
+
+      return () => clearInterval(interval); // cleanup when loading stops
+    } else {
+      setLoaderLabel("Fetching datasets...");
+    }
+  }, [loading]);
 
   /** Pick random item from array */
   const randomPick = <T,>(arr: T[]): T =>
@@ -210,9 +234,6 @@ export const TextTypingTemplateBatchRendering: React.FC = () => {
 
   return (
     <Box sx={{ display: "flex", height: "100vh", bgcolor: "#fafafa" }}>
-      {/* -------------------
-          Fixed SideNav
-          ------------------- */}
       <Box
         sx={{
           width: collapsed ? 72 : 260,
@@ -252,7 +273,6 @@ export const TextTypingTemplateBatchRendering: React.FC = () => {
           )}
         </Box>
 
-        {/* nav items */}
         <Box sx={{ flexGrow: 1 }}>
           <NavItem
             icon={<CloudIcon />}
@@ -291,7 +311,6 @@ export const TextTypingTemplateBatchRendering: React.FC = () => {
           />
         </Box>
 
-        {/* footer buttons */}
         <Box
           sx={{
             p: 2,
@@ -301,13 +320,12 @@ export const TextTypingTemplateBatchRendering: React.FC = () => {
             gap: 1,
           }}
         >
-          {/* Switch Mode */}
           <Button
             fullWidth
             variant="outlined"
             disabled={isRendering}
-            onClick={()=>{
-              window.location.assign('/template/newtexttyping');
+            onClick={() => {
+              window.location.assign("/template/newtexttyping");
             }}
             startIcon={<SwapHorizIcon />}
             sx={{
@@ -320,7 +338,6 @@ export const TextTypingTemplateBatchRendering: React.FC = () => {
             Single Output Mode
           </Button>
 
-          {/* Generate Batch */}
           <Button
             onClick={handleGenerateBatch}
             fullWidth
@@ -340,9 +357,6 @@ export const TextTypingTemplateBatchRendering: React.FC = () => {
         </Box>
       </Box>
 
-      {/* -------------------
-          Main Content
-          ------------------- */}
       <Box component="main" sx={{ flexGrow: 1, overflowY: "auto" }}>
         <Container maxWidth="xl" sx={{ py: 4 }}>
           {showProgressCard &&
@@ -523,36 +537,54 @@ export const TextTypingTemplateBatchRendering: React.FC = () => {
                 </Box>
               </Paper>
 
-              {/* Loading + Results */}
-              {loading && (
-                <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-                  <CircularProgress />
-                </Box>
-              )}
-
-              {!loading && phrasesData.length > 0 && (
-                <Box sx={{ mt: 3 }}>
-                  <Typography
-                    variant="h6"
-                    fontWeight={600}
-                    sx={{ mb: 2, color: "#1976d2" }}
+              {/* Phrases Section */}
+              <Paper
+                elevation={2}
+                sx={{
+                  mt: 3,
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  minHeight: 200, 
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {loading ? (
+                  <Box
+                    sx={{
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      p: 4,
+                      gap: 2,
+                    }}
                   >
-                    Generated Phrases ({phrasesData.length})
-                  </Typography>
-                  <Paper sx={{ width: "100%", overflow: "hidden" }}>
-                    {/* Header */}
+                    <CircularProgress size={40} />
+                    <Typography variant="body2" color="text.secondary">
+                      {loaderLabel}
+                    </Typography>
+                  </Box>
+                ) : phrasesData.length > 0 ? (
+                  <>
+                    {/* Header Row */}
                     <Box
                       sx={{
+                        pointerEvents: isRendering ? "none" : "auto",
+                        opacity: isRendering ? 0.5 : 1,
                         display: "flex",
                         px: 2,
                         py: 1,
-                        bgcolor: "#f5f5f5",
+                        bgcolor: "#f9fafb",
                         fontWeight: 600,
+                        fontSize: "0.9rem",
+                        borderBottom: "1px solid #eee",
                       }}
                     >
                       <Box sx={{ flex: 2 }}>Lines</Box>
-                      <Box sx={{ width: "20%" }}>Category</Box>
-                      <Box sx={{ width: "20%" }}>Mood</Box>
+                      <Box sx={{ flex: 1 }}>Category</Box>
+                      <Box sx={{ flex: 1 }}>Mood</Box>
                       <Box sx={{ width: 80, textAlign: "center" }}>Action</Box>
                     </Box>
 
@@ -561,24 +593,48 @@ export const TextTypingTemplateBatchRendering: React.FC = () => {
                       <Box
                         key={i}
                         sx={{
+                          pointerEvents: isRendering ? "none" : "auto",
+                          opacity: isRendering ? 0.5 : 1,
                           display: "flex",
                           px: 2,
-                          py: 1,
+                          py: 1.5,
                           borderTop: "1px solid #eee",
-                          alignItems: "center",
+                          alignItems: "flex-start",
                         }}
                       >
+                        {/* Lines */}
                         <Box sx={{ flex: 2, pr: 2, fontSize: "0.95rem" }}>
-                          {p.lines.join(" / ")}
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                            {p.lines.join(" / ")}
+                          </Typography>
                         </Box>
-                        <Box sx={{ width: "20%", fontSize: "0.9rem" }}>
+
+                        {/* Category */}
+                        <Box
+                          sx={{
+                            flex: 1,
+                            fontSize: "0.9rem",
+                            color: "text.secondary",
+                          }}
+                        >
                           {p.category}
                         </Box>
-                        <Box sx={{ width: "20%", fontSize: "0.9rem" }}>
+
+                        {/* Mood */}
+                        <Box
+                          sx={{
+                            flex: 1,
+                            fontSize: "0.9rem",
+                            color: "text.secondary",
+                          }}
+                        >
                           {p.mood}
                         </Box>
+
+                        {/* Remove Button */}
                         <Box sx={{ width: 80, textAlign: "center" }}>
                           <Button
+                            disabled={isRendering}
                             size="small"
                             color="error"
                             onClick={() => handleRemovePhrase(i)}
@@ -588,9 +644,23 @@ export const TextTypingTemplateBatchRendering: React.FC = () => {
                         </Box>
                       </Box>
                     ))}
-                  </Paper>
-                </Box>
-              )}
+                  </>
+                ) : (
+                  // Empty state
+                  <Box
+                    sx={{
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "text.secondary",
+                      p: 4,
+                    }}
+                  >
+                    No phrases generated yet
+                  </Box>
+                )}
+              </Paper>
             </Box>
           )}
           {activeSection === "backgrounds" && (
@@ -1012,9 +1082,32 @@ export const TextTypingTemplateBatchRendering: React.FC = () => {
           )}
           {activeSection === "outputs" && (
             <Box>
-              <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>
-                Batch Outputs ({combinations.length})
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+                <Typography variant="h5" fontWeight={700} sx={{ flexGrow: 1 }}>
+                  Batch Outputs ({combinations.length})
+                </Typography>
+
+                {/* Show only when rendering is done and at least one video is ready */}
+                {!isRendering && combinations.some((c) => c.exportUrl) && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<DownloadIcon />}
+                    onClick={() => {
+                      combinations.forEach((c, i) => {
+                        if (c.exportUrl) {
+                          const link = document.createElement("a");
+                          link.href = c.exportUrl;
+                          link.download = `batch_output_${i + 1}.mp4`;
+                          link.click();
+                        }
+                      });
+                    }}
+                  >
+                    Download All
+                  </Button>
+                )}
+              </Box>
 
               {combinations.length === 0 ? (
                 <Typography color="text.secondary">
@@ -1128,55 +1221,3 @@ export const TextTypingTemplateBatchRendering: React.FC = () => {
     </Box>
   );
 };
-
-/* ---------------
-   NavItem button
-   --------------- */
-function NavItem({
-  icon,
-  label,
-  collapsed,
-  active,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  collapsed: boolean;
-  active?: boolean;
-  onClick?: () => void;
-}) {
-  return (
-    <Box
-      onClick={onClick}
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 2,
-        px: collapsed ? 1.5 : 2,
-        py: 1.5,
-        cursor: "pointer",
-        bgcolor: active ? "rgba(25,118,210,0.08)" : "transparent",
-        borderLeft: active ? "4px solid #1976d2" : "4px solid transparent",
-        "&:hover": {
-          bgcolor: active ? "rgba(25,118,210,0.08)" : "#f6f8fa",
-        },
-        transition: "all .2s",
-      }}
-    >
-      <Box sx={{ minWidth: 28, display: "flex", justifyContent: "center" }}>
-        {icon}
-      </Box>
-      {!collapsed && (
-        <Typography
-          variant="body2"
-          sx={{
-            fontWeight: active ? 700 : 500,
-            color: active ? "#1976d2" : "text.primary",
-          }}
-        >
-          {label}
-        </Typography>
-      )}
-    </Box>
-  );
-}

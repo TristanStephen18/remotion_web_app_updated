@@ -1,530 +1,410 @@
 {
-  "story": "Does anyone actually read short stories? I hear a lot about how short stories are great practice and everyone should write them, but I can barely remember any short stories that I've read. It also doesn't seem like they're the sort of thing that's particularly popular as reading material. Why are they so important to write if no one reads them?",
-  "duration": 18.8865,
+  "story": "Boom! Sunog na naman mga DDS, Oo nga naman, bakit di pa rin nakikita yung 51B ni Pulong? House Majority Leader Sandro Marcos hits back at Davao City Rep. Paolo Duterte, who earlier accused him of handpicking Bojie Dy as the next Speaker in a supposed “cover-up move.”\n\nMarcos insisted party and House leaders were consulted, then took a swipe at Pulong: “Kung nagpakita sana siya sa trabaho at sa session, baka nakita rin niya. Pero siguro busy pa siyang hanapin kung saan napunta ang ₱51 billion flood control funds sa distrito niya.”",
+  "duration": 37.851375,
   "words": [
     {
-      "word": "Does",
-      "start": 0.079,
-      "end": 0.259
+      "word": "Boom!",
+      "start": 0.179,
+      "end": 0.539
     },
     {
       "word": " ",
-      "start": 0.259,
-      "end": 0.28
-    },
-    {
-      "word": "anyone",
-      "start": 0.28,
-      "end": 0.56
-    },
-    {
-      "word": " ",
-      "start": 0.56,
-      "end": 0.68
-    },
-    {
-      "word": "actually",
-      "start": 0.68,
-      "end": 1.039
-    },
-    {
-      "word": " ",
-      "start": 1.039,
-      "end": 1.079
-    },
-    {
-      "word": "read",
-      "start": 1.079,
-      "end": 1.319
-    },
-    {
-      "word": " ",
-      "start": 1.319,
-      "end": 1.379
-    },
-    {
-      "word": "short",
-      "start": 1.379,
+      "start": 0.539,
       "end": 1.579
     },
     {
-      "word": " ",
+      "word": "Sunog",
       "start": 1.579,
-      "end": 1.659
-    },
-    {
-      "word": "stories?",
-      "start": 1.659,
-      "end": 2.139
+      "end": 1.919
     },
     {
       "word": " ",
-      "start": 2.139,
-      "end": 2.799
+      "start": 1.919,
+      "end": 1.939
     },
     {
-      "word": "I",
-      "start": 2.799,
-      "end": 2.839
-    },
-    {
-      "word": " ",
-      "start": 2.839,
-      "end": 2.879
-    },
-    {
-      "word": "hear",
-      "start": 2.879,
-      "end": 3.039
+      "word": "na",
+      "start": 1.939,
+      "end": 2.019
     },
     {
       "word": " ",
-      "start": 3.039,
-      "end": 3.099
+      "start": 2.019,
+      "end": 2.079
     },
     {
-      "word": "a",
-      "start": 3.099,
-      "end": 3.119
-    },
-    {
-      "word": " ",
-      "start": 3.119,
-      "end": 3.179
-    },
-    {
-      "word": "lot",
-      "start": 3.179,
-      "end": 3.319
+      "word": "naman",
+      "start": 2.079,
+      "end": 2.359
     },
     {
       "word": " ",
-      "start": 3.319,
-      "end": 3.399
+      "start": 2.359,
+      "end": 2.399
     },
     {
-      "word": "about",
-      "start": 3.399,
+      "word": "mga",
+      "start": 2.399,
+      "end": 2.639
+    },
+    {
+      "word": " ",
+      "start": 2.639,
+      "end": 2.659
+    },
+    {
+      "word": "DDS,",
+      "start": 2.659,
+      "end": 3.199
+    },
+    {
+      "word": " ",
+      "start": 3.199,
+      "end": 3.519
+    },
+    {
+      "word": "Oo",
+      "start": 3.519,
       "end": 3.599
     },
     {
       "word": " ",
       "start": 3.599,
-      "end": 3.659
+      "end": 3.679
     },
     {
-      "word": "how",
-      "start": 3.659,
-      "end": 3.819
+      "word": "nga",
+      "start": 3.679,
+      "end": 3.799
     },
     {
       "word": " ",
-      "start": 3.819,
+      "start": 3.799,
       "end": 3.859
     },
     {
-      "word": "short",
+      "word": "naman,",
       "start": 3.859,
-      "end": 4.119
+      "end": 4.179
     },
     {
       "word": " ",
-      "start": 4.119,
-      "end": 4.159
-    },
-    {
-      "word": "stories",
-      "start": 4.159,
-      "end": 4.539
-    },
-    {
-      "word": " ",
-      "start": 4.539,
-      "end": 4.579
-    },
-    {
-      "word": "are",
-      "start": 4.579,
-      "end": 4.639
-    },
-    {
-      "word": " ",
-      "start": 4.639,
+      "start": 4.179,
       "end": 4.719
     },
     {
-      "word": "great",
+      "word": "bakit",
       "start": 4.719,
-      "end": 4.9
+      "end": 4.92
     },
     {
       "word": " ",
-      "start": 4.9,
-      "end": 5
+      "start": 4.92,
+      "end": 4.96
     },
     {
-      "word": "practice",
-      "start": 5,
-      "end": 5.46
-    },
-    {
-      "word": " ",
-      "start": 5.46,
-      "end": 5.779
-    },
-    {
-      "word": "and",
-      "start": 5.779,
-      "end": 5.859
+      "word": "di",
+      "start": 4.96,
+      "end": 5.039
     },
     {
       "word": " ",
-      "start": 5.859,
-      "end": 5.92
+      "start": 5.039,
+      "end": 5.119
     },
     {
-      "word": "everyone",
-      "start": 5.92,
-      "end": 6.239
-    },
-    {
-      "word": " ",
-      "start": 6.239,
-      "end": 6.279
-    },
-    {
-      "word": "should",
-      "start": 6.279,
-      "end": 6.46
+      "word": "pa",
+      "start": 5.119,
+      "end": 5.179
     },
     {
       "word": " ",
-      "start": 6.46,
-      "end": 6.48
+      "start": 5.179,
+      "end": 5.219
     },
     {
-      "word": "write",
-      "start": 6.48,
-      "end": 6.719
+      "word": "rin",
+      "start": 5.219,
+      "end": 5.319
     },
     {
       "word": " ",
-      "start": 6.719,
+      "start": 5.319,
+      "end": 5.339
+    },
+    {
+      "word": "nakikita",
+      "start": 5.339,
+      "end": 5.799
+    },
+    {
+      "word": " ",
+      "start": 5.799,
+      "end": 5.839
+    },
+    {
+      "word": "yung",
+      "start": 5.839,
+      "end": 5.94
+    },
+    {
+      "word": " ",
+      "start": 5.94,
+      "end": 6.139
+    },
+    {
+      "word": "51B",
+      "start": 6.139,
+      "end": 6.639
+    },
+    {
+      "word": " ",
+      "start": 6.639,
+      "end": 6.659
+    },
+    {
+      "word": "ni",
+      "start": 6.659,
       "end": 6.759
     },
     {
-      "word": "them,",
+      "word": " ",
       "start": 6.759,
-      "end": 6.899
+      "end": 6.839
+    },
+    {
+      "word": "Pulong?",
+      "start": 6.839,
+      "end": 7.199
     },
     {
       "word": " ",
-      "start": 6.899,
-      "end": 7.319
+      "start": 7.199,
+      "end": 8.179
     },
     {
-      "word": "but",
-      "start": 7.319,
-      "end": 7.379
-    },
-    {
-      "word": " ",
-      "start": 7.379,
-      "end": 7.46
-    },
-    {
-      "word": "I",
-      "start": 7.46,
-      "end": 7.5
+      "word": "House",
+      "start": 8.179,
+      "end": 8.38
     },
     {
       "word": " ",
-      "start": 7.5,
-      "end": 7.519
+      "start": 8.38,
+      "end": 8.46
     },
     {
-      "word": "can",
-      "start": 7.519,
-      "end": 7.659
-    },
-    {
-      "word": " ",
-      "start": 7.659,
-      "end": 7.699
-    },
-    {
-      "word": "barely",
-      "start": 7.699,
-      "end": 7.959
+      "word": "Majority",
+      "start": 8.46,
+      "end": 8.899
     },
     {
       "word": " ",
-      "start": 7.959,
-      "end": 8.019
+      "start": 8.899,
+      "end": 8.979
     },
     {
-      "word": "remember",
-      "start": 8.019,
-      "end": 8.42
-    },
-    {
-      "word": " ",
-      "start": 8.42,
-      "end": 8.479
-    },
-    {
-      "word": "any",
-      "start": 8.479,
-      "end": 8.679
+      "word": "Leader",
+      "start": 8.979,
+      "end": 9.3
     },
     {
       "word": " ",
-      "start": 8.679,
-      "end": 8.72
-    },
-    {
-      "word": "short",
-      "start": 8.72,
-      "end": 8.96
-    },
-    {
-      "word": " ",
-      "start": 8.96,
-      "end": 9.019
-    },
-    {
-      "word": "stories",
-      "start": 9.019,
+      "start": 9.3,
       "end": 9.38
     },
     {
-      "word": " ",
+      "word": "Sandro",
       "start": 9.38,
-      "end": 9.42
-    },
-    {
-      "word": "that",
-      "start": 9.42,
-      "end": 9.5
+      "end": 9.719
     },
     {
       "word": " ",
-      "start": 9.5,
-      "end": 9.559
+      "start": 9.719,
+      "end": 9.76
     },
     {
-      "word": "I've",
-      "start": 9.559,
-      "end": 9.679
-    },
-    {
-      "word": " ",
-      "start": 9.679,
-      "end": 9.739
-    },
-    {
-      "word": "read.",
-      "start": 9.739,
-      "end": 10.139
+      "word": "Marcos",
+      "start": 9.76,
+      "end": 10.219
     },
     {
       "word": " ",
-      "start": 10.139,
+      "start": 10.219,
+      "end": 10.279
+    },
+    {
+      "word": "hits",
+      "start": 10.279,
+      "end": 10.46
+    },
+    {
+      "word": " ",
+      "start": 10.46,
+      "end": 10.559
+    },
+    {
+      "word": "back",
+      "start": 10.559,
+      "end": 10.739
+    },
+    {
+      "word": " ",
+      "start": 10.739,
+      "end": 10.779
+    },
+    {
+      "word": "at",
+      "start": 10.779,
       "end": 10.88
     },
     {
-      "word": "It",
+      "word": " ",
       "start": 10.88,
-      "end": 10.939
+      "end": 10.92
+    },
+    {
+      "word": "Davao",
+      "start": 10.92,
+      "end": 11.219
     },
     {
       "word": " ",
-      "start": 10.939,
-      "end": 11
+      "start": 11.219,
+      "end": 11.3
     },
     {
-      "word": "also",
-      "start": 11,
-      "end": 11.239
-    },
-    {
-      "word": " ",
-      "start": 11.239,
-      "end": 11.279
-    },
-    {
-      "word": "doesn't",
-      "start": 11.279,
-      "end": 11.559
+      "word": "City",
+      "start": 11.3,
+      "end": 11.579
     },
     {
       "word": " ",
-      "start": 11.559,
-      "end": 11.639
+      "start": 11.579,
+      "end": 11.659
     },
     {
-      "word": "seem",
-      "start": 11.639,
-      "end": 11.84
-    },
-    {
-      "word": " ",
-      "start": 11.84,
-      "end": 11.88
-    },
-    {
-      "word": "like",
-      "start": 11.88,
-      "end": 12.039
+      "word": "Rep.",
+      "start": 11.659,
+      "end": 11.819
     },
     {
       "word": " ",
-      "start": 12.039,
-      "end": 12.079
+      "start": 11.819,
+      "end": 12.159
     },
     {
-      "word": "they're",
-      "start": 12.079,
-      "end": 12.22
-    },
-    {
-      "word": " ",
-      "start": 12.22,
-      "end": 12.239
-    },
-    {
-      "word": "the",
-      "start": 12.239,
-      "end": 12.319
+      "word": "Paolo",
+      "start": 12.159,
+      "end": 12.5
     },
     {
       "word": " ",
-      "start": 12.319,
-      "end": 12.38
+      "start": 12.5,
+      "end": 12.519
     },
     {
-      "word": "sort",
-      "start": 12.38,
-      "end": 12.539
-    },
-    {
-      "word": " ",
-      "start": 12.539,
-      "end": 12.579
-    },
-    {
-      "word": "of",
-      "start": 12.579,
-      "end": 12.639
+      "word": "Duterte,",
+      "start": 12.519,
+      "end": 13.019
     },
     {
       "word": " ",
-      "start": 12.639,
-      "end": 12.719
+      "start": 13.019,
+      "end": 13.559
     },
     {
-      "word": "thing",
-      "start": 12.719,
-      "end": 12.899
-    },
-    {
-      "word": " ",
-      "start": 12.899,
-      "end": 12.96
-    },
-    {
-      "word": "that's",
-      "start": 12.96,
-      "end": 13.119
+      "word": "who",
+      "start": 13.559,
+      "end": 13.699
     },
     {
       "word": " ",
-      "start": 13.119,
-      "end": 13.139
-    },
-    {
-      "word": "particularly",
-      "start": 13.139,
-      "end": 13.739
-    },
-    {
-      "word": " ",
-      "start": 13.739,
+      "start": 13.699,
       "end": 13.779
     },
     {
-      "word": "popular",
+      "word": "earlier",
       "start": 13.779,
-      "end": 14.199
+      "end": 14.139
     },
     {
       "word": " ",
-      "start": 14.199,
-      "end": 14.239
+      "start": 14.139,
+      "end": 14.219
+    },
+    {
+      "word": "accused",
+      "start": 14.219,
+      "end": 14.579
+    },
+    {
+      "word": " ",
+      "start": 14.579,
+      "end": 14.599
+    },
+    {
+      "word": "him",
+      "start": 14.599,
+      "end": 14.739
+    },
+    {
+      "word": " ",
+      "start": 14.739,
+      "end": 14.799
+    },
+    {
+      "word": "of",
+      "start": 14.799,
+      "end": 14.88
+    },
+    {
+      "word": " ",
+      "start": 14.88,
+      "end": 14.939
+    },
+    {
+      "word": "handpicking",
+      "start": 14.939,
+      "end": 15.399
+    },
+    {
+      "word": " ",
+      "start": 15.399,
+      "end": 15.479
+    },
+    {
+      "word": "Bojie",
+      "start": 15.479,
+      "end": 15.799
+    },
+    {
+      "word": " ",
+      "start": 15.799,
+      "end": 15.859
+    },
+    {
+      "word": "Dy",
+      "start": 15.859,
+      "end": 16.299
+    },
+    {
+      "word": " ",
+      "start": 16.299,
+      "end": 16.359
     },
     {
       "word": "as",
-      "start": 14.239,
-      "end": 14.359
+      "start": 16.359,
+      "end": 16.459
     },
     {
       "word": " ",
-      "start": 14.359,
-      "end": 14.42
+      "start": 16.459,
+      "end": 16.5
     },
     {
-      "word": "reading",
-      "start": 14.42,
-      "end": 14.679
-    },
-    {
-      "word": " ",
-      "start": 14.679,
-      "end": 14.699
-    },
-    {
-      "word": "material.",
-      "start": 14.699,
-      "end": 15.219
-    },
-    {
-      "word": " ",
-      "start": 15.219,
-      "end": 16.02
-    },
-    {
-      "word": "Why",
-      "start": 16.02,
-      "end": 16.159
-    },
-    {
-      "word": " ",
-      "start": 16.159,
-      "end": 16.18
-    },
-    {
-      "word": "are",
-      "start": 16.18,
-      "end": 16.26
-    },
-    {
-      "word": " ",
-      "start": 16.26,
-      "end": 16.279
-    },
-    {
-      "word": "they",
-      "start": 16.279,
-      "end": 16.419
-    },
-    {
-      "word": " ",
-      "start": 16.419,
-      "end": 16.479
-    },
-    {
-      "word": "so",
-      "start": 16.479,
+      "word": "the",
+      "start": 16.5,
       "end": 16.579
     },
     {
@@ -533,81 +413,536 @@
       "end": 16.619
     },
     {
-      "word": "important",
+      "word": "next",
       "start": 16.619,
-      "end": 17.059
+      "end": 16.799
     },
     {
       "word": " ",
-      "start": 17.059,
-      "end": 17.1
+      "start": 16.799,
+      "end": 16.899
     },
     {
-      "word": "to",
-      "start": 17.1,
-      "end": 17.199
-    },
-    {
-      "word": " ",
-      "start": 17.199,
-      "end": 17.219
-    },
-    {
-      "word": "write",
-      "start": 17.219,
-      "end": 17.579
+      "word": "Speaker",
+      "start": 16.899,
+      "end": 17.18
     },
     {
       "word": " ",
-      "start": 17.579,
-      "end": 17.639
+      "start": 17.18,
+      "end": 17.279
     },
     {
-      "word": "if",
-      "start": 17.639,
-      "end": 17.719
-    },
-    {
-      "word": " ",
-      "start": 17.719,
-      "end": 17.779
-    },
-    {
-      "word": "no",
-      "start": 17.779,
-      "end": 17.859
+      "word": "in",
+      "start": 17.279,
+      "end": 17.34
     },
     {
       "word": " ",
-      "start": 17.859,
+      "start": 17.34,
+      "end": 17.399
+    },
+    {
+      "word": "a",
+      "start": 17.399,
+      "end": 17.44
+    },
+    {
+      "word": " ",
+      "start": 17.44,
+      "end": 17.479
+    },
+    {
+      "word": "supposed",
+      "start": 17.479,
       "end": 17.92
     },
     {
-      "word": "one",
+      "word": " ",
       "start": 17.92,
-      "end": 18.039
+      "end": 18.199
+    },
+    {
+      "word": "“cover-up",
+      "start": 18.199,
+      "end": 18.719
     },
     {
       "word": " ",
-      "start": 18.039,
-      "end": 18.079
+      "start": 18.719,
+      "end": 18.819
     },
     {
-      "word": "reads",
-      "start": 18.079,
-      "end": 18.34
+      "word": "move.”",
+      "start": 18.819,
+      "end": 19.18
+    },
+    {
+      "word": "\r",
+      "start": 19.18,
+      "end": 19.181
+    },
+    {
+      "word": "\n",
+      "start": 19.181,
+      "end": 20.1
+    },
+    {
+      "word": "\r",
+      "start": 20.1,
+      "end": 20.12
+    },
+    {
+      "word": "\n",
+      "start": 20.12,
+      "end": 20.139
+    },
+    {
+      "word": "Marcos",
+      "start": 20.139,
+      "end": 20.459
     },
     {
       "word": " ",
-      "start": 18.34,
-      "end": 18.379
+      "start": 20.459,
+      "end": 20.52
     },
     {
-      "word": "them?",
-      "start": 18.379,
-      "end": 18.559
+      "word": "insisted",
+      "start": 20.52,
+      "end": 20.979
+    },
+    {
+      "word": " ",
+      "start": 20.979,
+      "end": 21.1
+    },
+    {
+      "word": "party",
+      "start": 21.1,
+      "end": 21.439
+    },
+    {
+      "word": " ",
+      "start": 21.439,
+      "end": 21.479
+    },
+    {
+      "word": "and",
+      "start": 21.479,
+      "end": 21.559
+    },
+    {
+      "word": " ",
+      "start": 21.559,
+      "end": 21.619
+    },
+    {
+      "word": "House",
+      "start": 21.619,
+      "end": 21.84
+    },
+    {
+      "word": " ",
+      "start": 21.84,
+      "end": 21.899
+    },
+    {
+      "word": "leaders",
+      "start": 21.899,
+      "end": 22.26
+    },
+    {
+      "word": " ",
+      "start": 22.26,
+      "end": 22.299
+    },
+    {
+      "word": "were",
+      "start": 22.299,
+      "end": 22.42
+    },
+    {
+      "word": " ",
+      "start": 22.42,
+      "end": 22.459
+    },
+    {
+      "word": "consulted,",
+      "start": 22.459,
+      "end": 22.959
+    },
+    {
+      "word": " ",
+      "start": 22.959,
+      "end": 23.5
+    },
+    {
+      "word": "then",
+      "start": 23.5,
+      "end": 23.679
+    },
+    {
+      "word": " ",
+      "start": 23.679,
+      "end": 23.739
+    },
+    {
+      "word": "took",
+      "start": 23.739,
+      "end": 23.859
+    },
+    {
+      "word": " ",
+      "start": 23.859,
+      "end": 23.92
+    },
+    {
+      "word": "a",
+      "start": 23.92,
+      "end": 23.959
+    },
+    {
+      "word": " ",
+      "start": 23.959,
+      "end": 24.019
+    },
+    {
+      "word": "swipe",
+      "start": 24.019,
+      "end": 24.319
+    },
+    {
+      "word": " ",
+      "start": 24.319,
+      "end": 24.34
+    },
+    {
+      "word": "at",
+      "start": 24.34,
+      "end": 24.439
+    },
+    {
+      "word": " ",
+      "start": 24.439,
+      "end": 24.479
+    },
+    {
+      "word": "Pulong:",
+      "start": 24.479,
+      "end": 24.939
+    },
+    {
+      "word": " ",
+      "start": 24.939,
+      "end": 25.92
+    },
+    {
+      "word": "“Kung",
+      "start": 25.92,
+      "end": 26.099
+    },
+    {
+      "word": " ",
+      "start": 26.099,
+      "end": 26.139
+    },
+    {
+      "word": "nagpakita",
+      "start": 26.139,
+      "end": 26.659
+    },
+    {
+      "word": " ",
+      "start": 26.659,
+      "end": 26.719
+    },
+    {
+      "word": "sana",
+      "start": 26.719,
+      "end": 26.959
+    },
+    {
+      "word": " ",
+      "start": 26.959,
+      "end": 27
+    },
+    {
+      "word": "siya",
+      "start": 27,
+      "end": 27.099
+    },
+    {
+      "word": " ",
+      "start": 27.099,
+      "end": 27.139
+    },
+    {
+      "word": "sa",
+      "start": 27.139,
+      "end": 27.239
+    },
+    {
+      "word": " ",
+      "start": 27.239,
+      "end": 27.279
+    },
+    {
+      "word": "trabaho",
+      "start": 27.279,
+      "end": 27.84
+    },
+    {
+      "word": " ",
+      "start": 27.84,
+      "end": 27.899
+    },
+    {
+      "word": "at",
+      "start": 27.899,
+      "end": 27.979
+    },
+    {
+      "word": " ",
+      "start": 27.979,
+      "end": 28.039
+    },
+    {
+      "word": "sa",
+      "start": 28.039,
+      "end": 28.119
+    },
+    {
+      "word": " ",
+      "start": 28.119,
+      "end": 28.18
+    },
+    {
+      "word": "session,",
+      "start": 28.18,
+      "end": 28.559
+    },
+    {
+      "word": " ",
+      "start": 28.559,
+      "end": 29.099
+    },
+    {
+      "word": "baka",
+      "start": 29.099,
+      "end": 29.259
+    },
+    {
+      "word": " ",
+      "start": 29.259,
+      "end": 29.319
+    },
+    {
+      "word": "nakita",
+      "start": 29.319,
+      "end": 29.659
+    },
+    {
+      "word": " ",
+      "start": 29.659,
+      "end": 29.699
+    },
+    {
+      "word": "rin",
+      "start": 29.699,
+      "end": 29.84
+    },
+    {
+      "word": " ",
+      "start": 29.84,
+      "end": 29.879
+    },
+    {
+      "word": "niya.",
+      "start": 29.879,
+      "end": 30.159
+    },
+    {
+      "word": " ",
+      "start": 30.159,
+      "end": 30.779
+    },
+    {
+      "word": "Pero",
+      "start": 30.779,
+      "end": 30.979
+    },
+    {
+      "word": " ",
+      "start": 30.979,
+      "end": 31.019
+    },
+    {
+      "word": "siguro",
+      "start": 31.019,
+      "end": 31.399
+    },
+    {
+      "word": " ",
+      "start": 31.399,
+      "end": 31.459
+    },
+    {
+      "word": "busy",
+      "start": 31.459,
+      "end": 31.719
+    },
+    {
+      "word": " ",
+      "start": 31.719,
+      "end": 31.76
+    },
+    {
+      "word": "pa",
+      "start": 31.76,
+      "end": 31.839
+    },
+    {
+      "word": " ",
+      "start": 31.839,
+      "end": 31.859
+    },
+    {
+      "word": "siyang",
+      "start": 31.859,
+      "end": 32.02
+    },
+    {
+      "word": " ",
+      "start": 32.02,
+      "end": 32.059
+    },
+    {
+      "word": "hanapin",
+      "start": 32.059,
+      "end": 32.899
+    },
+    {
+      "word": " ",
+      "start": 32.899,
+      "end": 32.959
+    },
+    {
+      "word": "kung",
+      "start": 32.959,
+      "end": 33.099
+    },
+    {
+      "word": " ",
+      "start": 33.099,
+      "end": 33.139
+    },
+    {
+      "word": "saan",
+      "start": 33.139,
+      "end": 33.419
+    },
+    {
+      "word": " ",
+      "start": 33.419,
+      "end": 33.439
+    },
+    {
+      "word": "napunta",
+      "start": 33.439,
+      "end": 33.919
+    },
+    {
+      "word": " ",
+      "start": 33.919,
+      "end": 33.959
+    },
+    {
+      "word": "ang",
+      "start": 33.959,
+      "end": 34.139
+    },
+    {
+      "word": " ",
+      "start": 34.139,
+      "end": 34.18
+    },
+    {
+      "word": "₱51",
+      "start": 34.18,
+      "end": 34.84
+    },
+    {
+      "word": " ",
+      "start": 34.84,
+      "end": 34.86
+    },
+    {
+      "word": "billion",
+      "start": 34.86,
+      "end": 35.279
+    },
+    {
+      "word": " ",
+      "start": 35.279,
+      "end": 35.34
+    },
+    {
+      "word": "flood",
+      "start": 35.34,
+      "end": 35.54
+    },
+    {
+      "word": " ",
+      "start": 35.54,
+      "end": 35.619
+    },
+    {
+      "word": "control",
+      "start": 35.619,
+      "end": 35.959
+    },
+    {
+      "word": " ",
+      "start": 35.959,
+      "end": 36.079
+    },
+    {
+      "word": "funds",
+      "start": 36.079,
+      "end": 36.36
+    },
+    {
+      "word": " ",
+      "start": 36.36,
+      "end": 36.68
+    },
+    {
+      "word": "sa",
+      "start": 36.68,
+      "end": 36.739
+    },
+    {
+      "word": " ",
+      "start": 36.739,
+      "end": 36.779
+    },
+    {
+      "word": "distrito",
+      "start": 36.779,
+      "end": 37.259
+    },
+    {
+      "word": " ",
+      "start": 37.259,
+      "end": 37.299
+    },
+    {
+      "word": "niya.”",
+      "start": 37.299,
+      "end": 37.819
     }
   ],
-  "title": "Does anyone actually read short stories?",
-  "text": "I hear a lot about how short stories are great practice and everyone should write them, but I can barely remember any short stories that I've read. It also doesn't seem like they're the sort of thing that's particularly popular as reading material. Why are they so important to write if no one reads them?"
+  "title": "Boom! Sunog na naman mga DDS, Oo nga naman, bakit di pa rin nakikita yung 51B ni Pulong?",
+  "text": "House Majority Leader Sandro Marcos hits back at Davao City Rep. Paolo Duterte, who earlier accused him of handpicking Bojie Dy as the next Speaker in a supposed “cover-up move.”\n\nMarcos insisted party and House leaders were consulted, then took a swipe at Pulong: “Kung nagpakita sana siya sa trabaho at sa session, baka nakita rin niya. Pero siguro busy pa siyang hanapin kung saan napunta ang ₱51 billion flood control funds sa distrito niya.”"
 }

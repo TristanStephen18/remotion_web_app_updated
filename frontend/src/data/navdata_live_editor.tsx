@@ -30,7 +30,7 @@ import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import PanoramaWideAngleIcon from "@mui/icons-material/PanoramaWideAngle";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import GridViewIcon from "@mui/icons-material/GridView";
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 // import TimerSharpIcon from '@mui/icons-material/TimerSharp';
 
 export const quoteeditornavs = [
@@ -114,6 +114,11 @@ export const KpiFlipCardsNavs = [
   { key: "data", label: "Card Data", icon: <DataArrayIcon /> },
   { key: "animation", label: "Animation", icon: <AnimationIcon /> },
   { key: "background", label: "Background", icon: <ImageIcon /> },
+  {
+    key: "template",
+    label: "Template Settings",
+    icon: <SettingsApplicationsIcon />,
+  },
   // { key: "options", label: "Options", icon: <SettingsIcon /> },
   { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
@@ -125,7 +130,7 @@ export const KenBurnsNav = [
     label: "Proportions",
     icon: <PhotoSizeSelectLargeIcon />,
   },
-    {
+  {
     key: "template",
     label: "Template Settings",
     icon: <SettingsApplicationsIcon />,

@@ -1,14 +1,15 @@
 {
   "phrase": {
     "lines": [
-      "Innovate for",
-      "a better",
-      "tomorrow"
+      "Embrace the",
+      "unexpected path",
+      "it often leads",
+      "to the greatest discoveries"
     ],
-    "category": "innovation",
-    "mood": "hopeful"
+    "category": "journey",
+    "mood": "wise"
   },
-  "backgroundIndex": 7,
-  "fontIndex": 10,
+  "backgroundIndex": 0,
+  "fontIndex": 0,
   "audioIndex": 0
 }

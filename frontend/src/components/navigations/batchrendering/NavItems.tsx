@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 
-type NavItemProps = {
+export type NavItemProps = {
   icon: React.ReactNode;
   label: string;
   collapsed: boolean;
@@ -9,7 +9,7 @@ type NavItemProps = {
   onClick?: () => void;
 };
 
-const NavItem: React.FC<NavItemProps> = ({ icon, label, collapsed, active, onClick }) => {
+export const NavItem: React.FC<NavItemProps> = ({ icon, label, collapsed, active, onClick }) => {
   return (
     <Box
       onClick={onClick}

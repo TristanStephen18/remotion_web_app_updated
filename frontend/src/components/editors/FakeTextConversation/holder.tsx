@@ -137,7 +137,7 @@ export const FakeTextConversationEditor: React.FC = () => {
   };
 
   const handleExport = async (format: string) => {
-    const prefix = "http://localhost:3000";
+    const prefix = window.location.origin;
 
     const newavatars = {
       left: prefix + avatars.left,

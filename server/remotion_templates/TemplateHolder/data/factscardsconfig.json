@@ -1,40 +1,32 @@
 {
   "intro": {
-    "title": "Linguistic Wonders",
-    "subtitle": "Fascinating facts about the world's languages."
+    "title": "Pulp Fiction Chronicles",
+    "subtitle": "Test your knowledge of Quentin Tarantino's non-linear crime epic."
   },
   "outro": {
-    "title": "Linguistic Wonders",
-    "subtitle": "Fascinating facts about the world's languages."
+    "title": "Pulp Fiction Chronicles",
+    "subtitle": "Test your knowledge of Quentin Tarantino's non-linear crime epic."
   },
   "facts": [
     {
-      "title": "Most Speakers?",
-      "description": "Mandarin Chinese has the most native speakers, with over 1.1 billion people speaking it as their first language."
+      "title": "The Briefcase Mystery",
+      "description": "The contents of the glowing briefcase in Pulp Fiction are never explicitly revealed, leaving its mystery open to countless fan theories."
     },
     {
-      "title": "Longest Alphabet?",
-      "description": "The Khmer language of Cambodia holds the record for the longest alphabet, with 74 letters."
+      "title": "Uma Thurman's Role",
+      "description": "Quentin Tarantino wrote the character of Mia Wallace specifically for Uma Thurman, though she initially hesitated to take the role."
     },
     {
-      "title": "No 'A' or 'B'?",
-      "description": "The Pirahã language spoken in the Amazon has no numbers, colors, or concepts of time."
-    },
-    {
-      "title": "Click Languages",
-      "description": "Some African languages, like Xhosa and Zulu, use click consonants as part of their phonology."
-    },
-    {
-      "title": "Evolving English",
-      "description": "The English language adds approximately 4,000 new words to its dictionary each year."
+      "title": "Dance Royale",
+      "description": "The famous dance scene between Mia and Vincent was partly inspired by Federico Fellini's 8½."
     }
   ],
-  "backgroundImage": "http://localhost:3000/bgimages/philosophy/bg20.jpg",
+  "backgroundImage": "http://localhost:3000/bgimages/colors/bg9.jpg",
   "fontSizeTitle": 68,
   "fontSizeSubtitle": 49,
-  "fontFamilyTitle": "'Dancing Script', cursive",
-  "fontColorTitle": "white",
-  "fontColorSubtitle": "white",
-  "fontFamilySubtitle": "'Dancing Script', cursive",
-  "duration": 7
+  "fontFamilyTitle": "Roboto, sans-serif",
+  "fontColorTitle": "lightcyan",
+  "fontColorSubtitle": "lightcyan",
+  "fontFamilySubtitle": "Roboto, sans-serif",
+  "duration": 20
 }

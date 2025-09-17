@@ -11,6 +11,7 @@ import {
 import { LinearProgress } from "@mui/material";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import BurstModeIcon from "@mui/icons-material/BurstMode";
+import DownloadIcon from "@mui/icons-material/Download";
 
 import Filter9PlusIcon from "@mui/icons-material/Filter9Plus";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -24,8 +25,11 @@ import {
   kenBurnsDurationCalculator,
   kenBurnsProportionHelper,
 } from "../../utils/kenburnshelper";
+import { ImageSlot } from "../../components/batchrendering/imageslotkenburns";
+import NavItem from "../../components/navigations/batchrendering/NavItems";
 
 export const KenBurnsSwipeBatchRendering: React.FC = () => {
+  // const [jobId, setJobId] = useState("");
   const [userImages, setUserImages] = useState<string[]>([]);
   const [imageQuantities, setImageQuantities] = useState<number[]>();
   const [selectedProportions, setSelectedProportions] = useState<string[]>();
@@ -41,11 +45,11 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
   const [showProgressCard, setShowProgressCard] = useState(true);
 
   const [combinations, setCombinations] = useState<any[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleExportForCombination = async (combo: any, index: number) => {
     updateCombination(index, { status: "exporting" });
-    // const dynamicduration = durationCalculatorForCurveLineAnimationSpeeds(combo.speed);
-    // const fontsizeindicator = titleAndSubtitleFontSizeIndicator(combo.bar.title);
     try {
       const response = await fetch("/generatevideo/kenburnsswipe", {
         method: "POST",
@@ -187,7 +191,6 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
           )}
         </Box>
 
-        {/* nav items */}
         <Box sx={{ flexGrow: 1 }}>
           <NavItem
             icon={<BurstModeIcon />}
@@ -265,9 +268,6 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
         </Box>
       </Box>
 
-      {/* -------------------
-          Main Content
-          ------------------- */}
       <Box component="main" sx={{ flexGrow: 1, overflowY: "auto" }}>
         <Container maxWidth="xl" sx={{ py: 4 }}>
           {showProgressCard &&
@@ -433,6 +433,8 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
                     onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (!file) return;
+                      setIsUploading(true);
+                      setUploadError(null);
 
                       const formData = new FormData();
                       formData.append("image", file);
@@ -449,14 +451,15 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
                         if (res.ok) {
                           setUserImages((prev) => [...prev, data.url]);
                         } else {
-                          alert(
-                            "Upload failed: " + (data.error || "Unknown error")
+                          setUploadError(
+                            data.error || "Upload failed. Please try again."
                           );
                         }
                       } catch (err) {
                         console.error("Upload failed:", err);
-                        alert("Upload failed");
+                        setUploadError("Unexpected error during upload.");
                       } finally {
+                        setIsUploading(false);
                         (e.target as HTMLInputElement).value = "";
                       }
                     }}
@@ -464,6 +467,7 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
 
                   <Box
                     onClick={() =>
+                      !isUploading &&
                       document.getElementById("add-image-upload")?.click()
                     }
                     sx={{
@@ -473,16 +477,29 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      cursor: "pointer",
+                      cursor: isUploading ? "not-allowed" : "pointer",
                       fontSize: 40,
                       fontWeight: 700,
                       color: "#1976d2",
-                      bgcolor: "#f9fbff",
-                      "&:hover": { bgcolor: "#eef5ff" },
+                      bgcolor: isUploading ? "#e0e0e0" : "#f9fbff",
+                      "&:hover": {
+                        bgcolor: isUploading ? "#e0e0e0" : "#eef5ff",
+                      },
+                      position: "relative",
                     }}
                   >
-                    +
+                    {isUploading ? (
+                      <CircularProgress size={32} color="primary" />
+                    ) : (
+                      "+"
+                    )}
                   </Box>
+
+                  {uploadError && (
+                    <Typography color="error" variant="caption" sx={{ mt: 1 }}>
+                      {uploadError}
+                    </Typography>
+                  )}
                 </Box>
 
                 {/* Add folder upload button */}
@@ -498,6 +515,8 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
                     onChange={async (e) => {
                       const files = e.target.files;
                       if (!files || files.length === 0) return;
+                      setIsUploading(true);
+                      setUploadError(null);
 
                       const formData = new FormData();
                       Array.from(files).forEach((file) => {
@@ -519,15 +538,15 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
                             ...data.images.map((img: any) => img.url),
                           ]);
                         } else {
-                          alert(
-                            "Folder upload failed: " +
-                              (data.error || "Unknown error")
-                          );
+                          setUploadError(data.error || "Folder upload failed.");
                         }
                       } catch (err) {
                         console.error("Folder upload failed:", err);
-                        alert("Folder upload failed");
+                        setUploadError(
+                          "Unexpected error during folder upload."
+                        );
                       } finally {
+                        setIsUploading(false);
                         (e.target as HTMLInputElement).value = "";
                       }
                     }}
@@ -535,6 +554,7 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
 
                   <Box
                     onClick={() =>
+                      !isUploading &&
                       document.getElementById("add-folder-upload")?.click()
                     }
                     sx={{
@@ -544,21 +564,33 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      cursor: "pointer",
+                      cursor: isUploading ? "not-allowed" : "pointer",
                       fontSize: 32,
                       fontWeight: 700,
                       color: "#388e3c",
-                      bgcolor: "#f1fff4",
-                      "&:hover": { bgcolor: "#e6ffea" },
+                      bgcolor: isUploading ? "#e0e0e0" : "#f1fff4",
+                      "&:hover": {
+                        bgcolor: isUploading ? "#e0e0e0" : "#e6ffea",
+                      },
+                      position: "relative",
                     }}
                   >
-                    📂
+                    {isUploading ? (
+                      <CircularProgress size={32} color="success" />
+                    ) : (
+                      "📂"
+                    )}
                   </Box>
+
+                  {uploadError && (
+                    <Typography color="error" variant="caption" sx={{ mt: 1 }}>
+                      {uploadError}
+                    </Typography>
+                  )}
                 </Box>
               </Box>
             </Box>
           )}
-
           {/* Image Quantity Section*/}
           {activeSection === "quantity" && (
             <Box>
@@ -631,8 +663,8 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
                           });
                         }}
                         sx={{
-                          pointerEvents: isRendering ? "none" : "auto", // disables hover/click
-                          opacity: isRendering ? 0.5 : 1, // faded look
+                          pointerEvents: isRendering ? "none" : "auto",
+                          opacity: isRendering ? 0.5 : 1,
                           border: isSelected
                             ? "2px solid #1976d2"
                             : "2px dashed #c6c9d6",
@@ -713,7 +745,6 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
               </Box>
             </Box>
           )}
-
           {/* Proportions */}
           {activeSection === "proportions" && (
             <Box>
@@ -840,13 +871,37 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
               </Box>
             </Box>
           )}
-
           {/* Batch Outputs Section */}
           {activeSection === "outputs" && (
             <Box>
-              <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>
-                Batch Outputs ({combinations.length})
-              </Typography>
+              {/* Title + Download button row */}
+              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+                <Typography variant="h5" fontWeight={700} sx={{ flexGrow: 1 }}>
+                  Batch Outputs ({combinations.length})
+                </Typography>
+
+                {/* Show only when rendering is done and at least one video is ready */}
+                {!isRendering && combinations.some((c) => c.exportUrl) && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<DownloadIcon />}
+                    onClick={() => {
+                      combinations.forEach((c, i) => {
+                        if (c.exportUrl) {
+                          const link = document.createElement("a");
+                          link.href = c.exportUrl;
+                          link.download = `batch_output_${i + 1}.mp4`;
+                          link.click();
+                        }
+                      });
+                    }}
+                  >
+                    Download All
+                  </Button>
+                )}
+              </Box>
+
               {combinations.length === 0 ? (
                 <Typography color="text.secondary">
                   No batch generated yet.
@@ -883,7 +938,7 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
                         sx={{
                           width: "100%",
                           aspectRatio: "9 / 16",
-                          maxHeight: 300, // 👈 cap the height
+                          maxHeight: 300,
                           borderRadius: 2,
                           overflow: "hidden",
                           bgcolor: "#f9f9f9",
@@ -949,145 +1004,6 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
           )}
         </Container>
       </Box>
-    </Box>
-  );
-};
-
-function NavItem({
-  icon,
-  label,
-  collapsed,
-  active,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  collapsed: boolean;
-  active?: boolean;
-  onClick?: () => void;
-}) {
-  return (
-    <Box
-      onClick={onClick}
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 2,
-        px: collapsed ? 1.5 : 2,
-        py: 1.5,
-        cursor: "pointer",
-        bgcolor: active ? "rgba(25,118,210,0.08)" : "transparent",
-        borderLeft: active ? "4px solid #1976d2" : "4px solid transparent",
-        "&:hover": {
-          bgcolor: active ? "rgba(25,118,210,0.08)" : "#f6f8fa",
-        },
-        transition: "all .2s",
-      }}
-    >
-      <Box sx={{ minWidth: 28, display: "flex", justifyContent: "center" }}>
-        {icon}
-      </Box>
-      {!collapsed && (
-        <Typography
-          variant="body2"
-          sx={{
-            fontWeight: active ? 700 : 500,
-            color: active ? "#1976d2" : "text.primary",
-          }}
-        >
-          {label}
-        </Typography>
-      )}
-    </Box>
-  );
-}
-
-const ImageSlot: React.FC<{
-  index: number;
-  img: string;
-  onUpload: (file: File) => void;
-  onRemove: () => void;
-  isRendering: boolean;
-}> = ({ index, img, onUpload, onRemove, isRendering }) => {
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) onUpload(file);
-    e.target.value = ""; // reset input
-  };
-
-  const isEmpty = !img;
-
-  return (
-    <Box
-      sx={{
-        pointerEvents: isRendering ? "none" : "auto", // disables hover/click
-        opacity: isRendering ? 0.5 : 1, // faded look
-        position: "relative",
-        width: "100%",
-        height: 200,
-        border: isEmpty ? "2px dashed #c6c9d6" : "2px solid #1976d2",
-        borderRadius: 2,
-        bgcolor: "#fafafa",
-        backgroundImage: isEmpty ? "none" : `url(${img})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <input
-        type="file"
-        accept="image/*"
-        id={`image-upload-${index}`}
-        style={{ display: "none" }}
-        onChange={handleFileChange}
-      />
-
-      {isEmpty ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 1,
-            alignItems: "center",
-          }}
-        >
-          <label
-            htmlFor={`image-upload-${index}`}
-            style={{
-              padding: "6px 12px",
-              background: "#1976d2",
-              color: "white",
-              borderRadius: 6,
-              cursor: "pointer",
-              fontSize: 14,
-              fontWeight: 600,
-            }}
-          >
-            Upload
-          </label>
-          <Button
-            size="small"
-            color="error"
-            variant="outlined"
-            onClick={onRemove}
-          >
-            Remove Slot
-          </Button>
-        </Box>
-      ) : (
-        <Button
-          disabled={isRendering}
-          variant="contained"
-          color="error"
-          size="small"
-          sx={{ position: "absolute", bottom: 8, right: 8 }}
-          onClick={onRemove}
-        >
-          Remove
-        </Button>
-      )}
     </Box>
   );
 };

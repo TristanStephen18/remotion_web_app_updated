@@ -28,7 +28,12 @@ import { fontFamilies } from "../../data/fontfamilies";
 // import { fontsSelections1 } from "../../data/fontcolors";
 import type { BarGraphDataset } from "../../models/BarGraph";
 import { barGraphConfig } from "../../data/defaultvalues";
-import { calculateDurationBarGraph, titleAndSubtitleFontSizeIndicator } from "../../utils/bargraphhelpers";
+import {
+  calculateDurationBarGraph,
+  titleAndSubtitleFontSizeIndicator,
+} from "../../utils/bargraphhelpers";
+import NavItem from "../../components/navigations/batchrendering/NavItems";
+import { DownloadIcon } from "lucide-react";
 // import { fontSizeIndicatorQuote } from "../../utils/quotespotlighthelpers";
 
 export const BarGraphBatchRendering: React.FC = () => {
@@ -50,6 +55,28 @@ export const BarGraphBatchRendering: React.FC = () => {
 
   const [selectedBackgrounds, setSelectedBackgrounds] = useState<string[]>([]);
   const [selectedFonts, setSelectedFonts] = useState<string[]>([]);
+  const [loaderLabel, setLoaderLabel] = useState("Fetching datasets...");
+
+  useEffect(() => {
+    if (loading) {
+      const messages = [
+        "Fetching datasets...",
+        "Still working...",
+        "Crunching numbers...",
+        "Almost done...",
+      ];
+      let index = 0;
+
+      const interval = setInterval(() => {
+        index = (index + 1) % messages.length;
+        setLoaderLabel(messages[index]);
+      }, 4000); // change message every 4s
+
+      return () => clearInterval(interval); // cleanup when loading stops
+    } else {
+      setLoaderLabel("Fetching datasets...");
+    }
+  }, [loading]);
 
   const [combinations, setCombinations] = useState<any[]>([]);
 
@@ -76,12 +103,16 @@ export const BarGraphBatchRendering: React.FC = () => {
 
   const handleExportForCombination = async (combo: any, index: number) => {
     updateCombination(index, { status: "exporting" });
-    const fontsizeindicator = titleAndSubtitleFontSizeIndicator(combo.bar.title);
+    const fontsizeindicator = titleAndSubtitleFontSizeIndicator(
+      combo.bar.title
+    );
     try {
       let finalImageUrl = combo.bg;
-      if (!finalImageUrl.startsWith("http://localhost:3000")) {
-        finalImageUrl = `http://localhost:3000${finalImageUrl}`;
+      const origin = window.location.origin;
+      if (!finalImageUrl.startsWith(origin)) {
+        finalImageUrl = `${origin}${finalImageUrl}`;
       }
+
       const response = await fetch("/generatevideo/bargraph", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -134,11 +165,6 @@ export const BarGraphBatchRendering: React.FC = () => {
   const clearAllBackgrounds = () => setSelectedBackgrounds([]);
   const selectAllFonts = () => setSelectedFonts([...fontFamilies]);
   const clearAllFonts = () => setSelectedFonts([]);
-
-  // inside QuoteSpotlightBatchRendering component
-  const handleRemoveQuote = (index: number) => {
-    setBarGraphData((prev) => prev.filter((_, i) => i !== index));
-  };
 
   const handleGenerateBatch = () => {
     setShowProgressCard(true);
@@ -499,60 +525,87 @@ export const BarGraphBatchRendering: React.FC = () => {
                 </Box>
               </Paper>
 
-              {/* Loading + results */}
-              {loading && (
-                <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-                  <CircularProgress />
-                </Box>
-              )}
-
-              {!loading && barGraphData.length > 0 && (
-                <Box sx={{ mt: 3 }}>
-                  <Typography
-                    variant="h6"
-                    fontWeight={600}
-                    sx={{ mb: 2, color: "#1976d2" }}
+              {/* BarGraph Section */}
+              <Paper
+                elevation={2}
+                sx={{
+                  mt: 3,
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  minHeight: 200,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {loading ? (
+                  <Box
+                    sx={{
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      p: 4,
+                      gap: 2,
+                    }}
                   >
-                    Generated BarGraph Datasets ({barGraphData.length})
-                  </Typography>
-                  <Paper sx={{ width: "100%", overflow: "hidden" }}>
-                    {/* Header row */}
+                    <CircularProgress size={40} />
+                    <Typography variant="body2" color="text.secondary">
+                      {loaderLabel}
+                    </Typography>
+                  </Box>
+                ) : barGraphData.length > 0 ? (
+                  <>
+                    {/* Header Row */}
                     <Box
                       sx={{
+                        pointerEvents: isRendering ? "none" : "auto",
+                        opacity: isRendering ? 0.5 : 1,
                         display: "flex",
                         px: 2,
                         py: 1,
-                        bgcolor: "#f5f5f5",
+                        bgcolor: "#f9fafb",
                         fontWeight: 600,
+                        fontSize: "0.9rem",
+                        borderBottom: "1px solid #eee",
                       }}
                     >
                       <Box sx={{ flex: 1 }}>Title</Box>
-                      <Box sx={{ width: "25%" }}>Subtitle</Box>
-                      <Box sx={{ width: "35%" }}>Data (name → value)</Box>
+                      <Box sx={{ flex: 1 }}>Subtitle</Box>
+                      <Box sx={{ flex: 2 }}>Data (name → value)</Box>
                       <Box sx={{ width: 80, textAlign: "center" }}>Action</Box>
                     </Box>
 
-                    {/* Data rows */}
+                    {/* Rows */}
                     {barGraphData.map((dataset, i) => (
                       <Box
                         key={i}
                         sx={{
+                          pointerEvents: isRendering ? "none" : "auto",
+                          opacity: isRendering ? 0.5 : 1,
                           display: "flex",
                           px: 2,
                           py: 1.5,
                           borderTop: "1px solid #eee",
-                          alignItems: "center",
+                          alignItems: "flex-start",
                         }}
                       >
                         {/* Title */}
-                        <Box sx={{ flex: 1, pr: 2, fontSize: "0.95rem" }}>
-                          "{dataset.title}"
+                        <Box
+                          sx={{
+                            flex: 1,
+                            pr: 2,
+                            fontSize: "0.95rem",
+                            fontWeight: 500,
+                          }}
+                        >
+                          {dataset.title}
                         </Box>
 
                         {/* Subtitle */}
                         <Box
                           sx={{
-                            width: "25%",
+                            flex: 1,
                             fontSize: "0.9rem",
                             color: "text.secondary",
                           }}
@@ -563,9 +616,8 @@ export const BarGraphBatchRendering: React.FC = () => {
                         {/* Data preview */}
                         <Box
                           sx={{
-                            width: "35%",
+                            flex: 2,
                             fontSize: "0.85rem",
-                            color: "text.secondary",
                             display: "flex",
                             flexWrap: "wrap",
                             gap: 1,
@@ -591,18 +643,36 @@ export const BarGraphBatchRendering: React.FC = () => {
                         {/* Remove */}
                         <Box sx={{ width: 80, textAlign: "center" }}>
                           <Button
+                            disabled={isRendering}
                             size="small"
                             color="error"
-                            onClick={() => handleRemoveQuote(i)}
+                            onClick={() =>
+                              setBarGraphData((prev) =>
+                                prev.filter((_, idx) => idx !== i)
+                              )
+                            }
                           >
                             Remove
                           </Button>
                         </Box>
                       </Box>
                     ))}
-                  </Paper>
-                </Box>
-              )}
+                  </>
+                ) : (
+                  <Box
+                    sx={{
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "text.secondary",
+                      p: 4,
+                    }}
+                  >
+                    No bar graph dataset generated yet
+                  </Box>
+                )}
+              </Paper>
             </Box>
           )}
 
@@ -837,9 +907,32 @@ export const BarGraphBatchRendering: React.FC = () => {
           {/* Batch Outputs Section */}
           {activeSection === "outputs" && (
             <Box>
-              <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>
-                Batch Outputs ({combinations.length})
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+                <Typography variant="h5" fontWeight={700} sx={{ flexGrow: 1 }}>
+                  Batch Outputs ({combinations.length})
+                </Typography>
+
+                {/* Show only when rendering is done and at least one video is ready */}
+                {!isRendering && combinations.some((c) => c.exportUrl) && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<DownloadIcon />}
+                    onClick={() => {
+                      combinations.forEach((c, i) => {
+                        if (c.exportUrl) {
+                          const link = document.createElement("a");
+                          link.href = c.exportUrl;
+                          link.download = `batch_output_${i + 1}.mp4`;
+                          link.click();
+                        }
+                      });
+                    }}
+                  >
+                    Download All
+                  </Button>
+                )}
+              </Box>
               {combinations.length === 0 ? (
                 <Typography color="text.secondary">
                   No batch generated yet.
@@ -945,52 +1038,3 @@ export const BarGraphBatchRendering: React.FC = () => {
     </Box>
   );
 };
-
-function NavItem({
-  icon,
-  label,
-  collapsed,
-  active,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  collapsed: boolean;
-  active?: boolean;
-  onClick?: () => void;
-}) {
-  return (
-    <Box
-      onClick={onClick}
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 2,
-        px: collapsed ? 1.5 : 2,
-        py: 1.5,
-        cursor: "pointer",
-        bgcolor: active ? "rgba(25,118,210,0.08)" : "transparent",
-        borderLeft: active ? "4px solid #1976d2" : "4px solid transparent",
-        "&:hover": {
-          bgcolor: active ? "rgba(25,118,210,0.08)" : "#f6f8fa",
-        },
-        transition: "all .2s",
-      }}
-    >
-      <Box sx={{ minWidth: 28, display: "flex", justifyContent: "center" }}>
-        {icon}
-      </Box>
-      {!collapsed && (
-        <Typography
-          variant="body2"
-          sx={{
-            fontWeight: active ? 700 : 500,
-            color: active ? "#1976d2" : "text.primary",
-          }}
-        >
-          {label}
-        </Typography>
-      )}
-    </Box>
-  );
-}

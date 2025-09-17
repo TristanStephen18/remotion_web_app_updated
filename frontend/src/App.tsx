@@ -28,6 +28,7 @@ import { BarGraphBatchRendering } from "./pages/batchrendering/BarGraph.tsx";
 import { CurveLineTrendBatchRendering } from "./pages/batchrendering/CurveLineTrend.tsx";
 import { KenBurnsSwipeBatchRendering } from "./pages/batchrendering/KenburnsStack.tsx";
 import { FactCardsBatchRendering } from "./pages/batchrendering/FactCardsTemplate.tsx";
+import { KpiFlipBatchRendering } from "./pages/batchrendering/KpilipCards.tsx";
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
         <Route path="/template/bargraph/mode/batchrendering" element={<BarGraphBatchRendering />} />
 
         <Route path="/template/kpiflipcards" element={<KpiFlipCardEditor />} />
+        <Route path="/template/kpiflipcards/mode/batchrendering" element={<KpiFlipBatchRendering />} />
         <Route
           path="/template/kenburnscarousel"
           element={<KernBurnsEditor />}
@@ -84,11 +86,11 @@ function App() {
         />
         <Route path="/template/newtexttyping" element={<NewTypingEditor />} />
 
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/sound" element={<Fakeconvo />} />
 
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/" element={<Dashboard />} />
         <Route path="/tester" element={<QuoteGenerator />} />
         <Route path="/qtester" element={<QuoteTester />} />
       </Routes>

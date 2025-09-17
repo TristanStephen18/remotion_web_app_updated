@@ -1,43 +1,35 @@
 {
   "data": [
     {
-      "name": "Product X",
-      "value": 31500
+      "name": "iPhone 15 Pro",
+      "value": 15230
     },
     {
-      "name": "Product Y",
-      "value": 29800
+      "name": "Samsung Galaxy S24 Ultra",
+      "value": 13890
     },
     {
-      "name": "Service A",
-      "value": 33200
+      "name": "Google Pixel 8 Pro",
+      "value": 11560
     },
     {
-      "name": "Product Z",
-      "value": 28500
+      "name": "OnePlus 12",
+      "value": 10210
     },
     {
-      "name": "Service B",
-      "value": 30500
+      "name": "Xiaomi 14",
+      "value": 9850
     },
     {
-      "name": "Accessory K",
-      "value": 27900
-    },
-    {
-      "name": "Software L",
-      "value": 32100
-    },
-    {
-      "name": "Consulting M",
-      "value": 31000
+      "name": "Asus ROG Phone 8",
+      "value": 8740
     }
   ],
-  "title": "Top Performing Offerings by Sales Volume",
+  "title": "Quarterly Smartphone Sales Performance",
   "titleFontColor": "white",
-  "backgroundImage": "http://localhost:3000/bgimages/colors/bg9.jpg",
+  "backgroundImage": "http://localhost:3000/bgimages/colors/bg6.jpg",
   "accent": "#3B82F6",
-  "subtitle": "Year-to-Date Figures for Q2 2024",
+  "subtitle": "Analysis of leading models from Q1 2024",
   "currency": "",
   "titleFontSize": 60,
   "subtitleFontSize": 38,
@@ -46,6 +38,6 @@
   "barGap": 36,
   "barLabelFontSize": 36,
   "barValueFontSize": 36,
-  "fontFamily": "'Playfair Display', serif",
-  "duration": 10
+  "fontFamily": "Roboto, sans-serif",
+  "duration": 8
 }

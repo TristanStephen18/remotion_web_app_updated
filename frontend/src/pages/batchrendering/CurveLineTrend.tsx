@@ -29,7 +29,9 @@ import { fontFamilies } from "../../data/fontfamilies";
 import type { CurveLineTrendDataset } from "../../models/CurveLineTrend";
 import { graphThemes } from "../../data/curvelinethemes";
 import { durationCalculatorForCurveLineAnimationSpeeds } from "../../utils/curvelinetrendhelpers";
-import { curvelineDefaultdata } from '../../data/defaultvalues';
+import { curvelineDefaultdata } from "../../data/defaultvalues";
+import NavItem from "../../components/navigations/batchrendering/NavItems";
+import { DownloadIcon } from "lucide-react";
 
 type SpeedOption = "slow" | "normal" | "fast";
 
@@ -64,6 +66,28 @@ export const CurveLineTrendBatchRendering: React.FC = () => {
   const [selectedFonts, setSelectedFonts] = useState<string[]>([]);
 
   const [combinations, setCombinations] = useState<any[]>([]);
+  const [loaderLabel, setLoaderLabel] = useState("Fetching datasets...");
+
+  useEffect(() => {
+    if (loading) {
+      const messages = [
+        "Fetching datasets...",
+        "Still working...",
+        "Crunching numbers...",
+        "Almost done...",
+      ];
+      let index = 0;
+
+      const interval = setInterval(() => {
+        index = (index + 1) % messages.length;
+        setLoaderLabel(messages[index]);
+      }, 4000); // change message every 4s
+
+      return () => clearInterval(interval); // cleanup when loading stops
+    } else {
+      setLoaderLabel("Fetching datasets...");
+    }
+  }, [loading]);
 
   const fetchAIDataset = async (quantity: number) => {
     setLoading(true);
@@ -88,7 +112,9 @@ export const CurveLineTrendBatchRendering: React.FC = () => {
 
   const handleExportForCombination = async (combo: any, index: number) => {
     updateCombination(index, { status: "exporting" });
-    const dynamicduration = durationCalculatorForCurveLineAnimationSpeeds(combo.speed);
+    const dynamicduration = durationCalculatorForCurveLineAnimationSpeeds(
+      combo.speed
+    );
     // const fontsizeindicator = titleAndSubtitleFontSizeIndicator(combo.bar.title);
     try {
       const response = await fetch("/generatevideo/curvelinetrend", {
@@ -102,8 +128,8 @@ export const CurveLineTrendBatchRendering: React.FC = () => {
             subtitleFontSize: curvelineDefaultdata.subtitleFontSize,
             fontFamily: combo.font,
             data: combo.cldata.data,
-            dataType:combo.cldata.dataType,
-            preset:combo.theme,
+            dataType: combo.cldata.dataType,
+            preset: combo.theme,
             backgroundImage: "",
             animationSpeed: combo.speed,
             minimalMode: curvelineDefaultdata.minimalmode,
@@ -141,7 +167,6 @@ export const CurveLineTrendBatchRendering: React.FC = () => {
   const clearAllPresets = () => setSelectedPresets([]);
   const selectAllFonts = () => setSelectedFonts([...fontFamilies]);
   const clearAllFonts = () => setSelectedFonts([]);
-
 
   const handleGenerateBatch = () => {
     setShowProgressCard(true);
@@ -515,74 +540,103 @@ export const CurveLineTrendBatchRendering: React.FC = () => {
                 </Box>
               </Paper>
 
-              {/* Loading + results */}
-              {loading && (
-                <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-                  <CircularProgress />
-                </Box>
-              )}
-
-              {!loading && curveLineData.length > 0 && (
-                <Box sx={{ mt: 3 }}>
-                  <Typography
-                    variant="h6"
-                    fontWeight={600}
-                    sx={{ mb: 2, color: "#1976d2" }}
+              {/* CurveLine Section */}
+              <Paper
+                elevation={2}
+                sx={{
+                  mt: 3,
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  minHeight: 200,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {loading ? (
+                  <Box
+                    sx={{
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      p: 4,
+                      gap: 2,
+                    }}
                   >
-                    Generated CurveLine Datasets ({curveLineData.length})
-                  </Typography>
-                  <Paper sx={{ width: "100%", overflow: "hidden" }}>
-                    {/* Header row */}
+                    <CircularProgress size={40} />
+                    <Typography variant="body2" color="text.secondary">
+                      {loaderLabel}
+                    </Typography>
+                  </Box>
+                ) : curveLineData.length > 0 ? (
+                  <>
+                    {/* Header Row */}
                     <Box
                       sx={{
+                        pointerEvents: isRendering ? "none" : "auto",
+                        opacity: isRendering ? 0.5 : 1,
                         display: "flex",
                         px: 2,
                         py: 1,
-                        bgcolor: "#f5f5f5",
+                        bgcolor: "#f9fafb",
                         fontWeight: 600,
+                        fontSize: "0.9rem",
+                        borderBottom: "1px solid #eee",
                       }}
                     >
                       <Box sx={{ flex: 1 }}>Title</Box>
-                      <Box sx={{ width: "25%" }}>Subtitle</Box>
-                      <Box sx={{ width: "35%" }}>Data (label → value)</Box>
+                      <Box sx={{ flex: 1 }}>Subtitle</Box>
+                      <Box sx={{ flex: 2 }}>Data (label → value)</Box>
                       <Box sx={{ width: 120 }}>Type</Box>
                       <Box sx={{ width: 80, textAlign: "center" }}>Action</Box>
                     </Box>
 
-                    {/* Data rows */}
-                    {curveLineData.map((dataset, idx) => (
+                    {/* Rows */}
+                    {curveLineData.map((dataset, i) => (
                       <Box
-                        key={idx}
+                        key={i}
                         sx={{
+                          pointerEvents: isRendering ? "none" : "auto",
+                          opacity: isRendering ? 0.5 : 1,
                           display: "flex",
                           px: 2,
-                          py: 1,
-                          borderBottom: "1px solid #eee",
-                          alignItems: "center",
+                          py: 1.5,
+                          borderTop: "1px solid #eee",
+                          alignItems: "flex-start",
                         }}
                       >
                         {/* Title */}
-                        <Box sx={{ flex: 1, fontWeight: 500 }}>
+                        <Box
+                          sx={{ flex: 1, fontSize: "0.95rem", fontWeight: 500 }}
+                        >
                           {dataset.title}
                         </Box>
 
                         {/* Subtitle */}
-                        <Box sx={{ width: "25%", color: "text.secondary" }}>
+                        <Box
+                          sx={{
+                            flex: 1,
+                            fontSize: "0.9rem",
+                            color: "text.secondary",
+                          }}
+                        >
                           {dataset.subtitle}
                         </Box>
 
                         {/* Data points */}
                         <Box
                           sx={{
-                            width: "35%",
+                            flex: 2,
                             display: "flex",
                             flexWrap: "wrap",
                             gap: 1,
+                            fontSize: "0.85rem",
                           }}
                         >
-                          {dataset.data.map((d, i) => (
+                          {dataset.data.map((d, idx) => (
                             <Box
-                              key={i}
+                              key={idx}
                               sx={{
                                 px: 1,
                                 py: 0.5,
@@ -607,15 +661,15 @@ export const CurveLineTrendBatchRendering: React.FC = () => {
                           {dataset.dataType}
                         </Box>
 
-                        {/* Actions */}
+                        {/* Remove */}
                         <Box sx={{ width: 80, textAlign: "center" }}>
                           <Button
+                            disabled={isRendering}
                             size="small"
-                            variant="outlined"
                             color="error"
                             onClick={() =>
                               setCurveLineData((prev) =>
-                                prev.filter((_, i) => i !== idx)
+                                prev.filter((_, idx) => idx !== i)
                               )
                             }
                           >
@@ -624,9 +678,22 @@ export const CurveLineTrendBatchRendering: React.FC = () => {
                         </Box>
                       </Box>
                     ))}
-                  </Paper>
-                </Box>
-              )}
+                  </>
+                ) : (
+                  <Box
+                    sx={{
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "text.secondary",
+                      p: 4,
+                    }}
+                  >
+                    No curve line dataset generated yet
+                  </Box>
+                )}
+              </Paper>
             </Box>
           )}
           {/* Presets Section (refactored to themes) */}
@@ -1039,9 +1106,32 @@ export const CurveLineTrendBatchRendering: React.FC = () => {
           {/* Batch Outputs Section */}
           {activeSection === "outputs" && (
             <Box>
-              <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>
-                Batch Outputs ({combinations.length})
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+                <Typography variant="h5" fontWeight={700} sx={{ flexGrow: 1 }}>
+                  Batch Outputs ({combinations.length})
+                </Typography>
+
+                {/* Show only when rendering is done and at least one video is ready */}
+                {!isRendering && combinations.some((c) => c.exportUrl) && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<DownloadIcon />}
+                    onClick={() => {
+                      combinations.forEach((c, i) => {
+                        if (c.exportUrl) {
+                          const link = document.createElement("a");
+                          link.href = c.exportUrl;
+                          link.download = `batch_output_${i + 1}.mp4`;
+                          link.click();
+                        }
+                      });
+                    }}
+                  >
+                    Download All
+                  </Button>
+                )}
+              </Box>
               {combinations.length === 0 ? (
                 <Typography color="text.secondary">
                   No batch generated yet.
@@ -1133,7 +1223,7 @@ export const CurveLineTrendBatchRendering: React.FC = () => {
                           color="text.secondary"
                           sx={{ display: "block", fontSize: "0.75rem" }}
                         >
-                          Font: {c.font} | Preset: {c.theme} | Speed: {c.speed} 
+                          Font: {c.font} | Preset: {c.theme} | Speed: {c.speed}
                         </Typography>
                       </Box>
                     </Box>
@@ -1147,52 +1237,3 @@ export const CurveLineTrendBatchRendering: React.FC = () => {
     </Box>
   );
 };
-
-function NavItem({
-  icon,
-  label,
-  collapsed,
-  active,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  collapsed: boolean;
-  active?: boolean;
-  onClick?: () => void;
-}) {
-  return (
-    <Box
-      onClick={onClick}
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 2,
-        px: collapsed ? 1.5 : 2,
-        py: 1.5,
-        cursor: "pointer",
-        bgcolor: active ? "rgba(25,118,210,0.08)" : "transparent",
-        borderLeft: active ? "4px solid #1976d2" : "4px solid transparent",
-        "&:hover": {
-          bgcolor: active ? "rgba(25,118,210,0.08)" : "#f6f8fa",
-        },
-        transition: "all .2s",
-      }}
-    >
-      <Box sx={{ minWidth: 28, display: "flex", justifyContent: "center" }}>
-        {icon}
-      </Box>
-      {!collapsed && (
-        <Typography
-          variant="body2"
-          sx={{
-            fontWeight: active ? 700 : 500,
-            color: active ? "#1976d2" : "text.primary",
-          }}
-        >
-          {label}
-        </Typography>
-      )}
-    </Box>
-  );
-}

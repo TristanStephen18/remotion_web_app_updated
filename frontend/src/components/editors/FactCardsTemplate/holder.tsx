@@ -131,9 +131,11 @@ export const FactCardsEditor: React.FC = () => {
     // console.log(backgroundImage)
     try {
       let finalImageUrl = backgroundImage;
-      if (!finalImageUrl.startsWith("http://localhost:3000")) {
-        finalImageUrl = `http://localhost:3000${finalImageUrl}`;
+      const origin = window.location.origin;
+      if (!finalImageUrl.startsWith(origin)) {
+        finalImageUrl = `${origin}${finalImageUrl}`;
       }
+
       const response = await fetch("/generatevideo/factstemplaterender", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

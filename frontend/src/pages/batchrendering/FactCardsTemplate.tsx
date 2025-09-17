@@ -29,7 +29,13 @@ import { fontsSelections1 } from "../../data/fontcolors";
 import ColorLensIcon from "@mui/icons-material/ColorLens";
 import AnimationIcon from "@mui/icons-material/Animation";
 import { triviaNiches } from "../../data/factcardsniches";
-import { cardSubtitleFontSizeIndicator, cardTitleFontSizeIndicator, durationCalculatorforFactsCard } from "../../utils/factcardshelpers";
+import {
+  cardSubtitleFontSizeIndicator,
+  cardTitleFontSizeIndicator,
+  durationCalculatorforFactsCard,
+} from "../../utils/factcardshelpers";
+import NavItem from "../../components/navigations/batchrendering/NavItems";
+import { DownloadIcon } from "lucide-react";
 
 type SpeedOption = "slower" | "slow" | "normal" | "fast" | "faster";
 
@@ -63,6 +69,28 @@ export const FactCardsBatchRendering: React.FC = () => {
   const [selectedPacings, setSelectedPacings] = useState<string[]>([]);
 
   const [combinations, setCombinations] = useState<any[]>([]);
+  const [loaderLabel, setLoaderLabel] = useState("Fetching datasets...");
+
+  useEffect(() => {
+    if (loading) {
+      const messages = [
+        "Fetching datasets...",
+        "Still working...",
+        "Crunching numbers...",
+        "Almost done...",
+      ];
+      let index = 0;
+
+      const interval = setInterval(() => {
+        index = (index + 1) % messages.length;
+        setLoaderLabel(messages[index]);
+      }, 4000); // change message every 4s
+
+      return () => clearInterval(interval); // cleanup when loading stops
+    } else {
+      setLoaderLabel("Fetching datasets...");
+    }
+  }, [loading]);
 
   const fetchAIDataset = async (quantity: number) => {
     if (selectedNiches.length === 0) {
@@ -95,40 +123,45 @@ export const FactCardsBatchRendering: React.FC = () => {
 
   const handleExportForCombination = async (combo: any, index: number) => {
     updateCombination(index, { status: "exporting" });
-        // const fontsizeindicator = titleAndSubtitleFontSizeIndicator(combo.bar.title);
-        try {
-          let finalImageUrl = combo.bg;
-          if (!finalImageUrl.startsWith("http://localhost:3000")) {
-            finalImageUrl = `http://localhost:3000${finalImageUrl}`;
-          }
-          const response = await fetch("/generatevideo/factstemplaterender", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              intro: combo.dataset.intro,
+    // const fontsizeindicator = titleAndSubtitleFontSizeIndicator(combo.bar.title);
+    try {
+      let finalImageUrl = combo.bg;
+      if (!finalImageUrl.startsWith("http://localhost:3000")) {
+        finalImageUrl = `http://localhost:3000${finalImageUrl}`;
+      }
+      const response = await fetch("/generatevideo/factstemplaterender", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          intro: combo.dataset.intro,
           outro: combo.dataset.intro,
           facts: combo.dataset.facts,
           backgroundImage: finalImageUrl,
           fontSizeTitle: cardTitleFontSizeIndicator(combo.dataset.intro.title),
-          fontSizeSubtitle: cardSubtitleFontSizeIndicator(combo.dataset.intro.subtitle),
+          fontSizeSubtitle: cardSubtitleFontSizeIndicator(
+            combo.dataset.intro.subtitle
+          ),
           fontFamilyTitle: combo.font,
           fontColorTitle: combo.fontColor,
-          fontColorSubtitle:  combo.fontColor,
+          fontColorSubtitle: combo.fontColor,
           fontFamilySubtitle: combo.font,
-          duration: durationCalculatorforFactsCard(combo.dataset.facts.length, combo.pacing),
-              format: "mp4",
-            }),
-          });
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText);
-          }
-          const data = await response.json();
-          updateCombination(index, { status: "ready", exportUrl: data.url });
-        } catch (err) {
-          console.error("Export failed:", err);
-          updateCombination(index, { status: "error" });
-        }
+          duration: durationCalculatorforFactsCard(
+            combo.dataset.facts.length,
+            combo.pacing
+          ),
+          format: "mp4",
+        }),
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+      const data = await response.json();
+      updateCombination(index, { status: "ready", exportUrl: data.url });
+    } catch (err) {
+      console.error("Export failed:", err);
+      updateCombination(index, { status: "error" });
+    }
   };
 
   const generateDataset = async () => {
@@ -614,17 +647,21 @@ export const FactCardsBatchRendering: React.FC = () => {
                 }}
               >
                 {loading ? (
-                  // Loader while fetching
                   <Box
                     sx={{
                       flex: 1,
                       display: "flex",
+                      flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "center",
                       p: 4,
+                      gap: 2,
                     }}
                   >
                     <CircularProgress size={40} />
+                    <Typography variant="body2" color="text.secondary">
+                      {loaderLabel}
+                    </Typography>
                   </Box>
                 ) : factCardsData.length > 0 ? (
                   <>
@@ -1273,9 +1310,32 @@ export const FactCardsBatchRendering: React.FC = () => {
           {/* Batch Outputs Section */}
           {activeSection === "outputs" && (
             <Box>
-              <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>
-                Batch Outputs ({combinations.length})
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+                <Typography variant="h5" fontWeight={700} sx={{ flexGrow: 1 }}>
+                  Batch Outputs ({combinations.length})
+                </Typography>
+
+                {/* Show only when rendering is done and at least one video is ready */}
+                {!isRendering && combinations.some((c) => c.exportUrl) && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<DownloadIcon />}
+                    onClick={() => {
+                      combinations.forEach((c, i) => {
+                        if (c.exportUrl) {
+                          const link = document.createElement("a");
+                          link.href = c.exportUrl;
+                          link.download = `batch_output_${i + 1}.mp4`;
+                          link.click();
+                        }
+                      });
+                    }}
+                  >
+                    Download All
+                  </Button>
+                )}
+              </Box>
               {combinations.length === 0 ? (
                 <Typography color="text.secondary">
                   No batch generated yet.
@@ -1367,7 +1427,8 @@ export const FactCardsBatchRendering: React.FC = () => {
                           color="text.secondary"
                           sx={{ display: "block", fontSize: "0.75rem" }}
                         >
-                          Font: {c.font} | Color: {c.fontColor} 
+                          Font: {c.font} | Color: {c.fontColor} | Pacing:{" "}
+                          {c.pacing}
                         </Typography>
                       </Box>
                     </Box>
@@ -1381,52 +1442,3 @@ export const FactCardsBatchRendering: React.FC = () => {
     </Box>
   );
 };
-
-function NavItem({
-  icon,
-  label,
-  collapsed,
-  active,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  collapsed: boolean;
-  active?: boolean;
-  onClick?: () => void;
-}) {
-  return (
-    <Box
-      onClick={onClick}
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 2,
-        px: collapsed ? 1.5 : 2,
-        py: 1.5,
-        cursor: "pointer",
-        bgcolor: active ? "rgba(25,118,210,0.08)" : "transparent",
-        borderLeft: active ? "4px solid #1976d2" : "4px solid transparent",
-        "&:hover": {
-          bgcolor: active ? "rgba(25,118,210,0.08)" : "#f6f8fa",
-        },
-        transition: "all .2s",
-      }}
-    >
-      <Box sx={{ minWidth: 28, display: "flex", justifyContent: "center" }}>
-        {icon}
-      </Box>
-      {!collapsed && (
-        <Typography
-          variant="body2"
-          sx={{
-            fontWeight: active ? 700 : 500,
-            color: active ? "#1976d2" : "text.primary",
-          }}
-        >
-          {label}
-        </Typography>
-      )}
-    </Box>
-  );
-}

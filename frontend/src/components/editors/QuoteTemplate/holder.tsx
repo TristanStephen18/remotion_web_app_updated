@@ -246,9 +246,11 @@ export const QuoteTemplateEditor: React.FC = () => {
 
     try {
       let finalImageUrl = backgroundImage;
-      if (!finalImageUrl.startsWith("http://localhost:3000")) {
-        finalImageUrl = `http://localhost:3000${finalImageUrl}`;
+      const origin = window.location.origin;
+      if (!finalImageUrl.startsWith(origin)) {
+        finalImageUrl = `${origin}${finalImageUrl}`;
       }
+
       const response = await fetch("/generatevideo/quotetemplatewchoices", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

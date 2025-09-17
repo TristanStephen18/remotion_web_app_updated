@@ -6,9 +6,13 @@ import airoutes from "./routes/apis/gemini.ts";
 import renderingroutes from "./routes/rendering.ts";
 import uploadroutes from './routes/uploads.ts';
 import elevenlabsroutes from './routes/apis/elevenlabs.ts';
+import redditroute from './routes/apis/reddit.ts';
 import path from "path";
+// import cors from "cors";
+import cors from "cors";
 
 const app = express();
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -22,6 +26,8 @@ app.use('/api', airoutes);
 app.use('/generatevideo', renderingroutes);
 app.use('/uploadhandler', uploadroutes);
 app.use('/sound', elevenlabsroutes);
+app.use('/reddit', redditroute);
+
 
 app.use('/videos', express.static(path.join(process.cwd(), './server/outputs')));
 app.use('/images', express.static(path.join(process.cwd(), './server/public/images')));

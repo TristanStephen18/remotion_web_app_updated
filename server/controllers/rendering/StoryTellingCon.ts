@@ -40,7 +40,6 @@ export const handleExport = async (req: Request, res: Response) => {
     newsoundloc
   );
 
-
   try {
     const entry = path.join(
       process.cwd(),
@@ -85,7 +84,11 @@ export const handleExport = async (req: Request, res: Response) => {
       console.log(`✅ Converted to ${format}:`, finalPath);
     }
 
-    const fileUrl = `http://localhost:3000/videos/${finalFile}`;
+    const protocol = req.protocol;
+    const host = req.get("host"); // e.g. tunnel-name.trycloudflare.com
+    const origin = `${protocol}://${host}`;
+
+    const fileUrl = `${origin}/videos/${finalFile}`;
 
     return res.json({
       url: fileUrl,

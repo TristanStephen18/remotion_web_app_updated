@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { DisplayerModal } from "../Global/modal";
 import { BackgroundSecTrial } from "../Global/sidenav_sections/bg";
 import { ExportSecTrial } from "../Global/sidenav_sections/export";
-import { OptionSectionTrial } from "../Global/sidenav_sections/options";
+// import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import { BarGraphNavs } from "./sidenav";
 import { BarGraphTemplatePreview } from "../../layout/EditorPreviews/BarGraphPreview";
 import type { BargraphData } from "../../remotion_compositions/BarGraphTemplate";
@@ -62,7 +62,7 @@ export const BarGraphEditor: React.FC = () => {
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isExporting, setIsExporting] = useState<string | null>(null);
-  const [autoSave, setAutoSave] = useState(false);
+  // const [autoSave, setAutoSave] = useState(false);
   const [duration, setDuration] = useState(8);
 
   // 🔹 Resizable panel state
@@ -132,9 +132,11 @@ export const BarGraphEditor: React.FC = () => {
     console.log(backgroundImage);
     try {
       let finalImageUrl = backgroundImage;
-      if (!finalImageUrl.startsWith("http://localhost:3000")) {
-        finalImageUrl = `http://localhost:3000${finalImageUrl}`;
+      const origin = window.location.origin;
+      if (!finalImageUrl.startsWith(origin)) {
+        finalImageUrl = `${origin}${finalImageUrl}`;
       }
+
       const response = await fetch("/generatevideo/bargraph", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

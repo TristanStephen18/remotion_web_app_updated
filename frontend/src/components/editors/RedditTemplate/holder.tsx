@@ -27,7 +27,7 @@ export const RedditVideoEditor: React.FC = () => {
   const defaulvalues = {
     backgroundOverlay: "rgba(0,0,0,0.6)",
     musicVolume: 0.2,
-    voiceoverPath: "reddit.mp3"
+    voiceoverPath: "reddit.mp3",
   };
   const [redditData, setRedditData] = useState(script);
   const [previewSize, setPreviewSize] = useState(1);
@@ -39,7 +39,7 @@ export const RedditVideoEditor: React.FC = () => {
 
   const [sentenceBgColor, setSentenceBgColor] = useState("#ff8c00");
 
-  const [isUpdating, setIsUpdating] = useState(false);
+  // const [isUpdating, setIsUpdating] = useState(false);
   const [aiVoice, setAiVoice] = useState("21m00Tcm4TlvDq8ikWAM");
 
   const [voiceoverPath, setVoiceoverPath] = useState(
@@ -104,20 +104,21 @@ export const RedditVideoEditor: React.FC = () => {
 
   async function fetchPost(postUrl: string) {
     try {
+      console.log(postUrl);
       setLoadingPost(true);
       setPostError(null);
       setFetchedPost(null);
 
-      // Clean up URL
-      let cleanUrl = postUrl.split("?")[0];
-      if (!cleanUrl.endsWith(".json")) {
-        cleanUrl = cleanUrl.replace(/\/$/, "") + ".json";
-      }
+      const res = await fetch("/reddit/getpost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: postUrl }),
+      });
 
-      const res = await fetch(cleanUrl);
+      // const res = await fetch(cleanUrl);
       if (!res.ok) throw new Error("Failed to fetch Reddit post");
-      const json = await res.json();
-      const fetched = json[0].data.children[0].data;
+      const data = await res.json();
+      const fetched = data[0]?.data?.children[0]?.data;
 
       const post = {
         title: fetched.title,
@@ -273,7 +274,7 @@ export const RedditVideoEditor: React.FC = () => {
 
           {activeSection === "voice" && (
             <AiVoiceSelector
-              isUpdatingTemplate={isUpdating}
+              isUpdatingTemplate={isUpdatingTemplate}
               onUpdateTemplate={createVoiceOverandScript}
               aiVoice={aiVoice}
               setAiVoice={setAiVoice}

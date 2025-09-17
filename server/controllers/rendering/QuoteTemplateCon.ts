@@ -2,11 +2,10 @@ import { bundle } from "@remotion/bundler";
 import { getCompositions, renderMedia } from "@remotion/renderer";
 import path from "path";
 import { updateJsonfile_QuoteData } from "../functions/jsonupdater.ts";
-import fs from 'fs';
+import fs from "fs";
 import { convertVideo } from "../../utils/ffmpeg.ts";
 import type { Request, Response } from "express";
 // import { Result } from "postcss";
-
 
 export const videoGeneration = async (req: Request, res: Response) => {
   const { quote, author, imageurl, fontsize, fontcolor, fontfamily } = req.body;
@@ -86,7 +85,7 @@ export const videoGeneration = async (req: Request, res: Response) => {
       url: videoUrl,
       filename: outputFile,
     });
-  } catch (err:any) {
+  } catch (err: any) {
     console.error("❌ Error rendering Remotion project:", err);
 
     // Provide more specific error information
@@ -101,7 +100,7 @@ export const videoGeneration = async (req: Request, res: Response) => {
       stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
     });
   }
-}
+};
 
 export const handleExport = async (req: Request, res: Response) => {
   const { quote, author, imageurl, fontsize, fontcolor, fontfamily, format } =
@@ -129,7 +128,7 @@ export const handleExport = async (req: Request, res: Response) => {
   try {
     const entry = path.join(
       process.cwd(),
-       "./server/remotion_templates/TemplateHolder/src/index.ts"
+      "./server/remotion_templates/TemplateHolder/src/index.ts"
     );
 
     if (!fs.existsSync(entry)) {
@@ -150,7 +149,6 @@ export const handleExport = async (req: Request, res: Response) => {
     const mp4File = `${baseFile}.mp4`;
     const mp4Path = path.join(outputDir, mp4File);
 
-    // Always render MP4 first (Remotion only outputs mp4/webm/mov directly)
     await renderMedia({
       serveUrl: bundleLocation,
       composition: comp,
@@ -170,7 +168,11 @@ export const handleExport = async (req: Request, res: Response) => {
       console.log(`✅ Converted to ${format}:`, finalPath);
     }
 
-    const fileUrl = `http://localhost:3000/videos/${finalFile}`;
+    const protocol = req.protocol;
+    const host = req.get("host"); // e.g. tunnel-name.trycloudflare.com
+    const origin = `${protocol}://${host}`;
+
+    const fileUrl = `${origin}/videos/${finalFile}`;
 
     return res.json({
       url: fileUrl,
@@ -185,4 +187,4 @@ export const handleExport = async (req: Request, res: Response) => {
       stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
     });
   }
-}
+};

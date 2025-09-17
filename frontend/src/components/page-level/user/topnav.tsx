@@ -14,7 +14,7 @@ import { Activity } from "lucide-react";
 export const Navbar: React.FC = () => {
   return (
     <AppBar
-      position="fixed"
+      position="sticky"
       elevation={0}
       sx={{
         backgroundColor: "background.paper",

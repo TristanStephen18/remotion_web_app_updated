@@ -12,7 +12,7 @@ import type { Request, Response } from "express";
 
 // import updateJson_KpiFlipCards
 
-export const handleExport = async (req:Request, res: Response) => {
+export const handleExport = async (req: Request, res: Response) => {
   const {
     chatPath,
     bgVideo,
@@ -52,7 +52,6 @@ export const handleExport = async (req:Request, res: Response) => {
   );
 
   try {
-
     console.log("Generating video");
     const entry = path.join(
       process.cwd(),
@@ -97,7 +96,11 @@ export const handleExport = async (req:Request, res: Response) => {
       console.log(`✅ Converted to ${format}:`, finalPath);
     }
 
-    const fileUrl = `http://localhost:3000/videos/${finalFile}`;
+    const protocol = req.protocol;
+    const host = req.get("host"); // e.g. tunnel-name.trycloudflare.com
+    const origin = `${protocol}://${host}`;
+
+    const fileUrl = `${origin}/videos/${finalFile}`;
 
     return res.json({
       url: fileUrl,

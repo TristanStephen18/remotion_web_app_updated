@@ -5,6 +5,7 @@ import {
   BarGraphDataSchema,
   CurveLineTrendSchema,
   FactCardsTemplateDatasetSchema,
+  KpiFlipCardsDatasetSchema,
   QuoteDataPropsSchema,
   SingleOutputQuoteSpotlightSchema,
   TextTypingTemplatePhraseSchema,
@@ -22,7 +23,7 @@ dotenv.config();
 
 const router = Router();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY_2!);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
 router.get("/reddit", async (req, res) => {
   //   const { niche, template } = req.body;
@@ -292,7 +293,7 @@ router.post("/generate/curvelinedataset", async (req, res) => {
 router.post("/generate/factcardsdataset", async (req, res) => {
   const { quantity, niches } = req.body;
 
-  console.log("Generating datasets for fact cards template");
+  console.log("Generating datasets for fact cards template", quantity);
 
   try {
     const result = await model.generateContent({
@@ -301,7 +302,10 @@ router.post("/generate/factcardsdataset", async (req, res) => {
           role: "user",
           parts: [
             {
-              text: `Generate ${quantity} trivia datasets for each niche from this selected ${niches} by the user. The dataset shall include a introductory title with a subtitle to follow up the title. And an outro title and subtitle that you will find most fitting, it could be a learn more type outro or a description type, it is up to you but keep it minimal. For the array of facts, it should be according to the niches, the title for the facts should be more or less miminal it should hook the viewers attention to it and the description should be truthful and short. `,
+              text: `Generate ${quantity} datasets for the niches selected ${niches}. 
+              The dataset shall include a introductory title with a subtitle to follow up the title. And an outro title and subtitle that you will find most fitting, 
+              it could be a learn more type outro or a description type, it is up to you but keep it minimal. For the array of facts, it should be according to the niches, 
+              the title for the facts should be more or less miminal it should hook the viewers attention to it and the description should be truthful and short. `,
             },
           ],
         },
@@ -324,6 +328,51 @@ router.post("/generate/factcardsdataset", async (req, res) => {
       .json({ textcontent: "Error creating story. Please try again." });
   }
 });
+
+
+router.post("/generate/kpiflipcardsdataset", async (req, res) => {
+  const { quantity } = req.body;
+
+  console.log("Generating datasets for kpiflip cards template");
+
+  try {
+    const result = await model.generateContent({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `Generate ${quantity} of datasets for a kpiflip cad remotion template. It should have a title (short but complete in thought), a subtitle to support the title. 
+              This template is an metric/measurement based template to it the title and subtitle should be based on that too. The cardsData length should be maximum of 8 and minimum of 4. 
+              The value of the cards data are different metrics, no repetitions and the color should not be light. 
+              As for the vaueFontSize it should depend on the value size if the value.length is longer than 7 make the valuefontsize between 40-45,but if not make it 46-48, cardlabelfontsize should be between 28 and 32. 
+              For the cardcolors both back and front, it should highlight the value 
+              and label meaning the colors of the card should not be contradicting wth the colors of the value and the label. 
+              The cardBorder color should not be the same with the cardColorFront and back because it will not be seen.`,
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: KpiFlipCardsDatasetSchema,
+      },
+    });
+
+    const text = result.response.text();
+    const data = JSON.parse(text);
+
+    console.log(data);
+    res.json({ data });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ textcontent: "Error creating story. Please try again." });
+  }
+});
+
+
 
 //ai setup routes
 
@@ -361,5 +410,8 @@ router.post("/setup/quotetemplate", async (req, res) => {
       .json({ textcontent: "Error creating story. Please try again." });
   }
 });
+
+
+
 
 export default router;

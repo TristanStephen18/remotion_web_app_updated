@@ -1,11 +1,10 @@
 import path from "path";
 import { convertVideo } from "../../utils/ffmpeg.ts";
 import { getCompositions, renderMedia } from "@remotion/renderer";
-import fs from 'fs';
+import fs from "fs";
 import { bundle } from "@remotion/bundler";
 import { updateJson_Bargraph } from "../functions/jsonupdater.ts";
 import type { Request, Response } from "express";
-
 
 export const handleExport = async (req: Request, res: Response) => {
   const {
@@ -104,14 +103,18 @@ export const handleExport = async (req: Request, res: Response) => {
       console.log(`✅ Converted to ${format}:`, finalPath);
     }
 
-    const fileUrl = `http://localhost:3000/videos/${finalFile}`;
+    const protocol = req.protocol;
+    const host = req.get("host"); // e.g. tunnel-name.trycloudflare.com
+    const origin = `${protocol}://${host}`;
+
+    const fileUrl = `${origin}/videos/${finalFile}`;
 
     return res.json({
       url: fileUrl,
       filename: finalFile,
       format: format || "mp4",
     });
-  } catch (err:any) {
+  } catch (err: any) {
     console.error("❌ Error rendering Remotion project:", err);
     return res.status(500).json({
       error: "Render failed",
@@ -119,4 +122,4 @@ export const handleExport = async (req: Request, res: Response) => {
       stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
     });
   }
-}
+};

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { DisplayerModal } from "../Global/modal";
 import { BackgroundSecTrial } from "../Global/sidenav_sections/bg";
-import { OptionSectionTrial } from "../Global/sidenav_sections/options";
+// import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import { ExportSecTrial } from "../Global/sidenav_sections/export";
 import { KpiFlipSideNav } from "./sidenav";
 import type { CardData } from "../../remotion_compositions/KpiFlipCards";
@@ -12,8 +12,12 @@ import { CardStylingPanel } from "./sidenav_sections/cardstyling";
 import { AnimationSettingsPanel } from "./sidenav_sections/animation";
 import { CardDataPanel } from "./sidenav_sections/data";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
+import { TemplateOptionsSection } from "../Global/templatesettings";
 
 export const KpiFlipCardEditor: React.FC = () => {
+  const [templateName, setTemplateName] = useState(
+    "🎬 Kpi Flip Cards Template"
+  );
   //   const [quote, setQuote] = useState("Your Quote");
   //   const [author, setAuthor] = useState("Author");
   const [backgroundImage, setBackgroundImage] = useState(
@@ -89,17 +93,17 @@ export const KpiFlipCardEditor: React.FC = () => {
     | "data"
     | "animation"
     | "background"
-    | "options"
+    | "template"
     | "export"
   >("text");
   const [collapsed, setCollapsed] = useState(false);
-  const [duration, setDuration] = useState(13);
+  // const [duration, setDuration] = useState(13);
 
   const [isUploading, setIsUploading] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isExporting, setIsExporting] = useState<string | null>(null);
-  const [autoSave, setAutoSave] = useState(false);
+  // const [autoSave, setAutoSave] = useState(false);
 
   // 🔹 Resizable panel state
   const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
@@ -168,9 +172,11 @@ export const KpiFlipCardEditor: React.FC = () => {
     // console.log(backgroundImage)
     try {
       let finalImageUrl = backgroundImage;
-      if (!finalImageUrl.startsWith("http://localhost:3000")) {
-        finalImageUrl = `http://localhost:3000${finalImageUrl}`;
+      const origin = window.location.origin;
+      if (!finalImageUrl.startsWith(origin)) {
+        finalImageUrl = `${origin}${finalImageUrl}`;
       }
+
       const response = await fetch("/generatevideo/kpiflipcard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -271,7 +277,7 @@ export const KpiFlipCardEditor: React.FC = () => {
               WebkitTextFillColor: "transparent",
             }}
           >
-            🎬 Kpi Flip Cards Template
+            {templateName}
           </h2>
 
           {activeSection === "text" && (
@@ -350,16 +356,18 @@ export const KpiFlipCardEditor: React.FC = () => {
             />
           )}
 
-          {activeSection === "options" && (
-            <OptionSectionTrial
-              setShowSafeMargins={setShowSafeMargins}
-              showSafeMargins={showSafeMargins}
-              setAutoSave={setAutoSave}
-              autoSave={autoSave}
-              previewSize={previewSize}
-              setPreviewSize={setPreviewSize}
+          {activeSection === "template" && (
+            <TemplateOptionsSection
+              onEnterBatchRender={() => {
+                window.location.assign(
+                  "/template/kpiflipcards/mode/batchrendering"
+                );
+              }}
+              templateName={templateName}
+              setTemplateName={setTemplateName}
             />
           )}
+
           {activeSection === "export" && (
             <ExportSecTrial
               handleExport={handleExport}
@@ -401,18 +409,6 @@ export const KpiFlipCardEditor: React.FC = () => {
         onPreviewScaleChange={setPreviewSize}
         onToggleSafeMargins={setShowSafeMargins}
       />
-      {/* 
-      <QuoteSpotlightPreview
-        quote={quote}
-        author={author}
-        backgroundImage={backgroundImage}
-        fontSize={fontSize}
-        fontFamily={fontFamily}
-        fontColor={fontColor}
-        showSafeMargins={showSafeMargins}
-        previewBg={previewBg}
-        cycleBg={cycleBg}
-      /> */}
     </div>
   );
 };
