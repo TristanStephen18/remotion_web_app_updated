@@ -9,3 +9,15 @@ then for the last folder run "cd.." then "cd server", "cd remotion_templates", a
 after that you can open a new terminal then run "npm start", click the link "http://localhost:3000" or paste it in your browser
 
 P.S This application won't run without an env file at the root folder
+
+For port tunneling/sharing:
+run "npm cloudflared --version"to see if cloudflared is installed, if not "npm i cloudflared" to install it
+then after successful installation run "cloudflared tunnel --url http://localhost:3000" while the poject is running 
+then you wlll get the -
+
++--------------------------------------------------------------------------------------------+ 
+2025-09-17T08:12:05Z INF | Your quick Tunnel has been created! Visit it at (it may take some time to be reachable): | 
+2025-09-17T08:12:05Z INF | https://high-intensity-referring-aaron.trycloudflare.com | 2025-09-17T08:12:05Z INF 
++--------------------------------------------------------------------------------------------+
+
+- message in your console. find it and copy the link provided then forward it to the person you want to share it too
