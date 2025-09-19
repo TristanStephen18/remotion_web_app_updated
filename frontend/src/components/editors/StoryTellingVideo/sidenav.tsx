@@ -14,9 +14,7 @@ interface SidenavProps {
     | "voice"
     | "text"
     | "background"
-    | "music"
-    | "options"
-    | "export" >>;
+    | "music" >>;
 }
 
 export const StoryTellingSidePanel: React.FC<SidenavProps>=({collapsed, setCollapsed, activeSection, setActiveSection})=>{

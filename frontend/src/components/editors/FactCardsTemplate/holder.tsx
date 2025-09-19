@@ -41,7 +41,7 @@ export const FactCardsEditor: React.FC = () => {
   const [titlefontFamily, setTitleFontFamily] = useState("Russo");
   const [subtitleFontFamily, setSubtitleFontFamily] = useState("Russo");
   const [backgroundImage, setBackgroundImage] = useState(
-    "http://localhost:3000/bgimages/colors/bg1.jpg"
+    "/bgimages/colors/bg1.jpg"
   );
   const [backgroundSource, setBackgroundSource] = useState<
     "upload" | "default"

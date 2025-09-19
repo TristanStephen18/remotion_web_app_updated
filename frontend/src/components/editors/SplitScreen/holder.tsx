@@ -1,21 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { DisplayerModal } from "../Global/modal";
-// import { BackgroundSecTrial } from "../Global/sidenav_sections/bg";
-// import { ExportSecTrial } from "../Global/sidenav_sections/export";
 import { SplitScreenSideNavs } from "./sidenav";
-// import { TextContentSection } from "./sidenav_sections/textcontent";
-// import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import { BottomVideoSelectorPanel } from "./sidnav_sections/bottomvidselection";
 import { SPlitScreenPreview } from "../../layout/EditorPreviews/SplitScreenPreview";
 import { VideoUploadPanel } from "./sidnav_sections/upload";
 import { VideoSettingsControlPanel } from "./sidnav_sections/videosettings";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
-// import { TopNav } from "../../navigations/single_editors/trialtopnav";
 import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
 import { ExportModal } from "../../layout/modals/exportmodal";
-// import { SoundAndDurationSection } from "./sidenav_sections/sound_and_duration";
-// import { TypographySection } from '../Global/sidenav_sections/typo';
-// import { TextTypingTemplatePreview } from "../../layout/EditorPreviews/TextTypingPreview";
 
 export const SplitScreenEditor: React.FC = () => {
   const [templateName, setTemplateName] = useState("My splitscreen video");

@@ -1,8 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-// import { DisplayerModal } from "../Global/modal";
 import { BackgroundSecTrial } from "../Global/sidenav_sections/bg";
-// import { ExportSecTrial } from "../Global/sidenav_sections/export";
-// import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import { BarGraphNavs } from "./sidenav";
 import { BarGraphTemplatePreview } from "../../layout/EditorPreviews/BarGraphPreview";
 import type { BargraphData } from "../../remotion_compositions/BarGraphTemplate";
@@ -10,8 +7,6 @@ import { TypographyPanelBarGraphTemplate } from "./sidenav_sections/header";
 import { DataPanel } from "./sidenav_sections/dataenrty";
 import { BarGraphControlsPanel } from "./sidenav_sections/bargraphconfig";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
-// import { TemplateOptionsSection } from "../Global/templatesettings";
-// import { TopNav } from "../../navigations/single_editors/trialtopnav";
 import { ExportModal } from "../../layout/modals/exportmodal";
 import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
 
@@ -23,7 +18,7 @@ export const BarGraphEditor: React.FC = () => {
 
   //header states
   const [title, setTitle] = useState("Your title");
-  const [subTitle, setSubtitle] = useState("Your subtitle");
+  const [subtitle, setSubtitle] = useState("Your subtitle");
   const [titleFontSize, setTitleFontSize] = useState(80);
   const [subtitleFontSize, setSubtitleFontSize] = useState(50);
   const [titleFontColor, setTitleFontColor] = useState("white");
@@ -42,7 +37,7 @@ export const BarGraphEditor: React.FC = () => {
 
   //bg
   const [backgroundImage, setBackgroundImage] = useState(
-    "http://localhost:3000/bgimages/colors/bg1.jpg"
+    "/bgimages/colors/bg1.jpg"
   );
   const [backgroundSource, setBackgroundSource] = useState<
     "upload" | "default"
@@ -69,7 +64,7 @@ export const BarGraphEditor: React.FC = () => {
   const [duration, setDuration] = useState(8);
 
   // 🔹 Resizable panel state
-  const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
+  const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); 
   const [isResizing, setIsResizing] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
 
@@ -149,7 +144,7 @@ export const BarGraphEditor: React.FC = () => {
           titleFontColor,
           backgroundImage: finalImageUrl,
           accent,
-          subtitle: subTitle,
+          subtitle,
           currency: "",
           titleFontSize,
           subtitleFontSize,
@@ -258,7 +253,7 @@ export const BarGraphEditor: React.FC = () => {
                 title={title}
                 setSubtitle={setSubtitle}
                 setTitle={setTitle}
-                subtitle={subTitle}
+                subtitle={subtitle}
               />
             )}
 
@@ -309,7 +304,7 @@ export const BarGraphEditor: React.FC = () => {
           barHeight={barHeight}
           barLabelFontSize={barLabelFontSize}
           barValueFontSize={barValueFontSize}
-          subtitle={subTitle}
+          subtitle={subtitle}
           subtitleColor={subtitleFontColor}
           titleFontSize={titleFontSize}
           subtitleFontSize={subtitleFontSize}

@@ -16,7 +16,6 @@ export const AnimationPanel: React.FC<AnimationPanelProps> = ({
   setAnimationSpeed,
   minimalMode,
   setMinimalMode,
-  duration,
   setDuration,
 }) => {
   const cardStyle: React.CSSProperties = {

@@ -29,73 +29,193 @@ import { CurveLineTrendBatchRendering } from "./pages/batchrendering/CurveLineTr
 import { KenBurnsSwipeBatchRendering } from "./pages/batchrendering/KenburnsStack.tsx";
 import { FactCardsBatchRendering } from "./pages/batchrendering/FactCardsTemplate.tsx";
 import { KpiFlipBatchRendering } from "./pages/batchrendering/KpilipCards.tsx";
+import RequireAuth from "./pages/auth/AuthChecker.tsx";
 // import { QuoteTemplateEditor2 } from "./components/editors/QuoteTemplate/holder2.tsx";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/gedit" element={<GraphEditor />} />
+        <Route
+          path="/gedit"
+          element={
+            <RequireAuth>
+              <GraphEditor />
+            </RequireAuth>
+          }
+        />
         <Route
           path="/template/quotetemplate"
-          element={<QuoteTemplateEditor />}
+          element={
+            <RequireAuth>
+              <QuoteTemplateEditor />
+            </RequireAuth>
+          }
         />
         <Route
           path="/template/quotetemplate/mode/batchrendering"
-          element={<QuoteSpotlightBatchRendering />}
+          element={
+            <RequireAuth>
+              <QuoteSpotlightBatchRendering />
+            </RequireAuth>
+          }
         />
-        <Route path="/template/splitscreen" element={<SplitScreenEditor />} />
-        <Route path="/template/texttypingtemplate" element={<TypingEditor />} />
+        <Route
+          path="/template/splitscreen"
+          element={
+            <RequireAuth>
+              <SplitScreenEditor />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/template/texttypingtemplate"
+          element={
+            <RequireAuth>
+              <TypingEditor />
+            </RequireAuth>
+          }
+        />
         <Route
           path="/template/newtexttyping/mode/batchrendering"
-          element={<TextTypingTemplateBatchRendering />}
+          element={
+            <RequireAuth>
+              <TextTypingTemplateBatchRendering />
+            </RequireAuth>
+          }
         />
 
-        <Route path="/template/factcards" element={<FactCardsEditor />} />
-        <Route path="/template/factcards/mode/batchrendering" element={<FactCardsBatchRendering />} />
+        <Route
+          path="/template/factcards"
+          element={
+            <RequireAuth>
+              <FactCardsEditor />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/template/factcards/mode/batchrendering"
+          element={
+            <RequireAuth>
+              <FactCardsBatchRendering />
+            </RequireAuth>
+          }
+        />
 
-        <Route path="/template/bargraph" element={<BarGraphEditor />} />
-        <Route path="/template/bargraph/mode/batchrendering" element={<BarGraphBatchRendering />} />
+        <Route
+          path="/template/bargraph"
+          element={
+            <RequireAuth>
+              <BarGraphEditor />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/template/bargraph/mode/batchrendering"
+          element={
+            <RequireAuth>
+              <BarGraphBatchRendering />
+            </RequireAuth>
+          }
+        />
 
-        <Route path="/template/kpiflipcards" element={<KpiFlipCardEditor />} />
-        <Route path="/template/kpiflipcards/mode/batchrendering" element={<KpiFlipBatchRendering />} />
+        <Route
+          path="/template/kpiflipcards"
+          element={
+            <RequireAuth>
+              <KpiFlipCardEditor />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/template/kpiflipcards/mode/batchrendering"
+          element={
+            <RequireAuth>
+              <KpiFlipBatchRendering />
+            </RequireAuth>
+          }
+        />
         <Route
           path="/template/kenburnscarousel"
-          element={<KernBurnsEditor />}
+          element={
+            <RequireAuth>
+              <KernBurnsEditor />
+            </RequireAuth>
+          }
         />
         <Route
           path="/template/kenburnscarousel/mode/batchrendering"
-          element={<KenBurnsSwipeBatchRendering />}
+          element={
+            <RequireAuth>
+              <KenBurnsSwipeBatchRendering />
+            </RequireAuth>
+          }
         />
         <Route
           path="/template/curvelinetrend"
-          element={<CurveLineTrendEditor />}
+          element={
+            <RequireAuth>
+              <CurveLineTrendEditor />
+            </RequireAuth>
+          }
         />
         <Route
           path="/template/curvelinetrend/mode/batchrendering"
-          element={<CurveLineTrendBatchRendering />}
+          element={
+            <RequireAuth>
+              <CurveLineTrendBatchRendering />
+            </RequireAuth>
+          }
         />
 
         <Route
           path="/template/faketextconversation"
-          element={<FakeTextConversationEditor />}
+          element={
+            <RequireAuth>
+              <FakeTextConversationEditor />
+            </RequireAuth>
+          }
         />
-        <Route path="/template/redditvideo" element={<RedditVideoEditor />} />
+        <Route
+          path="/template/redditvideo"
+          element={
+            <RequireAuth>
+              <RedditVideoEditor />
+            </RequireAuth>
+          }
+        />
         <Route
           path="/template/storytelling"
-          element={<StoryTellingVideoEditor />}
+          element={
+            <RequireAuth>
+              <StoryTellingVideoEditor />
+            </RequireAuth>
+          }
         />
-        <Route path="/template/newtexttyping" element={<NewTypingEditor />} />
+        <Route
+          path="/template/newtexttyping"
+          element={
+            <RequireAuth>
+              <NewTypingEditor />
+            </RequireAuth>
+          }
+        />
 
         <Route path="/login" element={<LoginPage />} />
         <Route path="/sound" element={<Fakeconvo />} />
 
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/" element={<Dashboard />} />
+        <Route
+          path="/dashboard"
+          element={
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
+          }
+        />
         <Route path="/tester" element={<QuoteGenerator />} />
         <Route path="/qtester" element={<QuoteTester />} />
         {/* <Route path="/testpage" element={<QuoteTemplateEditor2 />} /> */}
-
       </Routes>
     </BrowserRouter>
   );

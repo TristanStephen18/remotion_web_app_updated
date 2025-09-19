@@ -7,6 +7,8 @@ import renderingroutes from "./routes/rendering.ts";
 import uploadroutes from "./routes/uploads.ts";
 import elevenlabsroutes from "./routes/apis/elevenlabs.ts";
 import redditroute from "./routes/apis/reddit.ts";
+import authroutes from "./routes/database/auth.ts";
+import projectsroutes from  "./routes/database/projects.ts";
 import path from "path";
 // import cors from "cors";
 import cors from "cors";
@@ -29,6 +31,8 @@ app.use("/generatevideo", renderingroutes);
 app.use("/uploadhandler", uploadroutes);
 app.use("/sound", elevenlabsroutes);
 app.use("/reddit", redditroute);
+app.use("/auth", authroutes);
+app.use("/projects", projectsroutes);
 
 app.use(
   "/videos",

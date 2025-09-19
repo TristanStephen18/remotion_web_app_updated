@@ -1,24 +1,17 @@
 import React, { useState, useRef, useEffect } from "react";
-// import { DisplayerModal } from "../Global/modal";
 import { SideNavTrial } from "./sidenav";
 import { QuoteSecTrial } from "./sidenav_sections/quote";
 import { BackgroundSecTrial } from "../Global/sidenav_sections/bg";
-// import { OptionSectionTrial } from "../Global/sidenav_sections/options";
-// import { ExportSecTrial } from "../Global/sidenav_sections/export";
-// import { TypographySection } from "../Global/sidenav_sections/typo";
 import { QuoteSpotlightPreview } from "../../layout/EditorPreviews/QuoteTemplatePreview";
 import { TypographySectionQuote } from "./sidenav_sections/typo";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
-// import { TemplateOptionsSection } from "../Global/templatesettings";
 import {
   fontSizeIndicatorQuote,
   quoteSpotlightDurationCalculator,
 } from "../../../utils/quotespotlighthelpers";
 import type { QuoteConfigDataset } from "../../../models/QuoteSpotlight";
 import { AiSetupPanel } from "./sidenav_sections/aisetup";
-// import { TopNav } from "./holder2";
 import { ExportModal } from "../../layout/modals/exportmodal";
-// import { TopNav } from "../../navigations/single_editors/trialtopnav";
 import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
 
 export const QuoteTemplateEditor: React.FC = () => {
@@ -37,7 +30,7 @@ export const QuoteTemplateEditor: React.FC = () => {
   const [quote, setQuote] = useState("Your Quote");
   const [author, setAuthor] = useState("Author");
   const [backgroundImage, setBackgroundImage] = useState(
-    `${window.location.origin}/bgimages/colors/bg1.jpg`
+    `/bgimages/colors/bg1.jpg`
   );
   const [backgroundSource, setBackgroundSource] = useState<
     "upload" | "default"

@@ -1,25 +1,17 @@
 import React, { useState } from "react";
 import "../css/Login.css";
+import { useNavigate } from "react-router-dom";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-//   const [theme, setTheme] = useState<"light" | "dark">("light");
-
-  // Load saved theme from localStorage
-//   useEffect(() => {
-//     const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
-//     if (savedTheme) {
-//       setTheme(savedTheme);
-//       document.documentElement.setAttribute("data-theme", savedTheme);
-//     }
-//   }, []);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,31 +28,33 @@ const LoginPage: React.FC = () => {
 
     try {
       setLoading(true);
-      // Hook up your auth call here
-      // await auth.login({ email, password, remember });
+      const response = await fetch("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-      if(email !== "useremail@gmail.com" && password !== "000000000"){
-        // alert("")
-        setError("You entered the wrong credentials");
-      }else{
-        window.location.assign("/dashboard");
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${errorText}`
+        );
       }
-      // await new Promise((r) => setTimeout(r, 900));
+
+      const data = await response.json();
+
+      localStorage.setItem("token", data.token);
       console.log({ email, password, remember });
-      // navigate("/dashboard");
+      navigate("/dashboard");
     } catch (err) {
       setError("Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
-
-//   const toggleTheme = () => {
-//     const newTheme = theme === "light" ? "dark" : "light";
-//     setTheme(newTheme);
-//     localStorage.setItem("theme", newTheme);
-//     document.documentElement.setAttribute("data-theme", newTheme);
-//   };
 
   return (
     <div className="auth__bg">
@@ -71,10 +65,6 @@ const LoginPage: React.FC = () => {
               <span className="logo__dot" />
               <span className="logo__text">ViralMotion</span>
             </div>
-
-            {/* <button className="theme-toggle" onClick={toggleTheme}>
-              {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
-            </button> */}
             <h1 className="auth__title">
               Welcome Back <span className="wave">👋</span>
             </h1>

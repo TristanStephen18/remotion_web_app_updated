@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import "../css/Login.css"; // reuse same styles for consistency
+import { useNavigate } from "react-router-dom"; // ✅ for navigation
+import "../css/Login.css";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -8,14 +9,16 @@ const SignupPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
-  // const [role, setRole] = useState<"user" | "admin">("user");
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
 
     if (!username.trim()) {
       setError("Username is required.");
@@ -36,10 +39,31 @@ const SignupPage: React.FC = () => {
 
     try {
       setLoading(true);
-      // Hook up API call here
-      await new Promise((r) => setTimeout(r, 900));
-      console.log({ username, email, password });
-      // navigate("/dashboard");
+      const response = await fetch("/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+          name: username,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${errorText}`
+        );
+      }
+
+      // const data = await response.json();
+      setSuccess("Signup successful! Redirecting to login...");
+      
+      // redirect after 2 seconds
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+
     } catch (err) {
       setError("Signup failed. Please try again.");
     } finally {
@@ -67,6 +91,12 @@ const SignupPage: React.FC = () => {
           {error && (
             <div className="auth__error" role="alert">
               {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="auth__success" role="alert">
+              {success}
             </div>
           )}
 
@@ -126,8 +156,6 @@ const SignupPage: React.FC = () => {
                 required
               />
             </div>
-
-            
 
             <button
               className="btn btn--primary"

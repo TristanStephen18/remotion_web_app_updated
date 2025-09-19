@@ -16,7 +16,9 @@ import { AnimationPanel } from "./sidenav_sections/animation";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
 // import { TopNav } from "../../navigations/single_editors/trialtopnav";
 import { ExportModal } from "../../layout/modals/exportmodal";
-import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
+// import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
+import { SaveProjectModal } from "../../layout/modals/savemodal";
+import { TopNavWithSave } from "../../navigations/single_editors/withsave";
 // import { TemplateOptionsSection } from "../Global/templatesettings";
 
 const initialData = [
@@ -33,6 +35,9 @@ const initialData = [
 ];
 
 export const CurveLineTrendEditor: React.FC = () => {
+  const [projectId, setProjectId] = useState<number | null>(null);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [templateName, setTemplateName] = useState(
     "🎬 Curve Line Trend Template"
   );
@@ -51,6 +56,8 @@ export const CurveLineTrendEditor: React.FC = () => {
   const [subtitleFontSize, setSubtitleFontSize] = useState(30);
   const [previewSize, setPreviewSize] = useState(1);
   const backgroundImage = "";
+
+  const lastSavedProps = useRef<any | null>(null);
 
   const graphProps: SimpleGraphProps = {
     title,
@@ -114,6 +121,149 @@ export const CurveLineTrendEditor: React.FC = () => {
     else setPreviewBg("dark");
   };
 
+  const buildPropsObject = () => ({
+    title,
+    subtitle,
+    titleFontSize,
+    subtitleFontSize,
+    fontFamily,
+    data,
+    dataType,
+    preset,
+    backgroundImage,
+    animationSpeed,
+    minimalMode,
+    duration,
+  });
+
+  // Save for existing project: export then update
+  const handleSave = async () => {
+    const currentProps = buildPropsObject();
+
+    // 🟢 check if project already exists
+    if (projectId) {
+      // 🟢 compare with last saved props
+      if (
+        lastSavedProps.current &&
+        JSON.stringify(lastSavedProps.current) === JSON.stringify(currentProps)
+      ) {
+        alert("✅ Your project has already been saved");
+        return;
+      }
+
+      setIsSaving(true);
+      try {
+        // 1) export
+        const exportRes = await fetch("/generatevideo/curvelinetrend", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            data: currentProps,
+            format: "mp4",
+          }),
+        });
+
+        if (!exportRes.ok) {
+          const t = await exportRes.text();
+          throw new Error(t || "Export failed");
+        }
+        const exportResult = await exportRes.json();
+        const projectVidUrl = exportResult.url;
+
+        // 2) update project with props + projectVidUrl
+        const response = await fetch(`/projects/update/${projectId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            props: currentProps,
+            projectVidUrl,
+          }),
+        });
+
+        if (!response.ok) {
+          const payload = await response.json().catch(() => null);
+          const msg = payload?.error ?? (await response.text());
+          throw new Error(msg || "Failed to update project");
+        }
+
+        // ✅ success
+        lastSavedProps.current = currentProps; // update ref
+        alert("✅ Project exported and updated successfully!");
+      } catch (err: any) {
+        console.error(err);
+        alert(`❌ Save failed: ${err?.message ?? err}`);
+      } finally {
+        setIsSaving(false);
+      }
+    } else {
+      // 🟢 new project → open modal
+      setShowSaveModal(true);
+    }
+  };
+  const saveNewProject = async (
+    titleFromModal: string,
+    setStatus: (s: string) => void
+  ) => {
+    try {
+      setStatus("Saving project...");
+      const currentProps = buildPropsObject();
+
+      // export
+      const exportRes = await fetch("/generatevideo/curvelinetrend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: currentProps,
+          format: "mp4",
+        }),
+      });
+
+      if (!exportRes.ok) {
+        const t = await exportRes.text();
+        throw new Error(t || "Export failed");
+      }
+
+      const exportResult = await exportRes.json();
+      const projectVidUrl = exportResult.url;
+
+      // save to DB
+      const response = await fetch("/projects/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          title: titleFromModal,
+          templateId: 5, // use actual template id for Curve Line Trend
+          props: currentProps,
+          projectVidUrl,
+        }),
+      });
+
+      if (!response.ok) {
+        const json = await response.json().catch(() => null);
+        const msg =
+          json?.error ?? (await response.text().catch(() => "Failed to save"));
+        throw new Error(msg);
+      }
+
+      const result = await response.json();
+      setProjectId(result.project.id);
+
+      // 🟢 FIX: mark current props as last saved
+      lastSavedProps.current = currentProps;
+
+      setStatus("Saved!");
+    } catch (err: any) {
+      console.error("saveNewProject error", err);
+      throw err; // modal will catch and show message
+    }
+  };
+
   const handleExport = async (format: string) => {
     setIsExporting(true);
     try {
@@ -157,13 +307,19 @@ export const CurveLineTrendEditor: React.FC = () => {
 
   return (
     <div style={{ display: "flex", height: "100vh", background: "#fafafa" }}>
-      <TopNavWithoutBatchrendering
+      <TopNavWithSave
         templateName={templateName}
-        onSave={() => {}}
+        onSave={handleSave}
         onExport={handleExport}
         setTemplateName={setTemplateName}
         onOpenExport={() => setShowModal(true)}
         template="🎬 Curve Line Trend Template"
+        isSaving={isSaving}
+      />
+      <SaveProjectModal
+        open={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onSave={saveNewProject}
       />
 
       <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>

@@ -1,26 +1,10 @@
 {
-  "title": "Revenue Growth",
+  "title": "my something temlasdsa",
   "subtitle": "2015–2024 • Journey",
   "titleFontSize": 50,
   "subtitleFontSize": 30,
   "fontFamily": "Arial, sans-serif",
   "data": [
-    {
-      "label": 2015,
-      "value": 100
-    },
-    {
-      "label": 2016,
-      "value": 150
-    },
-    {
-      "label": 2017,
-      "value": 300
-    },
-    {
-      "label": 2018,
-      "value": 200
-    },
     {
       "label": 2019,
       "value": 250
@@ -47,9 +31,9 @@
     }
   ],
   "dataType": "$",
-  "preset": "corporate",
+  "preset": "ruby",
   "backgroundImage": "",
-  "animationSpeed": "normal",
+  "animationSpeed": "fast",
   "minimalMode": false,
-  "duration": 13
+  "duration": 8
 }

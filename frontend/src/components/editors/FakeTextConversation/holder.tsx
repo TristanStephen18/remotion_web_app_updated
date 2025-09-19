@@ -1,7 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-// import { DisplayerModal } from "../Global/modal";
-// import { ExportSecTrial } from "../Global/sidenav_sections/export";
-import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import { FakeTextVideoSideNavigation } from "./sidenav";
 import { ChatVideoPreview } from "../../layout/EditorPreviews/FakeTextConversationPreview";
 import { defaultchats } from "./defaultdata";
@@ -75,7 +72,7 @@ export const FakeTextConversationEditor: React.FC = () => {
   const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [autoSave, setAutoSave] = useState(false);
+  // const [autoSave, setAutoSave] = useState(false);
 
   // 🔹 Resizable panel state
   const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
