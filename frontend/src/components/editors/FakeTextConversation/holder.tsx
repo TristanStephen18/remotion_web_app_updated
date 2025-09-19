@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { DisplayerModal } from "../Global/modal";
-import { ExportSecTrial } from "../Global/sidenav_sections/export";
+// import { DisplayerModal } from "../Global/modal";
+// import { ExportSecTrial } from "../Global/sidenav_sections/export";
 import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import { FakeTextVideoSideNavigation } from "./sidenav";
 import { ChatVideoPreview } from "../../layout/EditorPreviews/FakeTextConversationPreview";
@@ -12,9 +12,14 @@ import { ChatStylePanel } from "./sidenav_sections/themesnfonts";
 import { BackgroundVideoSelectorPanel } from "../Global/sidenav_sections/bgvideoselector";
 import { MusicSelector } from "../Global/bgmusic";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
+import { ExportModal } from "../../layout/modals/exportmodal";
+import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
 type ChatLine = { speaker: "person_1" | "person_2"; text: string };
 
 export const FakeTextConversationEditor: React.FC = () => {
+  const [templateName, setTemplateName] = useState(
+    "My Fake Text Conversation Template"
+  );
   const [chatdata, setChatData] = useState(defaultchats);
   const [voice1, setVoice1] = useState("21m00Tcm4TlvDq8ikWAM");
   const [voice2, setVoice2] = useState("2EiwWnXFnvU5JabPnv8n");
@@ -52,8 +57,6 @@ export const FakeTextConversationEditor: React.FC = () => {
     | "display"
     | "background"
     | "music"
-    | "options"
-    | "export"
   >("messages");
   const [collapsed, setCollapsed] = useState(false);
 
@@ -69,9 +72,9 @@ export const FakeTextConversationEditor: React.FC = () => {
   };
 
   //   const [isUploading, setIsUploading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [isExporting, setIsExporting] = useState<string | null>(null);
   const [autoSave, setAutoSave] = useState(false);
 
   // 🔹 Resizable panel state
@@ -143,7 +146,7 @@ export const FakeTextConversationEditor: React.FC = () => {
       left: prefix + avatars.left,
       right: prefix + avatars.right,
     };
-    setIsExporting(format);
+    setIsExporting(true);
     console.log(fontSize);
     try {
       const response = await fetch("/generatevideo/faketextconvo", {
@@ -180,148 +183,135 @@ export const FakeTextConversationEditor: React.FC = () => {
       console.error("Export failed:", error);
       alert(`Export failed: ${error || "Please try again."}`);
     } finally {
-      setIsExporting(null);
+      setIsExporting(false);
     }
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#fafafa" }}>
-      {/* modal */}
-      {showModal && exportUrl && (
-        <DisplayerModal exportUrl={exportUrl} setShowModal={setShowModal} />
-      )}
-
-      {/* sidenav */}
-      <FakeTextVideoSideNavigation
-        activeSection={activeSection}
-        collapsed={collapsed}
-        setActiveSection={setActiveSection}
-        setCollapsed={setCollapsed}
+    <div style={{ display: "flex", height: "100%", flex: 1 }}>
+      <TopNavWithoutBatchrendering
+        templateName={templateName}
+        onSave={() => {}}
+        onExport={handleExport}
+        setTemplateName={setTemplateName}
+        onOpenExport={() => setShowModal(true)}
+        template="🎬 Fake Text Conversation Template"
       />
-
-      {/* Controls Panel */}
-      {!collapsed && (
-        <div
-          ref={panelRef}
-          style={{
-            width: `${panelWidth}px`,
-            padding: "2rem",
-            overflowY: "auto",
-            background: "#fff",
-            borderRight: "1px solid #eee",
-            position: "relative",
-            transition: isResizing ? "none" : "width 0.2s",
-          }}
-        >
-          <div
-            onMouseDown={() => setIsResizing(true)}
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: "6px",
-              cursor: "col-resize",
-              background: "#ddd", // 👈 always visible
-            }}
+      <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
+        {showModal && (
+          <ExportModal
+            showExport={showModal}
+            setShowExport={setShowModal}
+            isExporting={isExporting}
+            exportUrl={exportUrl}
+            onExport={handleExport}
           />
+        )}
 
-          <h2
+        {/* sidenav */}
+        <FakeTextVideoSideNavigation
+          activeSection={activeSection}
+          collapsed={collapsed}
+          setActiveSection={setActiveSection}
+          setCollapsed={setCollapsed}
+        />
+
+        {/* Controls Panel */}
+        {!collapsed && (
+          <div
+            ref={panelRef}
             style={{
-              marginBottom: "1.5rem",
-              fontSize: "1.5rem",
-              fontWeight: 600,
-              background: "linear-gradient(90deg,#ff4fa3,#8a4dff,#0077ff)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              width: `${panelWidth}px`,
+              padding: "1rem",
+              overflowY: "auto",
+              background: "#fff",
+              borderRight: "1px solid #eee",
+              position: "relative",
+              transition: isResizing ? "none" : "width 0.2s",
             }}
           >
-            🎬 Fake Text Conversation Template
-          </h2>
-
-          {activeSection === "messages" && (
-            <MessagesPanel chats={chats} setChats={setChats} />
-          )}
-          {activeSection === "voice" && (
-            <VoiceSelector
-              setVoice1={setVoice1}
-              setVoice2={setVoice2}
-              voice1={voice1}
-              voice2={voice2}
-              onUpdateTemplate={createJsonFileandAudio}
-              isUpdatingTemplate={isUpdatingTemplate} // ✅ new prop
+            <div
+              onMouseDown={() => setIsResizing(true)}
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: "6px",
+                cursor: "col-resize",
+                background: "#ddd", // 👈 always visible
+              }}
             />
-          )}
 
-          {activeSection === "avatar" && (
-            <AvatarSelector avatars={avatars} setAvatars={setAvatars} />
-          )}
+            {activeSection === "messages" && (
+              <MessagesPanel chats={chats} setChats={setChats} />
+            )}
+            {activeSection === "voice" && (
+              <VoiceSelector
+                setVoice1={setVoice1}
+                setVoice2={setVoice2}
+                voice1={voice1}
+                voice2={voice2}
+                onUpdateTemplate={createJsonFileandAudio}
+                isUpdatingTemplate={isUpdatingTemplate} // ✅ new prop
+              />
+            )}
 
-          {activeSection === "display" && (
-            <ChatStylePanel
-              chatTheme={chatTheme}
-              fontColor={fontColor}
-              fontFamily={fontFamily}
-              fontSize={fontSize}
-              setChatTheme={setChatTheme}
-              setFontColor={setFontColor}
-              setFontFamily={setFontFamily}
-              setFontSize={setFontSize}
-            />
-          )}
+            {activeSection === "avatar" && (
+              <AvatarSelector avatars={avatars} setAvatars={setAvatars} />
+            )}
 
-          {activeSection === "background" && (
-            <BackgroundVideoSelectorPanel
-              bgVideo={bgVideo}
-              setBgVideo={setBgVideo}
-            />
-          )}
+            {activeSection === "display" && (
+              <ChatStylePanel
+                chatTheme={chatTheme}
+                fontColor={fontColor}
+                fontFamily={fontFamily}
+                fontSize={fontSize}
+                setChatTheme={setChatTheme}
+                setFontColor={setFontColor}
+                setFontFamily={setFontFamily}
+                setFontSize={setFontSize}
+              />
+            )}
 
-          {activeSection === "music" && (
-            <MusicSelector
-              musicAudio={musicAudio}
-              setMusicAudio={setMusicAudio}
-            />
-          )}
+            {activeSection === "background" && (
+              <BackgroundVideoSelectorPanel
+                bgVideo={bgVideo}
+                setBgVideo={setBgVideo}
+              />
+            )}
 
-          {activeSection === "options" && (
-            <OptionSectionTrial
-              setShowSafeMargins={setShowSafeMargins}
-              showSafeMargins={showSafeMargins}
-              setAutoSave={setAutoSave}
-              autoSave={autoSave}
-              previewSize={previewSize}
-              setPreviewSize={setPreviewSize}
-            />
-          )}
-          {activeSection === "export" && (
-            <ExportSecTrial
-              handleExport={handleExport}
-              isExporting={isExporting}
-            />
-          )}
-        </div>
-      )}
+            {activeSection === "music" && (
+              <MusicSelector
+                musicAudio={musicAudio}
+                setMusicAudio={setMusicAudio}
+              />
+            )}
 
-      <ChatVideoPreview
-        chatdata={chatdata}
-        cycleBg={cycleBg}
-        duration={duration}
-        previewBg={previewBg}
-        previewScale={previewSize}
-        avatars={avatars}
-        bgVideo={bgVideo}
-        chatAudio={chatAudio}
-        chatTheme={chatTheme}
-        fontColor={fontColor}
-        fontFamily={fontFamily}
-        fontSize={fontSize}
-        musicAudio={musicAudio}
-        showSafeMargins={showSafeMargins}
-        onPreviewScaleChange={setPreviewSize}
-        onToggleSafeMargins={setShowSafeMargins}
-        //   timeShiftSec={}
-      />
+            
+          </div>
+        )}
+
+        <ChatVideoPreview
+          chatdata={chatdata}
+          cycleBg={cycleBg}
+          duration={duration}
+          previewBg={previewBg}
+          previewScale={previewSize}
+          avatars={avatars}
+          bgVideo={bgVideo}
+          chatAudio={chatAudio}
+          chatTheme={chatTheme}
+          fontColor={fontColor}
+          fontFamily={fontFamily}
+          fontSize={fontSize}
+          musicAudio={musicAudio}
+          showSafeMargins={showSafeMargins}
+          onPreviewScaleChange={setPreviewSize}
+          onToggleSafeMargins={setShowSafeMargins}
+          //   timeShiftSec={}
+        />
+      </div>
     </div>
   );
 };

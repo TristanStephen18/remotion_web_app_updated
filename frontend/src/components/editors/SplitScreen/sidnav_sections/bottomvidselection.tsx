@@ -50,7 +50,7 @@ export const BottomVideoSelectorPanel: React.FC<BgProps> = ({
         color: "#0077ff",
         fontSize: "clamp(0.9rem, 2.5vw, 1.1rem)"
       }}>
-        Background Video
+        Select your other video
       </h3>
 
       {/* Tabs */}
@@ -90,7 +90,7 @@ export const BottomVideoSelectorPanel: React.FC<BgProps> = ({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(min(120px, 100%), 1fr))",
+          gridTemplateColumns: "repeat(auto-fill, minmax(min(200px, 100%), 1fr))",
           gap: "0.75rem",
         }}
       >

@@ -891,6 +891,7 @@ export const KenBurnsSwipeBatchRendering: React.FC = () => {
                         if (c.exportUrl) {
                           const link = document.createElement("a");
                           link.href = c.exportUrl;
+                          console.log(c.exportUrl);
                           link.download = `batch_output_${i + 1}.mp4`;
                           link.click();
                         }

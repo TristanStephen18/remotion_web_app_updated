@@ -171,7 +171,7 @@ export const KenBurnsCarouselPreview: React.FC<{
         <button
           title="Increase Live Preview Size"
           onClick={() =>
-            onPreviewScaleChange(Math.min(previewScale + 0.05, 1.2))
+            onPreviewScaleChange(Math.min(previewScale + 0.05, 1.1))
           }
           style={{
             width: "30px",

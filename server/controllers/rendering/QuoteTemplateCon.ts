@@ -149,14 +149,14 @@ export const handleExport = async (req: Request, res: Response) => {
     const mp4File = `${baseFile}.mp4`;
     const mp4Path = path.join(outputDir, mp4File);
 
-    await renderMedia({
+    const job = await renderMedia({
       serveUrl: bundleLocation,
       composition: comp,
       codec: "h264",
       outputLocation: mp4Path,
     });
 
-    console.log("✅ Render complete!");
+    console.log("✅ Render complete!"+ job);
 
     let finalFile = mp4File;
     let finalPath = mp4Path;
@@ -172,9 +172,12 @@ export const handleExport = async (req: Request, res: Response) => {
     const host = req.get("host"); // e.g. tunnel-name.trycloudflare.com
     const origin = `${protocol}://${host}`;
 
+    console.log(origin)
+
     const fileUrl = `${origin}/videos/${finalFile}`;
 
     return res.json({
+      job,
       url: fileUrl,
       filename: finalFile,
       format: format || "mp4",

@@ -15,15 +15,14 @@ interface SidenavProps {
     | "text"
     | "background"
     | "music"
-    | "options"
-    | "export" >>;
+ >>;
 }
 
 export const RedditSideNavigation: React.FC<SidenavProps>=({collapsed, setCollapsed, activeSection, setActiveSection})=>{
     return (
         <div
         style={{
-          width: collapsed ? "60px" : "180px",
+          width: collapsed ? "60px" : "200px",
           background: "#fff",
           borderRight: "1px solid #eee",
           display: "flex",

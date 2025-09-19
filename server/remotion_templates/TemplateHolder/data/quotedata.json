@@ -1,8 +1,8 @@
 {
-  "quote": "The unexamined life is not worth living.",
-  "author": "Socrates",
-  "backgroundImage": "http://localhost:3000/bgimages/philosophy/bg1.jpg",
-  "fontFamily": "'Dancing Script', cursive",
+  "quote": "Your Quote",
+  "author": "Author",
+  "backgroundImage": "http://localhost:3000/bgimages/colors/bg11.jpg",
+  "fontFamily": "Cormorant Garamond, serif",
   "fontSize": 1,
-  "fontColor": "lightyellow"
+  "fontColor": "white"
 }

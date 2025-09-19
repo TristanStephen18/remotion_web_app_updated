@@ -185,7 +185,7 @@ export const TypingEditor: React.FC = () => {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#fafafa" }}>
+    <div style={{ display: "flex", height: "100%", flex: 1}}>
       {/* modal */}
       {showModal && exportUrl && (
         <DisplayerModal exportUrl={exportUrl} setShowModal={setShowModal} />

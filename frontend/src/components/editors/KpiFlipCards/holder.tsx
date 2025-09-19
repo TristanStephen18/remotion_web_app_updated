@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { DisplayerModal } from "../Global/modal";
+// import { DisplayerModal } from "../Global/modal";
 import { BackgroundSecTrial } from "../Global/sidenav_sections/bg";
 // import { OptionSectionTrial } from "../Global/sidenav_sections/options";
-import { ExportSecTrial } from "../Global/sidenav_sections/export";
+// import { ExportSecTrial } from "../Global/sidenav_sections/export";
 import { KpiFlipSideNav } from "./sidenav";
 import type { CardData } from "../../remotion_compositions/KpiFlipCards";
 import { KpiFlipCardsPreview } from "../../layout/EditorPreviews/KpiFlipCardsPreview";
@@ -12,11 +12,13 @@ import { CardStylingPanel } from "./sidenav_sections/cardstyling";
 import { AnimationSettingsPanel } from "./sidenav_sections/animation";
 import { CardDataPanel } from "./sidenav_sections/data";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
-import { TemplateOptionsSection } from "../Global/templatesettings";
+// import { TopNav } from "../../navigations/single_editors/trialtopnav";
+import { ExportModal } from "../../layout/modals/exportmodal";
+import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
 
 export const KpiFlipCardEditor: React.FC = () => {
   const [templateName, setTemplateName] = useState(
-    "🎬 Kpi Flip Cards Template"
+    "My Kpi Flip Cards Template"
   );
   //   const [quote, setQuote] = useState("Your Quote");
   //   const [author, setAuthor] = useState("Author");
@@ -87,22 +89,15 @@ export const KpiFlipCardEditor: React.FC = () => {
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    | "text"
-    | "layout"
-    | "style"
-    | "data"
-    | "animation"
-    | "background"
-    | "template"
-    | "export"
+    "text" | "layout" | "style" | "data" | "animation" | "background"
   >("text");
   const [collapsed, setCollapsed] = useState(false);
   // const [duration, setDuration] = useState(13);
 
   const [isUploading, setIsUploading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [isExporting, setIsExporting] = useState<string | null>(null);
   // const [autoSave, setAutoSave] = useState(false);
 
   // 🔹 Resizable panel state
@@ -168,7 +163,7 @@ export const KpiFlipCardEditor: React.FC = () => {
   };
 
   const handleExport = async (format: string) => {
-    setIsExporting(format);
+    setIsExporting(true);
     // console.log(backgroundImage)
     try {
       let finalImageUrl = backgroundImage;
@@ -220,195 +215,182 @@ export const KpiFlipCardEditor: React.FC = () => {
       console.error("Export failed:", error);
       alert(`Export failed: ${error || "Please try again."}`);
     } finally {
-      setIsExporting(null);
+      setIsExporting(false);
     }
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#fafafa" }}>
-      {/* modal */}
-      {showModal && exportUrl && (
-        <DisplayerModal exportUrl={exportUrl} setShowModal={setShowModal} />
-      )}
-
-      {/* sidenav */}
-      <KpiFlipSideNav
-        activeSection={activeSection}
-        collapsed={collapsed}
-        setActiveSection={setActiveSection}
-        setCollapsed={setCollapsed}
+    <div style={{ display: "flex", height: "100%", flex: 1 }}>
+      <TopNavWithoutBatchrendering
+        templateName={templateName}
+        
+        onSave={() => {}}
+        onExport={handleExport}
+        setTemplateName={setTemplateName}
+        onOpenExport={() => setShowModal(true)}
+        template="🎬 Kpi Flip Cards Template"
       />
-
-      {/* Controls Panel */}
-      {!collapsed && (
-        <div
-          ref={panelRef}
-          style={{
-            width: `${panelWidth}px`,
-            padding: "2rem",
-            overflowY: "auto",
-            background: "#fff",
-            borderRight: "1px solid #eee",
-            position: "relative",
-            transition: isResizing ? "none" : "width 0.2s",
-          }}
-        >
-          {/* Drag Handle */}
-          <div
-            onMouseDown={() => setIsResizing(true)}
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: "6px",
-              cursor: "col-resize",
-              background: "#ddd",
-            }}
+      {/* modal */}
+      <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
+        {showModal && (
+          <ExportModal
+            showExport={showModal}
+            setShowExport={setShowModal}
+            isExporting={isExporting}
+            exportUrl={exportUrl}
+            onExport={handleExport}
           />
+        )}
+        {/* sidenav */}
+        <KpiFlipSideNav
+          activeSection={activeSection}
+          collapsed={collapsed}
+          setActiveSection={setActiveSection}
+          setCollapsed={setCollapsed}
+        />
 
-          <h2
+        {/* Controls Panel */}
+        {!collapsed && (
+          <div
+            ref={panelRef}
             style={{
-              marginBottom: "1.5rem",
-              fontSize: "1.5rem",
-              fontWeight: 600,
-              background: "linear-gradient(90deg,#ff4fa3,#8a4dff,#0077ff)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              width: `${panelWidth}px`,
+              padding: "1rem",
+              overflowY: "auto",
+              background: "#fff",
+              borderRight: "1px solid #eee",
+              position: "relative",
+              transition: isResizing ? "none" : "width 0.2s",
             }}
           >
-            {templateName}
-          </h2>
-
-          {activeSection === "text" && (
-            <TextSettingsPanel
-              title={title}
-              setTitle={setTitle}
-              titleFontSize={titleFontSize}
-              setTitleFontSize={setTitleFontSize}
-              titleFontColor={titleFontColor}
-              setTitleFontColor={setTitleFontColor}
-              titleFontFamily={titleFontFamily}
-              setTitleFontFamily={setTitleFontFamily}
-              subtitle={subtitle}
-              setSubtitle={setSubtitle}
-              subtitleFontSize={subtitleFontSize}
-              setSubtitleFontSize={setSubtitleFontSize}
-              subtitleFontColor={subtitleFontColor}
-              setSubtitleFontColor={setSubtitleFontColor}
-              subtitleFontFamily={subtitleFontFamily}
-              setSubtitleFontFamily={setSubtitleFontFamily}
-            />
-          )}
-
-          {activeSection === "layout" && (
-            <CardsLayoutPanel
-              cardWidth={cardWidth}
-              setCardWidth={setCardWidth}
-              cardHeight={cardHeight}
-              setCardHeight={setCardHeight}
-              cardBorderRadius={cardBorderRadius}
-              setCardBorderRadius={setCardBorderRadius}
-              cardGrid={cardGrid}
-              setCardGrid={setCardGrid}
-            />
-          )}
-          {activeSection === "style" && (
-            <CardStylingPanel
-              cardBorderColor={cardBorderColor}
-              setCardBorderColor={setCardBorderColor}
-              cardLabelColor={cardLabelColor}
-              setCardLabelColor={setCardLabelColor}
-              cardLabelFontSize={cardLabelFontSize}
-              setCardLabelFontSize={setCardLabelFontSize}
-              cardContentFontFamily={cardContentFontFamily}
-              setCardContentFontFamily={setCardContentFontFamily}
-              cardBackColor={cardBackColor}
-              cardFrontColor={cardFrontColor}
-              setCardBackColor={setCardColorBack}
-              setCardFrontColor={setCardFrontColor}
-              valueFontSize={valueFontSize}
-              setValueFontSize={setValueFontSzie}
-            />
-          )}
-
-          {activeSection === "animation" && (
-            <AnimationSettingsPanel
-              delayStart={delayStart}
-              setDelayStart={setDelayStart}
-              delayStep={delayStep}
-              setDelayStep={setDelayStep}
-            />
-          )}
-
-          {activeSection === "data" && (
-            <CardDataPanel cardsData={cardsData} setCardsData={setCardsData} />
-          )}
-
-          {activeSection === "background" && (
-            <BackgroundSecTrial
-              backgroundImage={backgroundImage}
-              backgroundSource={backgroundSource}
-              handleFileUpload={handleFileUpload}
-              isUploading={isUploading}
-              setBackgroundImage={setBackgroundImage}
-              setBackgroundSource={setBackgroundSource}
-            />
-          )}
-
-          {activeSection === "template" && (
-            <TemplateOptionsSection
-              onEnterBatchRender={() => {
-                window.location.assign(
-                  "/template/kpiflipcards/mode/batchrendering"
-                );
+            {/* Drag Handle */}
+            <div
+              onMouseDown={() => setIsResizing(true)}
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: "6px",
+                cursor: "col-resize",
+                background: "#ddd",
               }}
-              templateName={templateName}
-              setTemplateName={setTemplateName}
             />
-          )}
 
-          {activeSection === "export" && (
-            <ExportSecTrial
-              handleExport={handleExport}
-              isExporting={isExporting}
-            />
-          )}
-        </div>
-      )}
+            {activeSection === "text" && (
+              <TextSettingsPanel
+                title={title}
+                setTitle={setTitle}
+                titleFontSize={titleFontSize}
+                setTitleFontSize={setTitleFontSize}
+                titleFontColor={titleFontColor}
+                setTitleFontColor={setTitleFontColor}
+                titleFontFamily={titleFontFamily}
+                setTitleFontFamily={setTitleFontFamily}
+                subtitle={subtitle}
+                setSubtitle={setSubtitle}
+                subtitleFontSize={subtitleFontSize}
+                setSubtitleFontSize={setSubtitleFontSize}
+                subtitleFontColor={subtitleFontColor}
+                setSubtitleFontColor={setSubtitleFontColor}
+                subtitleFontFamily={subtitleFontFamily}
+                setSubtitleFontFamily={setSubtitleFontFamily}
+              />
+            )}
 
-      <KpiFlipCardsPreview
-        backgroundImage={backgroundImage}
-        cardBorderColor={cardBorderColor}
-        cardBorderRadius={cardBorderRadius}
-        cardContentFontFamily={cardContentFontFamily}
-        cardGrid={cardGrid}
-        cardHeight={cardHeight}
-        cardLabelColor={cardLabelColor}
-        cardLabelFontSize={cardLabelFontSize}
-        cardWidth={cardWidth}
-        cardsData={cardsData}
-        cycleBg={cycleBg}
-        delayStart={delayStart}
-        delayStep={delayStep}
-        fps={30}
-        previewBg={previewBg}
-        subtitle={subtitle}
-        subtitleFontColor={subtitleFontColor}
-        subtitleFontFamily={subtitleFontFamily}
-        subtitleFontSize={subtitleFontSize}
-        title={title}
-        titleFontColor={titleFontColor}
-        titleFontFamily={titleFontFamily}
-        titleFontSize={titleFontSize}
-        cardColorBack={cardBackColor}
-        cardColorFront={cardFrontColor}
-        valueFontSize={valueFontSize}
-        previewScale={previewSize}
-        showSafeMargins={showSafeMargins}
-        onPreviewScaleChange={setPreviewSize}
-        onToggleSafeMargins={setShowSafeMargins}
-      />
+            {activeSection === "layout" && (
+              <CardsLayoutPanel
+                cardWidth={cardWidth}
+                setCardWidth={setCardWidth}
+                cardHeight={cardHeight}
+                setCardHeight={setCardHeight}
+                cardBorderRadius={cardBorderRadius}
+                setCardBorderRadius={setCardBorderRadius}
+                cardGrid={cardGrid}
+                setCardGrid={setCardGrid}
+              />
+            )}
+            {activeSection === "style" && (
+              <CardStylingPanel
+                cardBorderColor={cardBorderColor}
+                setCardBorderColor={setCardBorderColor}
+                cardLabelColor={cardLabelColor}
+                setCardLabelColor={setCardLabelColor}
+                cardLabelFontSize={cardLabelFontSize}
+                setCardLabelFontSize={setCardLabelFontSize}
+                cardContentFontFamily={cardContentFontFamily}
+                setCardContentFontFamily={setCardContentFontFamily}
+                cardBackColor={cardBackColor}
+                cardFrontColor={cardFrontColor}
+                setCardBackColor={setCardColorBack}
+                setCardFrontColor={setCardFrontColor}
+                valueFontSize={valueFontSize}
+                setValueFontSize={setValueFontSzie}
+              />
+            )}
+
+            {activeSection === "animation" && (
+              <AnimationSettingsPanel
+                delayStart={delayStart}
+                setDelayStart={setDelayStart}
+                delayStep={delayStep}
+                setDelayStep={setDelayStep}
+              />
+            )}
+
+            {activeSection === "data" && (
+              <CardDataPanel
+                cardsData={cardsData}
+                setCardsData={setCardsData}
+              />
+            )}
+
+            {activeSection === "background" && (
+              <BackgroundSecTrial
+                backgroundImage={backgroundImage}
+                backgroundSource={backgroundSource}
+                handleFileUpload={handleFileUpload}
+                isUploading={isUploading}
+                setBackgroundImage={setBackgroundImage}
+                setBackgroundSource={setBackgroundSource}
+              />
+            )}
+          </div>
+        )}
+
+        <KpiFlipCardsPreview
+          backgroundImage={backgroundImage}
+          cardBorderColor={cardBorderColor}
+          cardBorderRadius={cardBorderRadius}
+          cardContentFontFamily={cardContentFontFamily}
+          cardGrid={cardGrid}
+          cardHeight={cardHeight}
+          cardLabelColor={cardLabelColor}
+          cardLabelFontSize={cardLabelFontSize}
+          cardWidth={cardWidth}
+          cardsData={cardsData}
+          cycleBg={cycleBg}
+          delayStart={delayStart}
+          delayStep={delayStep}
+          fps={30}
+          previewBg={previewBg}
+          subtitle={subtitle}
+          subtitleFontColor={subtitleFontColor}
+          subtitleFontFamily={subtitleFontFamily}
+          subtitleFontSize={subtitleFontSize}
+          title={title}
+          titleFontColor={titleFontColor}
+          titleFontFamily={titleFontFamily}
+          titleFontSize={titleFontSize}
+          cardColorBack={cardBackColor}
+          cardColorFront={cardFrontColor}
+          valueFontSize={valueFontSize}
+          previewScale={previewSize}
+          showSafeMargins={showSafeMargins}
+          onPreviewScaleChange={setPreviewSize}
+          onToggleSafeMargins={setShowSafeMargins}
+        />
+      </div>
     </div>
   );
 };

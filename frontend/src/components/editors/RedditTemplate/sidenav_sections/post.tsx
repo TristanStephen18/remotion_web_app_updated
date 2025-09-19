@@ -18,6 +18,7 @@ export const RedditFetcherSidepanel: React.FC<RedditFetcherSidepanelProps> = ({
   return (
     <div
       style={{
+        marginTop: "40px",
         width: "100%", // always takes parent width
         maxWidth: "100%",
         background: "#fff",

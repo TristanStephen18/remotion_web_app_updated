@@ -1,7 +1,8 @@
 import type React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-// import { quoteeditornavs } from "../../../data/navdata_live_editor.tsx";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import Button from "@mui/material/Button";
 import { KpiFlipCardsNavs } from "../../../data/navdata_live_editor";
 
 interface SidenavProps {
@@ -10,7 +11,7 @@ interface SidenavProps {
   activeSection: string;
   setActiveSection: React.Dispatch<
     React.SetStateAction<
-      "text" | "layout" | "style" | "data" | "animation" | "background" | "template" | "export"
+      "text" | "layout" | "style" | "data" | "animation" | "background"
     >
   >;
 }
@@ -24,7 +25,7 @@ export const KpiFlipSideNav: React.FC<SidenavProps> = ({
   return (
     <div
       style={{
-        width: collapsed ? "60px" : "180px",
+        width: collapsed ? "60px" : "200px",
         background: "#fff",
         borderRight: "1px solid #eee",
         display: "flex",
@@ -32,6 +33,7 @@ export const KpiFlipSideNav: React.FC<SidenavProps> = ({
         transition: "width 0.3s",
         overflow: "hidden",
         position: "relative",
+        // height: "100vh", // ensures bottom button sticks
       }}
     >
       {/* Collapse Toggle */}
@@ -51,29 +53,58 @@ export const KpiFlipSideNav: React.FC<SidenavProps> = ({
       </button>
 
       {/* Nav Items */}
-      {KpiFlipCardsNavs.map(({ key, label, icon }) => (
-        <button
-          key={key}
-          onClick={() => setActiveSection(key as any)}
-          style={{
-            padding: "1rem",
-            textAlign: "left",
-            border: "none",
-            background: activeSection === key ? "#f5f5f5" : "transparent",
-            cursor: "pointer",
-            fontWeight: 600,
-            display: "flex",
-            alignItems: "center",
-            gap: collapsed ? "0" : "0.5rem",
-            justifyContent: collapsed ? "center" : "flex-start",
-          }}
-        >
-          {icon}
-          {!collapsed && label}
-        </button>
-      ))}
+      <div style={{ flex: 1 }}>
+        {KpiFlipCardsNavs.map(({ key, label, icon }) => (
+          <button
+            key={key}
+            onClick={() => setActiveSection(key as any)}
+            style={{
+              padding: "1rem",
+              textAlign: "left",
+              border: "none",
+              background: activeSection === key ? "#f5f5f5" : "transparent",
+              cursor: "pointer",
+              fontWeight: 600,
+              display: "flex",
+              alignItems: "center",
+              gap: collapsed ? "0" : "0.5rem",
+              justifyContent: collapsed ? "center" : "flex-start",
+              width: "100%",
+            }}
+          >
+            {icon}
+            {!collapsed && label}
+          </button>
+        ))}
+      </div>
+
+      {!collapsed && (
+        <div style={{ padding: "1rem" }}>
+          <Button
+            title="Switch to batch rendering mode?"
+            fullWidth={!collapsed}
+            variant="outlined"
+            startIcon={<SwapHorizIcon />}
+            onClick={() =>
+              window.location.assign(
+                "/template/kpiflipcards/mode/batchrendering"
+              )
+            }
+            sx={{
+              borderRadius: 2,
+              textTransform: "none",
+              fontWeight: 600,
+              borderColor: "#d81b60",
+              color: "#d81b60",
+              minWidth: collapsed ? "40px" : "auto",
+              justifyContent: collapsed ? "center" : "flex-start",
+              "&:hover": { borderColor: "#42a5f5", color: "#42a5f5" },
+            }}
+          >
+            Batch Output
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
-
-// export default SideNav;

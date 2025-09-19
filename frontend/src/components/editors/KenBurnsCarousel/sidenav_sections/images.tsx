@@ -100,7 +100,7 @@ export const KenBurnsImagesPanel: React.FC<{
     <div
       style={{
         marginBottom: "1.5rem",
-        padding: "1rem",
+        padding: "2rem",
         background: "#fff",
         borderRadius: 12,
         boxShadow: "0 6px 18px rgba(12,24,48,0.06)",

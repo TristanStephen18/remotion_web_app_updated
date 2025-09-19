@@ -131,7 +131,7 @@ export const CurveLineTextPanel: React.FC<TextPanelProps> = ({
         </label>
       </div>
       {/* Font Family Selection */}
-      <div style={{ marginBottom: "1.5rem" }}>
+      <div style={cardStyle}>
         <div
           style={{ marginBottom: "0.75rem", color: "#ff4fa3", fontWeight: 600 }}
         >

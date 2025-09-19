@@ -161,7 +161,7 @@ export const BackgroundSecTrial: React.FC<BgProps> = ({
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(90px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(200px, 100%), 1fr))",
               gap: "0.75rem",
             }}
           >
@@ -174,7 +174,7 @@ export const BackgroundSecTrial: React.FC<BgProps> = ({
                   alt={`bg${i + 1}`}
                   style={{
                     width: "100%",
-                    height: "70px",
+                    height: "100px",
                     objectFit: "cover",
                     borderRadius: "8px",
                     border:

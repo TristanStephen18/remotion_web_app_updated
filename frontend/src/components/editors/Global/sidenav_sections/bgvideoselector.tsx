@@ -90,7 +90,7 @@ export const BackgroundVideoSelectorPanel: React.FC<BgProps> = ({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(min(120px, 100%), 1fr))",
+          gridTemplateColumns: "repeat(auto-fill, minmax(min(180px, 100%), 1fr))",
           gap: "0.75rem",
         }}
       >
@@ -105,6 +105,7 @@ export const BackgroundVideoSelectorPanel: React.FC<BgProps> = ({
               cursor: "pointer",
               transition: "transform 0.2s ease",
               aspectRatio: "16/9",
+              width: '100%'
             }}
             onClick={() => setBgVideo(videoUrl)}
           >

@@ -11,7 +11,7 @@ interface SidenavProps {
     collapsed: boolean;
     setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
     activeSection: string;
-    setActiveSection: React.Dispatch<React.SetStateAction<  "upload"| "bottomvid" |"settings" | "options" | "export" >>;
+    setActiveSection: React.Dispatch<React.SetStateAction<  "upload"| "bottomvid" |"settings"  >>;
 }
 
 export const SplitScreenSideNavs: React.FC<SidenavProps>=({collapsed, setCollapsed, activeSection, setActiveSection})=>{

@@ -27,9 +27,12 @@ export const MusicSelector: React.FC<{
 
     const newAudio = new Audio(src);
     audioRef.current = newAudio;
-    newAudio.play().then(() => setPlaying(src)).catch(() => {
-      console.warn("Autoplay prevented ❗");
-    });
+    newAudio
+      .play()
+      .then(() => setPlaying(src))
+      .catch(() => {
+        console.warn("Autoplay prevented ❗");
+      });
 
     newAudio.onended = () => setPlaying(null);
   };
@@ -47,19 +50,22 @@ export const MusicSelector: React.FC<{
     <div
       style={{
         marginBottom: "1.5rem",
-        padding: "1rem",
+        padding: "clamp(0.75rem, 2vw, 1rem)",
         background: "#fff",
-        borderRadius: 12,
-        boxShadow: "0 6px 18px rgba(12,24,48,0.06)",
-        border: "1px solid #eef2ff",
+        borderRadius: "12px",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+        border: "1px solid #eee",
+        width: "100%",
+        boxSizing: "border-box",
       }}
     >
-      <h3 style={{ marginBottom: 16, color: "#0b63ff" }}>🎵 Background Music</h3>
+      <h3 style={{ marginBottom: 16, color: "#0b63ff" }}>
+        🎵 Background Music
+      </h3>
 
       <p style={{ fontSize: 13, color: "#555", marginBottom: 16 }}>
-        Select a <strong>background track</strong> for your conversation.  
-        You can <em>Preview</em> before selecting.  
-        Click again to unselect or pause.
+        Select a <strong>background track</strong> for your conversation. You
+        can <em>Preview</em> before selecting. Click again to unselect or pause.
       </p>
 
       <div

@@ -1,15 +1,13 @@
 {
   "phrase": {
     "lines": [
-      "Embrace the",
-      "unexpected path",
-      "it often leads",
-      "to the greatest discoveries"
+      "Dream big, start small",
+      "but start today"
     ],
-    "category": "journey",
-    "mood": "wise"
+    "category": "wisdom",
+    "mood": "iconic"
   },
-  "backgroundIndex": 0,
-  "fontIndex": 0,
-  "audioIndex": 0
+  "backgroundIndex": 10,
+  "fontIndex": 1,
+  "audioIndex": 1
 }

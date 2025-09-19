@@ -84,6 +84,7 @@ const RemotionChatPlayer: React.FC<{
         timeShiftSec,
         avatars,
       }}
+      initiallyMuted
       durationInFrames={30 * duration}
       compositionWidth={1080}
       compositionHeight={1920}
@@ -217,7 +218,7 @@ export const ChatVideoPreview: React.FC<{
         <button
           title="Increase Live Preview Size"
           onClick={() =>
-            onPreviewScaleChange(Math.min(previewScale + 0.05, 1.2))
+            onPreviewScaleChange(Math.min(previewScale + 0.05, 1.1))
           }
           style={{
             width: "30px",

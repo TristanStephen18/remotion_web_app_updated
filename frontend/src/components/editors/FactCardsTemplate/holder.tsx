@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { DisplayerModal } from "../Global/modal";
+// import { DisplayerModal } from "../Global/modal";
 import { BackgroundSecTrial } from "../Global/sidenav_sections/bg";
-import { ExportSecTrial } from "../Global/sidenav_sections/export";
+// import { ExportSecTrial } from "../Global/sidenav_sections/export";
 // import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import { FactCardsSidenav } from "./sidenav";
 import { IntroOutroPanel } from "./sidenave_sections/endpoints";
@@ -11,10 +11,13 @@ import { TypographyPanelFactsTemplate } from "./sidenave_sections/typo";
 import { FacstCardPreview } from "../../layout/EditorPreviews/FacstCardTemplate";
 import { DurationSection } from "./sidenave_sections/duration";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
-import { TemplateOptionsSection } from "../Global/templatesettings";
+// import { TemplateOptionsSection } from "../Global/templatesettings";
+// import { TopNav } from "../../navigations/single_editors/trialtopnav";
+import { ExportModal } from "../../layout/modals/exportmodal";
+import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
 
 export const FactCardsEditor: React.FC = () => {
-  const [templateName, setTemplateName] = useState("🎬 Fact Cards Template");
+  const [templateName, setTemplateName] = useState("My Fact Cards Template");
   const [intro, setIntro] = useState<Slide>({
     title: "Your intro title",
     subtitle: "Your intro subtitle",
@@ -47,20 +50,14 @@ export const FactCardsEditor: React.FC = () => {
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    | "background"
-    | "typography"
-    | "export"
-    | "endpoints"
-    | "facts"
-    | "duration"
-    | "template"
+    "background" | "typography" | "endpoints" | "facts" | "duration"
   >("endpoints");
   const [collapsed, setCollapsed] = useState(false);
 
   const [isUploading, setIsUploading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [isExporting, setIsExporting] = useState<string | null>(null);
   // const [autoSave, setAutoSave] = useState(false);
   const [duration, setDuration] = useState(20);
 
@@ -127,7 +124,7 @@ export const FactCardsEditor: React.FC = () => {
   };
 
   const handleExport = async (format: string) => {
-    setIsExporting(format);
+    setIsExporting(true);
     // console.log(backgroundImage)
     try {
       let finalImageUrl = backgroundImage;
@@ -167,112 +164,117 @@ export const FactCardsEditor: React.FC = () => {
       console.error("Export failed:", error);
       alert(`Export failed: ${error || "Please try again."}`);
     } finally {
-      setIsExporting(null);
+      setIsExporting(false);
     }
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#fafafa" }}>
-      {/* modal */}
-      {showModal && exportUrl && (
-        <DisplayerModal exportUrl={exportUrl} setShowModal={setShowModal} />
-      )}
-
-      {/* sidenav */}
-      <FactCardsSidenav
-        activeSection={activeSection}
-        collapsed={collapsed}
-        setActiveSection={setActiveSection}
-        setCollapsed={setCollapsed}
+    <div style={{ display: "flex", height: "100%", flex: 1 }}>
+      <TopNavWithoutBatchrendering
+        templateName={templateName}
+        onSave={() => {}}
+        onExport={handleExport}
+        setTemplateName={setTemplateName}
+        onOpenExport={() => setShowModal(true)}
+        template="🎬 Facts Cards Template"
       />
 
-      {/* Controls Panel */}
-      {!collapsed && (
-        <div
-          ref={panelRef}
-          style={{
-            width: `${panelWidth}px`,
-            padding: "2rem",
-            overflowY: "auto",
-            background: "#fff",
-            borderRight: "1px solid #eee",
-            position: "relative",
-            transition: isResizing ? "none" : "width 0.2s",
-          }}
-        >
-          {/* Drag Handle */}
-          <div
-            onMouseDown={() => setIsResizing(true)}
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: "6px",
-              cursor: "col-resize",
-              background: "#ddd",
-            }}
+      <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
+        {showModal && (
+          <ExportModal
+            showExport={showModal}
+            setShowExport={setShowModal}
+            isExporting={isExporting}
+            exportUrl={exportUrl}
+            onExport={handleExport}
           />
+        )}
 
-          <h2
+        {/* sidenav */}
+        <FactCardsSidenav
+          activeSection={activeSection}
+          collapsed={collapsed}
+          setActiveSection={setActiveSection}
+          setCollapsed={setCollapsed}
+        />
+
+        {/* Controls Panel */}
+        {!collapsed && (
+          <div
+            ref={panelRef}
             style={{
-              marginBottom: "1.5rem",
-              fontSize: "1.5rem",
-              fontWeight: 600,
-              background: "linear-gradient(90deg,#ff4fa3,#8a4dff,#0077ff)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              width: `${panelWidth}px`,
+              padding: "1rem",
+              overflowY: "auto",
+              background: "#fff",
+              borderRight: "1px solid #eee",
+              position: "relative",
+              transition: isResizing ? "none" : "width 0.2s",
             }}
           >
-            {templateName}
-          </h2>
-
-          {activeSection === "facts" && (
-            <FactPanel factsArray={factsArray} setFactsArray={setFactsArray} />
-          )}
-
-          {activeSection === "endpoints" && (
-            <IntroOutroPanel
-              //   handleAISuggestion={handleAISuggestion}
-              intro={intro}
-              outro={outro}
-              setIntro={setIntro}
-              setOutro={setOutro}
+            {/* Drag Handle */}
+            <div
+              onMouseDown={() => setIsResizing(true)}
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: "6px",
+                cursor: "col-resize",
+                background: "#ddd",
+              }}
             />
-          )}
 
-          {activeSection === "background" && (
-            <BackgroundSecTrial
-              backgroundImage={backgroundImage}
-              backgroundSource={backgroundSource}
-              handleFileUpload={handleFileUpload}
-              isUploading={isUploading}
-              setBackgroundImage={setBackgroundImage}
-              setBackgroundSource={setBackgroundSource}
-            />
-          )}
+            {activeSection === "facts" && (
+              <FactPanel
+                factsArray={factsArray}
+                setFactsArray={setFactsArray}
+              />
+            )}
 
-          {activeSection === "typography" && (
-            <TypographyPanelFactsTemplate
-              setSubtitleFontColor={setSubtitleFontColor}
-              setSubtitleFontFamily={setSubtitleFontFamily}
-              setSubtitleFontSize={setSubtitleFontSize}
-              setTitleFontColor={setTitleFontColor}
-              setTitleFontFamily={setTitleFontFamily}
-              setTitleFontSize={setTitleFontSize}
-              subtitleFontColor={subtitleFontColor}
-              subtitleFontFamily={subtitleFontFamily}
-              subtitleFontSize={subtitleFontSize}
-              titleFontColor={titleFontColor}
-              titleFontFamily={titlefontFamily}
-              titleFontSize={titleFontSize}
-            />
-          )}
-          {activeSection === "duration" && (
-            <DurationSection duration={duration} setDuration={setDuration} />
-          )}
+            {activeSection === "endpoints" && (
+              <IntroOutroPanel
+                //   handleAISuggestion={handleAISuggestion}
+                intro={intro}
+                outro={outro}
+                setIntro={setIntro}
+                setOutro={setOutro}
+              />
+            )}
 
-          {activeSection === "template" && (
+            {activeSection === "background" && (
+              <BackgroundSecTrial
+                backgroundImage={backgroundImage}
+                backgroundSource={backgroundSource}
+                handleFileUpload={handleFileUpload}
+                isUploading={isUploading}
+                setBackgroundImage={setBackgroundImage}
+                setBackgroundSource={setBackgroundSource}
+              />
+            )}
+
+            {activeSection === "typography" && (
+              <TypographyPanelFactsTemplate
+                setSubtitleFontColor={setSubtitleFontColor}
+                setSubtitleFontFamily={setSubtitleFontFamily}
+                setSubtitleFontSize={setSubtitleFontSize}
+                setTitleFontColor={setTitleFontColor}
+                setTitleFontFamily={setTitleFontFamily}
+                setTitleFontSize={setTitleFontSize}
+                subtitleFontColor={subtitleFontColor}
+                subtitleFontFamily={subtitleFontFamily}
+                subtitleFontSize={subtitleFontSize}
+                titleFontColor={titleFontColor}
+                titleFontFamily={titlefontFamily}
+                titleFontSize={titleFontSize}
+              />
+            )}
+            {activeSection === "duration" && (
+              <DurationSection duration={duration} setDuration={setDuration} />
+            )}
+
+            {/* {activeSection === "template" && (
             <TemplateOptionsSection
               onEnterBatchRender={() => {
                 window.location.assign(
@@ -289,29 +291,30 @@ export const FactCardsEditor: React.FC = () => {
               handleExport={handleExport}
               isExporting={isExporting}
             />
-          )}
-        </div>
-      )}
+          )} */}
+          </div>
+        )}
 
-      <FacstCardPreview
-        backgroundImage={backgroundImage}
-        cycleBg={cycleBg}
-        facts={factsArray}
-        fontColorTitle={titleFontColor}
-        fontFamilyTitle={titlefontFamily}
-        fontColorSubtitle={subtitleFontColor}
-        fontFamilySubtitle={subtitleFontFamily}
-        fontSizeSubtitle={subtitleFontSize}
-        fontSizeTitle={titleFontSize}
-        intro={intro}
-        outro={outro}
-        previewBg={previewBg}
-        duration={duration}
-        showSafeMargins={showSafeMargins}
-        previewScale={previewSize}
-        onPreviewScaleChange={setPreviewSize}
-        onToggleSafeMargins={setShowSafeMargins}
-      />
+        <FacstCardPreview
+          backgroundImage={backgroundImage}
+          cycleBg={cycleBg}
+          facts={factsArray}
+          fontColorTitle={titleFontColor}
+          fontFamilyTitle={titlefontFamily}
+          fontColorSubtitle={subtitleFontColor}
+          fontFamilySubtitle={subtitleFontFamily}
+          fontSizeSubtitle={subtitleFontSize}
+          fontSizeTitle={titleFontSize}
+          intro={intro}
+          outro={outro}
+          previewBg={previewBg}
+          duration={duration}
+          showSafeMargins={showSafeMargins}
+          previewScale={previewSize}
+          onPreviewScaleChange={setPreviewSize}
+          onToggleSafeMargins={setShowSafeMargins}
+        />
+      </div>
     </div>
   );
 };

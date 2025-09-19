@@ -1,16 +1,21 @@
 import React, { useState, useRef, useEffect } from "react";
-import { DisplayerModal } from "../Global/modal";
+// import { DisplayerModal } from "../Global/modal";
 // import { OptionSectionTrial } from "../Global/sidenav_sections/options";
-import { ExportSecTrial } from "../Global/sidenav_sections/export";
+// import { ExportSecTrial } from "../Global/sidenav_sections/export";
 import { KenBurnsSideNav } from "./sidenav";
 import { KenBurnsCarouselPreview } from "../../layout/EditorPreviews/KenBurnsCarouselPreview";
 import { KenBurnsImagesPanel } from "./sidenav_sections/images";
 import { ProportionsPanel } from "./sidenav_sections/proportions";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
-import { TemplateOptionsSection } from "../Global/templatesettings";
+// import { TemplateOptionsSection } from "../Global/templatesettings";
+import { ExportModal } from "../../layout/modals/exportmodal";
+// import { TopNav } from "../../navigations/single_editors/trialtopnav";
+import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
 
 export const KernBurnsEditor: React.FC = () => {
-  const [templateName, setTemplateName] = useState("🎬 Ken Burns Swipe Template");
+  const [templateName, setTemplateName] = useState(
+    "🎬 Ken Burns Swipe Template"
+  );
   const [previewSize, setPreviewSize] = useState(1);
 
   const [images, setImages] = React.useState<string[]>([
@@ -24,19 +29,18 @@ export const KernBurnsEditor: React.FC = () => {
   const [cardWidthRatio, setCardWidthRatio] = React.useState<number>(0.75);
 
   const [cardHeightRatio, setCardHeightRatio] = React.useState<number>(0.75);
-  const blurBgOpacity =0.0;
+  const blurBgOpacity = 0.0;
   // const [blurBgOpacity, setBlurBgOpacity] = React.useState<number>(0.0);
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    "images" | "proportions" | "template" | "export"
+    "images" | "proportions"
   >("images");
   const [collapsed, setCollapsed] = useState(false);
 
-  // const [isUploading, setIsUploading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [isExporting, setIsExporting] = useState<string | null>(null);
 
   // 🔹 Resizable panel state
   const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
@@ -78,7 +82,7 @@ export const KernBurnsEditor: React.FC = () => {
     const updatedimages = images.map((img) => `${prefix}${img}`);
 
     console.log(updatedimages);
-    setIsExporting(format);
+    setIsExporting(true);
     try {
       const response = await fetch("/generatevideo/kenburnsswipe", {
         method: "POST",
@@ -104,110 +108,101 @@ export const KernBurnsEditor: React.FC = () => {
       console.error("Export failed:", error);
       alert(`Export failed: ${error || "Please try again."}`);
     } finally {
-      setIsExporting(null);
+      setIsExporting(false);
     }
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#fafafa" }}>
-      {/* modal */}
-      {showModal && exportUrl && (
-        <DisplayerModal exportUrl={exportUrl} setShowModal={setShowModal} />
-      )}
-
-      {/* sidenav */}
-      <KenBurnsSideNav
-        activeSection={activeSection}
-        collapsed={collapsed}
-        setActiveSection={setActiveSection}
-        setCollapsed={setCollapsed}
+    <div style={{ display: "flex", height: "100%", flex: 1 }}>
+      <TopNavWithoutBatchrendering
+        templateName={templateName}
+        onSave={() => {}}
+        onExport={handleExport}
+        setTemplateName={setTemplateName}
+        onOpenExport={() => setShowModal(true)}
+        template="🎬 Ken Burns Carousel Template"
       />
-
-      {/* Controls Panel */}
-      {!collapsed && (
-        <div
-          ref={panelRef}
-          style={{
-            width: `${panelWidth}px`,
-            padding: "2rem",
-            overflowY: "auto",
-            background: "#fff",
-            borderRight: "1px solid #eee",
-            position: "relative",
-            transition: isResizing ? "#add" : "width 0.2s",
-          }}
-        >
-          {/* Drag Handle */}
-          <div
-            onMouseDown={() => setIsResizing(true)}
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: "6px",
-              cursor: "col-resize",
-              background: "#ddd",
-            }}
+      {/* modal */}
+      <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
+        {showModal && (
+          <ExportModal
+            showExport={showModal}
+            setShowExport={setShowModal}
+            isExporting={isExporting}
+            exportUrl={exportUrl}
+            onExport={handleExport}
           />
+        )}
 
-          <h2
+        {/* sidenav */}
+        <KenBurnsSideNav
+          activeSection={activeSection}
+          collapsed={collapsed}
+          setActiveSection={setActiveSection}
+          setCollapsed={setCollapsed}
+        />
+
+        {/* Controls Panel */}
+        {!collapsed && (
+          <div
+            ref={panelRef}
             style={{
-              marginBottom: "1.5rem",
-              fontSize: "1.5rem",
-              fontWeight: 600,
-              background: "linear-gradient(90deg,#ff4fa3,#8a4dff,#0077ff)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              width: `${panelWidth}px`,
+              padding: "1rem",
+              overflowY: "auto",
+              background: "#fff",
+              borderRight: "1px solid #eee",
+              position: "relative",
+              transition: isResizing ? "#add" : "width 0.2s",
             }}
           >
-            {templateName}
-          </h2>
-
-          {activeSection === "images" && (
-            <KenBurnsImagesPanel images={images} setImages={setImages} setDuration={setDuration} />
-          )}
-
-          {activeSection === "proportions" && (
-            <ProportionsPanel
-              cardHeightRatio={cardHeightRatio}
-              cardWidthRatio={cardWidthRatio}
-              setCardHeightRatio={setCardHeightRatio}
-              setCardWidthRatio={setCardWidthRatio}
+            {/* Drag Handle */}
+            <div
+              onMouseDown={() => setIsResizing(true)}
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: "6px",
+                cursor: "col-resize",
+                background: "#ddd",
+              }}
             />
-          )}
 
-          {activeSection === "template" && (
-            <TemplateOptionsSection
-            onEnterBatchRender={()=>{
-              window.location.assign("/template/kenburnscarousel/mode/batchrendering")
-            }}
-            setTemplateName={setTemplateName}
-            templateName={templateName}
-            />
-          )}
-          {activeSection === "export" && (
-            <ExportSecTrial
-              handleExport={handleExport}
-              isExporting={isExporting}
-            />
-          )}
-        </div>
-      )}
+            {activeSection === "images" && (
+              <KenBurnsImagesPanel
+                images={images}
+                setImages={setImages}
+                setDuration={setDuration}
+              />
+            )}
 
-      <KenBurnsCarouselPreview
-        cycleBg={cycleBg}
-        duration={duration}
-        images={images}
-        previewBg={previewBg}
-        cardHeightRatio={cardHeightRatio}
-        blurBgOpacity={blurBgOpacity}
-        cardWidthRatio={cardWidthRatio}
-        previewScale={previewSize}
-        showSafeMargins={showSafeMargins}
-        onPreviewScaleChange={setPreviewSize}
-        onToggleSafeMargins={setShowSafeMargins}
-      />
+            {activeSection === "proportions" && (
+              <ProportionsPanel
+                cardHeightRatio={cardHeightRatio}
+                cardWidthRatio={cardWidthRatio}
+                setCardHeightRatio={setCardHeightRatio}
+                setCardWidthRatio={setCardWidthRatio}
+              />
+            )}
+          </div>
+        )}
+
+        <KenBurnsCarouselPreview
+          cycleBg={cycleBg}
+          duration={duration}
+          images={images}
+          previewBg={previewBg}
+          cardHeightRatio={cardHeightRatio}
+          blurBgOpacity={blurBgOpacity}
+          cardWidthRatio={cardWidthRatio}
+          previewScale={previewSize}
+          showSafeMargins={showSafeMargins}
+          onPreviewScaleChange={setPreviewSize}
+          onToggleSafeMargins={setShowSafeMargins}
+        />
+      </div>
     </div>
   );
 };

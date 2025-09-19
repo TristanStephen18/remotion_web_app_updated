@@ -35,14 +35,14 @@ export const PhraseSideNav: React.FC<SideNavProps> = ({
   }, [phrase, category, mood, setPhraseData]);
   return (
     <div
-      style={{
-        marginBottom: "1.5rem",
-        padding: "1rem",
-        background: "#fff",
-        borderRadius: "12px",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
-        border: "1px solid #eee",
-      }}
+      // style={{
+      //   marginBottom: "1.5rem",
+      //   padding: "1rem",
+      //   background: "#fff",
+      //   borderRadius: "12px",
+      //   boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+      //   border: "1px solid #eee",
+      // }}
     >
       {/* 🎭 Mood Selection */}
       <div

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { DisplayerModal } from "../Global/modal";
+// import { DisplayerModal } from "../Global/modal";
 import { BackgroundSecTrial } from "../Global/sidenav_sections/bg";
-import { ExportSecTrial } from "../Global/sidenav_sections/export";
+// import { ExportSecTrial } from "../Global/sidenav_sections/export";
 // import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import { BarGraphNavs } from "./sidenav";
 import { BarGraphTemplatePreview } from "../../layout/EditorPreviews/BarGraphPreview";
@@ -10,11 +10,14 @@ import { TypographyPanelBarGraphTemplate } from "./sidenav_sections/header";
 import { DataPanel } from "./sidenav_sections/dataenrty";
 import { BarGraphControlsPanel } from "./sidenav_sections/bargraphconfig";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
-import { TemplateOptionsSection } from "../Global/templatesettings";
+// import { TemplateOptionsSection } from "../Global/templatesettings";
+// import { TopNav } from "../../navigations/single_editors/trialtopnav";
+import { ExportModal } from "../../layout/modals/exportmodal";
+import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
 
 export const BarGraphEditor: React.FC = () => {
   const [templateName, setTemplateName] = useState(
-    "🎬 Bar Graph Analytics Template"
+    "My Bar Graph Analytics Template"
   );
   const [previewSize, setPreviewSize] = useState(1);
 
@@ -54,14 +57,14 @@ export const BarGraphEditor: React.FC = () => {
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    "title" | "graph" | "data" | "background" | "template" | "export"
+    "title" | "graph" | "data" | "background" 
   >("title");
   const [collapsed, setCollapsed] = useState(false);
 
   const [isUploading, setIsUploading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [isExporting, setIsExporting] = useState<string | null>(null);
   // const [autoSave, setAutoSave] = useState(false);
   const [duration, setDuration] = useState(8);
 
@@ -128,7 +131,7 @@ export const BarGraphEditor: React.FC = () => {
   };
 
   const handleExport = async (format: string) => {
-    setIsExporting(format);
+    setIsExporting(true);
     console.log(backgroundImage);
     try {
       let finalImageUrl = backgroundImage;
@@ -173,163 +176,151 @@ export const BarGraphEditor: React.FC = () => {
       console.error("Export failed:", error);
       alert(`Export failed: ${error || "Please try again."}`);
     } finally {
-      setIsExporting(null);
+      setIsExporting(false);
     }
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#fafafa" }}>
+    <div style={{ display: "flex", height: "100%", flex: 1 }}>
       {/* modal */}
-      {showModal && exportUrl && (
-        <DisplayerModal exportUrl={exportUrl} setShowModal={setShowModal} />
-      )}
 
-      {/* sidenav */}
-      <BarGraphNavs
-        activeSection={activeSection}
-        collapsed={collapsed}
-        setActiveSection={setActiveSection}
-        setCollapsed={setCollapsed}
+      <TopNavWithoutBatchrendering
+        templateName={templateName}
+        
+        onSave={() => {}}
+        onExport={handleExport}
+        setTemplateName={setTemplateName}
+        onOpenExport={() => setShowModal(true)}
+        template="🎬 Bar Graph Analytics Template"
       />
 
-      {/* Controls Panel */}
-      {!collapsed && (
-        <div
-          ref={panelRef}
-          style={{
-            width: `${panelWidth}px`,
-            padding: "2rem",
-            overflowY: "auto",
-            background: "#fff",
-            borderRight: "1px solid #eee",
-            position: "relative",
-            transition: isResizing ? "none" : "width 0.2s",
-          }}
-        >
-          {/* Drag Handle */}
-          <div
-            onMouseDown={() => setIsResizing(true)}
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: "6px",
-              cursor: "col-resize",
-              background: "#ddd",
-            }}
+      <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
+        {showModal && (
+          <ExportModal
+            showExport={showModal}
+            setShowExport={setShowModal}
+            isExporting={isExporting}
+            exportUrl={exportUrl}
+            onExport={handleExport}
           />
+        )}
 
-          <h2
+        {/* sidenav */}
+        <BarGraphNavs
+          activeSection={activeSection}
+          collapsed={collapsed}
+          setActiveSection={setActiveSection}
+          setCollapsed={setCollapsed}
+        />
+
+        {/* Controls Panel */}
+        {!collapsed && (
+          <div
+            ref={panelRef}
             style={{
-              marginBottom: "1.5rem",
-              fontSize: "1.5rem",
-              fontWeight: 600,
-              background: "linear-gradient(90deg,#ff4fa3,#8a4dff,#0077ff)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              width: `${panelWidth}px`,
+              padding: "1rem",
+              overflowY: "auto",
+              background: "#fff",
+              borderRight: "1px solid #eee",
+              position: "relative",
+              transition: isResizing ? "none" : "width 0.2s",
             }}
           >
-            {templateName}
-          </h2>
-
-          {activeSection === "title" && (
-            <TypographyPanelBarGraphTemplate
-              accent={accent}
-              fontFamily={fontFamily}
-              setAccent={setAccent}
-              setFontFamily={setFontFamily}
-              setSubtitleFontColor={setSubtitleFontColor}
-              setSubtitleFontSize={setSubtitleFontSize}
-              setTitleFontColor={setTitleFontColor}
-              setTitleFontSize={setTitleFontSize}
-              subtitleFontColor={subtitleFontColor}
-              subtitleFontSize={subtitleFontSize}
-              titleFontColor={titleFontColor}
-              titleFontSize={titleFontSize}
-              title={title}
-              setSubtitle={setSubtitle}
-              setTitle={setTitle}
-              subtitle={subTitle}
-            />
-          )}
-
-          {activeSection === "data" && (
-            <DataPanel
-              data={data}
-              setData={setData}
-              duration={duration}
-              setDuration={setDuration}
-            />
-          )}
-
-          {activeSection === "graph" && (
-            <BarGraphControlsPanel
-              barGap={barGap}
-              barHeight={barHeight}
-              barLabelFontSize={barLabelFontSize}
-              barValueFontSize={barValueFontSize}
-              setBarGap={setBarGap}
-              setBarHeight={setBarHeight}
-              setBarLabelFontSize={setBarLabelFontSize}
-              setBarValueFontSize={setBarValueFontSize}
-            />
-          )}
-
-          {activeSection === "background" && (
-            <BackgroundSecTrial
-              backgroundImage={backgroundImage}
-              backgroundSource={backgroundSource}
-              handleFileUpload={handleFileUpload}
-              isUploading={isUploading}
-              setBackgroundImage={setBackgroundImage}
-              setBackgroundSource={setBackgroundSource}
-            />
-          )}
-          {activeSection === "template" && (
-            <TemplateOptionsSection
-              setTemplateName={setTemplateName}
-              templateName={templateName}
-              onEnterBatchRender={() => {
-                window.location.assign(
-                  "/template/bargraph/mode/batchrendering"
-                );
+            {/* Drag Handle */}
+            <div
+              onMouseDown={() => setIsResizing(true)}
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: "6px",
+                cursor: "col-resize",
+                background: "#ddd",
               }}
             />
-          )}
 
-          {activeSection === "export" && (
-            <ExportSecTrial
-              handleExport={handleExport}
-              isExporting={isExporting}
-            />
-          )}
-        </div>
-      )}
+            {activeSection === "title" && (
+              <TypographyPanelBarGraphTemplate
+                accent={accent}
+                fontFamily={fontFamily}
+                setAccent={setAccent}
+                setFontFamily={setFontFamily}
+                setSubtitleFontColor={setSubtitleFontColor}
+                setSubtitleFontSize={setSubtitleFontSize}
+                setTitleFontColor={setTitleFontColor}
+                setTitleFontSize={setTitleFontSize}
+                subtitleFontColor={subtitleFontColor}
+                subtitleFontSize={subtitleFontSize}
+                titleFontColor={titleFontColor}
+                titleFontSize={titleFontSize}
+                title={title}
+                setSubtitle={setSubtitle}
+                setTitle={setTitle}
+                subtitle={subTitle}
+              />
+            )}
 
-      <BarGraphTemplatePreview
-        accent={accent}
-        backgroundImage={backgroundImage}
-        cycleBg={cycleBg}
-        data={data}
-        previewBg={previewBg}
-        title={title}
-        titleFontColor={titleFontColor}
-        barGap={barGap}
-        barHeight={barHeight}
-        barLabelFontSize={barLabelFontSize}
-        barValueFontSize={barValueFontSize}
-        subtitle={subTitle}
-        subtitleColor={subtitleFontColor}
-        titleFontSize={titleFontSize}
-        subtitleFontSize={subtitleFontSize}
-        fontFamily={fontFamily}
-        previewScale={previewSize}
-        duration={duration}
-        showSafeMargins={showSafeMargins}
-        onPreviewScaleChange={setPreviewSize}
-        onToggleSafeMargins={setShowSafeMargins}
-      />
+            {activeSection === "data" && (
+              <DataPanel
+                data={data}
+                setData={setData}
+                duration={duration}
+                setDuration={setDuration}
+              />
+            )}
+
+            {activeSection === "graph" && (
+              <BarGraphControlsPanel
+                barGap={barGap}
+                barHeight={barHeight}
+                barLabelFontSize={barLabelFontSize}
+                barValueFontSize={barValueFontSize}
+                setBarGap={setBarGap}
+                setBarHeight={setBarHeight}
+                setBarLabelFontSize={setBarLabelFontSize}
+                setBarValueFontSize={setBarValueFontSize}
+              />
+            )}
+
+            {activeSection === "background" && (
+              <BackgroundSecTrial
+                backgroundImage={backgroundImage}
+                backgroundSource={backgroundSource}
+                handleFileUpload={handleFileUpload}
+                isUploading={isUploading}
+                setBackgroundImage={setBackgroundImage}
+                setBackgroundSource={setBackgroundSource}
+              />
+            )}
+          </div>
+        )}
+
+        <BarGraphTemplatePreview
+          accent={accent}
+          backgroundImage={backgroundImage}
+          cycleBg={cycleBg}
+          data={data}
+          previewBg={previewBg}
+          title={title}
+          titleFontColor={titleFontColor}
+          barGap={barGap}
+          barHeight={barHeight}
+          barLabelFontSize={barLabelFontSize}
+          barValueFontSize={barValueFontSize}
+          subtitle={subTitle}
+          subtitleColor={subtitleFontColor}
+          titleFontSize={titleFontSize}
+          subtitleFontSize={subtitleFontSize}
+          fontFamily={fontFamily}
+          previewScale={previewSize}
+          duration={duration}
+          showSafeMargins={showSafeMargins}
+          onPreviewScaleChange={setPreviewSize}
+          onToggleSafeMargins={setShowSafeMargins}
+        />
+      </div>
     </div>
   );
 };

@@ -1,8 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { DisplayerModal } from "../Global/modal";
-import { ExportSecTrial } from "../Global/sidenav_sections/export";
-import { OptionSectionTrial } from "../Global/sidenav_sections/options";
-// import { ChatVideoPreview } from "../../layout/EditorPreviews/FakeTextConversationPreview";
+// import { DisplayerModal } from "../Global/modal";
 
 import { BackgroundVideoSelectorPanel } from "../Global/sidenav_sections/bgvideoselector";
 import { MusicSelector } from "../Global/bgmusic";
@@ -14,8 +11,13 @@ import { AiVoiceSelector } from "../Global/sidenav_sections/aivoices";
 import { RedditTypoGraphy } from "../Global/sidenav_sections/typography";
 import { RedditFetcherSidepanel } from "./sidenav_sections/post";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
+import { ExportModal } from "../../layout/modals/exportmodal";
+import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
 
 export const RedditVideoEditor: React.FC = () => {
+  const [templateName, setTemplateName] = useState(
+    "My Reddit Narration Template"
+  );
   const [postUrl, setPostUrl] = useState("");
   const [loadingPost, setLoadingPost] = useState(false);
   const [postError, setPostError] = useState<string | null>(null);
@@ -56,17 +58,17 @@ export const RedditVideoEditor: React.FC = () => {
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    "post" | "voice" | "text" | "background" | "music" | "options" | "export"
+    "post" | "voice" | "text" | "background" | "music" 
   >("post");
   const [collapsed, setCollapsed] = useState(false);
 
   //default variables
 
   //   const [isUploading, setIsUploading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [isExporting, setIsExporting] = useState<string | null>(null);
-  const [autoSave, setAutoSave] = useState(false);
+  // const [autoSave, setAutoSave] = useState(false);
 
   // 🔹 Resizable panel state
   const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
@@ -171,7 +173,7 @@ export const RedditVideoEditor: React.FC = () => {
   };
 
   const handleExport = async (format: string) => {
-    setIsExporting(format);
+    setIsExporting(true);
     console.log(fontSize);
     try {
       const response = await fetch("/generatevideo/redditvideo", {
@@ -202,148 +204,133 @@ export const RedditVideoEditor: React.FC = () => {
       console.error("Export failed:", error);
       alert(`Export failed: ${error || "Please try again."}`);
     } finally {
-      setIsExporting(null);
+      setIsExporting(false);
     }
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#fafafa" }}>
-      {/* modal */}
-      {showModal && exportUrl && (
-        <DisplayerModal exportUrl={exportUrl} setShowModal={setShowModal} />
-      )}
-
-      {/* sidenav */}
-      <RedditSideNavigation
-        activeSection={activeSection}
-        collapsed={collapsed}
-        setActiveSection={setActiveSection}
-        setCollapsed={setCollapsed}
+    <div style={{ display: "flex", height: "100%", flex: 1 }}>
+      <TopNavWithoutBatchrendering
+        templateName={templateName}
+        onSave={() => {}}
+        onExport={handleExport}
+        setTemplateName={setTemplateName}
+        onOpenExport={() => setShowModal(true)}
+        template="🎬 Reddit Video Template"
       />
-
-      {/* Controls Panel */}
-      {!collapsed && (
-        <div
-          ref={panelRef}
-          style={{
-            width: `${panelWidth}px`,
-            padding: "2rem",
-            overflowY: "auto",
-            background: "#fff",
-            borderRight: "1px solid #eee",
-            position: "relative",
-            transition: isResizing ? "none" : "width 0.2s",
-          }}
-        >
-          <div
-            onMouseDown={() => setIsResizing(true)}
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: "6px",
-              cursor: "col-resize",
-              background: "#ddd", // 👈 always visible
-            }}
+      <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
+        {showModal && (
+          <ExportModal
+            showExport={showModal}
+            setShowExport={setShowModal}
+            isExporting={isExporting}
+            exportUrl={exportUrl}
+            onExport={handleExport}
           />
+        )}
 
-          <h2
+        {/* sidenav */}
+        <RedditSideNavigation
+          activeSection={activeSection}
+          collapsed={collapsed}
+          setActiveSection={setActiveSection}
+          setCollapsed={setCollapsed}
+        />
+
+        {/* Controls Panel */}
+        {!collapsed && (
+          <div
+            ref={panelRef}
             style={{
-              marginBottom: "1.5rem",
-              fontSize: "1.5rem",
-              fontWeight: 600,
-              background: "linear-gradient(90deg,#ff4fa3,#8a4dff,#0077ff)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              width: `${panelWidth}px`,
+              padding: "1rem",
+              overflowY: "auto",
+              background: "#fff",
+              borderRight: "1px solid #eee",
+              position: "relative",
+              transition: isResizing ? "none" : "width 0.2s",
             }}
           >
-            🎬 Reddit Video Template
-          </h2>
+            <div
+              onMouseDown={() => setIsResizing(true)}
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: "6px",
+                cursor: "col-resize",
+                background: "#ddd", // 👈 always visible
+              }}
+            />
 
-          {activeSection === "post" && (
-            <RedditFetcherSidepanel
-              url={postUrl}
-              setUrl={setPostUrl}
-              loading={loadingPost}
-              error={postError}
-              post={fetchedPost}
-              onFetch={fetchPost}
-            />
-          )}
+            {activeSection === "post" && (
+              <RedditFetcherSidepanel
+                url={postUrl}
+                setUrl={setPostUrl}
+                loading={loadingPost}
+                error={postError}
+                post={fetchedPost}
+                onFetch={fetchPost}
+              />
+            )}
 
-          {activeSection === "voice" && (
-            <AiVoiceSelector
-              isUpdatingTemplate={isUpdatingTemplate}
-              onUpdateTemplate={createVoiceOverandScript}
-              aiVoice={aiVoice}
-              setAiVoice={setAiVoice}
-            />
-          )}
+            {activeSection === "voice" && (
+              <AiVoiceSelector
+                isUpdatingTemplate={isUpdatingTemplate}
+                onUpdateTemplate={createVoiceOverandScript}
+                aiVoice={aiVoice}
+                setAiVoice={setAiVoice}
+              />
+            )}
 
-          {activeSection === "text" && (
-            <RedditTypoGraphy
-              fontColor={fontColor}
-              fontFamily={fontFamily}
-              fontSize={fontSize}
-              sentenceBgColor={sentenceBgColor}
-              setFontColor={setFontColor}
-              setFontFamily={setFontFamily}
-              setFontSize={setFontSize}
-              setSentenceBgColor={setSentenceBgColor}
-            />
-          )}
+            {activeSection === "text" && (
+              <RedditTypoGraphy
+                fontColor={fontColor}
+                fontFamily={fontFamily}
+                fontSize={fontSize}
+                sentenceBgColor={sentenceBgColor}
+                setFontColor={setFontColor}
+                setFontFamily={setFontFamily}
+                setFontSize={setFontSize}
+                setSentenceBgColor={setSentenceBgColor}
+              />
+            )}
 
-          {activeSection === "background" && (
-            <BackgroundVideoSelectorPanel
-              bgVideo={backgroundVideo}
-              setBgVideo={setBackgroundVideo}
-            />
-          )}
+            {activeSection === "background" && (
+              <BackgroundVideoSelectorPanel
+                bgVideo={backgroundVideo}
+                setBgVideo={setBackgroundVideo}
+              />
+            )}
 
-          {activeSection === "music" && (
-            <MusicSelector
-              musicAudio={backgroundMusicPath}
-              setMusicAudio={setBackgroundMusicPath}
-            />
-          )}
-
-          {activeSection === "options" && (
-            <OptionSectionTrial
-              setShowSafeMargins={setShowSafeMargins}
-              showSafeMargins={showSafeMargins}
-              setAutoSave={setAutoSave}
-              autoSave={autoSave}
-              previewSize={previewSize}
-              setPreviewSize={setPreviewSize}
-            />
-          )}
-          {activeSection === "export" && (
-            <ExportSecTrial
-              handleExport={handleExport}
-              isExporting={isExporting}
-            />
-          )}
-        </div>
-      )}
-      <RedditVideoPreview
-        script={redditData}
-        voiceoverPath={voiceoverPath}
-        duration={duration}
-        previewBg={previewBg}
-        cycleBg={cycleBg}
-        previewScale={previewSize}
-        backgroundVideo={backgroundVideo}
-        backgroundMusicPath={backgroundMusicPath}
-        fontSize={fontSize}
-        fontFamily={fontFamily}
-        fontColor={fontColor}
-        sentenceBgColor={sentenceBgColor}
-        backgroundOverlayColor={defaulvalues.backgroundOverlay}
-        showSafeMargins={showSafeMargins}
-        onPreviewScaleChange={setPreviewSize}
-        onToggleSafeMargins={setShowSafeMargins}
-      />
+            {activeSection === "music" && (
+              <MusicSelector
+                musicAudio={backgroundMusicPath}
+                setMusicAudio={setBackgroundMusicPath}
+              />
+            )}
+          </div>
+        )}
+        <RedditVideoPreview
+          script={redditData}
+          voiceoverPath={voiceoverPath}
+          duration={duration}
+          previewBg={previewBg}
+          cycleBg={cycleBg}
+          previewScale={previewSize}
+          backgroundVideo={backgroundVideo}
+          backgroundMusicPath={backgroundMusicPath}
+          fontSize={fontSize}
+          fontFamily={fontFamily}
+          fontColor={fontColor}
+          sentenceBgColor={sentenceBgColor}
+          backgroundOverlayColor={defaulvalues.backgroundOverlay}
+          showSafeMargins={showSafeMargins}
+          onPreviewScaleChange={setPreviewSize}
+          onToggleSafeMargins={setShowSafeMargins}
+        />
+      </div>
     </div>
   );
 };

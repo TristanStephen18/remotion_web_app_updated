@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { DisplayerModal } from "../Global/modal";
+// import { DisplayerModal } from "../Global/modal";
 // import { BackgroundSecTrial } from "../Global/sidenav_sections/bg";
 import { CurveLineSideNav } from "./sidenav";
 import { SimpleTrendGraphPreview } from "../../layout/EditorPreviews/SimpleTrendMapPreview";
 import type { SimpleGraphProps } from "../../remotion_compositions/Curvelinetrend/SimplifiedTemplateHolder";
 import { CurveLineTextPanel } from "./sidenav_sections/titleandsubtitle";
-import { ExportSecTrial } from "../Global/sidenav_sections/export";
+// import { ExportSecTrial } from "../Global/sidenav_sections/export";
 // import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import {
   CurveLineTrendDataPanel,
@@ -14,7 +14,10 @@ import {
 import { PresetPanel, type GraphThemeKey } from "./sidenav_sections/themes";
 import { AnimationPanel } from "./sidenav_sections/animation";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
-import { TemplateOptionsSection } from "../Global/templatesettings";
+// import { TopNav } from "../../navigations/single_editors/trialtopnav";
+import { ExportModal } from "../../layout/modals/exportmodal";
+import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
+// import { TemplateOptionsSection } from "../Global/templatesettings";
 
 const initialData = [
   { label: 2015, value: 100 },
@@ -66,14 +69,14 @@ export const CurveLineTrendEditor: React.FC = () => {
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    "text" | "data" | "background" | "animation" | "template" | "export"
+    "text" | "data" | "background" | "animation"
   >("text");
   const [collapsed, setCollapsed] = useState(false);
 
   //   const [isUploading, setIsUploading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [isExporting, setIsExporting] = useState<string | null>(null);
   // const [autoSave, setAutoSave] = useState(false);
   const [duration, setDuration] = useState(13);
 
@@ -112,7 +115,7 @@ export const CurveLineTrendEditor: React.FC = () => {
   };
 
   const handleExport = async (format: string) => {
-    setIsExporting(format);
+    setIsExporting(true);
     try {
       const response = await fetch("/generatevideo/curvelinetrend", {
         method: "POST",
@@ -148,134 +151,121 @@ export const CurveLineTrendEditor: React.FC = () => {
       console.error("Export failed:", error);
       alert(`Export failed: ${error || "Please try again."}`);
     } finally {
-      setIsExporting(null);
+      setIsExporting(false);
     }
   };
 
   return (
     <div style={{ display: "flex", height: "100vh", background: "#fafafa" }}>
-      {/* modal */}
-      {showModal && exportUrl && (
-        <DisplayerModal exportUrl={exportUrl} setShowModal={setShowModal} />
-      )}
-
-      {/* sidenav */}
-      <CurveLineSideNav
-        activeSection={activeSection}
-        collapsed={collapsed}
-        setActiveSection={setActiveSection}
-        setCollapsed={setCollapsed}
+      <TopNavWithoutBatchrendering
+        templateName={templateName}
+        onSave={() => {}}
+        onExport={handleExport}
+        setTemplateName={setTemplateName}
+        onOpenExport={() => setShowModal(true)}
+        template="🎬 Curve Line Trend Template"
       />
 
-      {/* Controls Panel */}
-      {!collapsed && (
-        <div
-          ref={panelRef}
-          style={{
-            width: `${panelWidth}px`,
-            padding: "2rem",
-            overflowY: "auto",
-            background: "#fff",
-            borderRight: "1px solid #eee",
-            position: "relative",
-            transition: isResizing ? "none" : "width 0.2s",
-          }}
-        >
-          {/* Drag Handle */}
-          <div
-            onMouseDown={() => setIsResizing(true)}
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: "6px",
-              cursor: "col-resize",
-              background: "#ddd",
-            }}
+      <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
+        {/* modal */}
+        {showModal && (
+          <ExportModal
+            showExport={showModal}
+            setShowExport={setShowModal}
+            isExporting={isExporting}
+            exportUrl={exportUrl}
+            onExport={handleExport}
           />
+        )}
 
-          <h2
+        {/* sidenav */}
+        <CurveLineSideNav
+          activeSection={activeSection}
+          collapsed={collapsed}
+          setActiveSection={setActiveSection}
+          setCollapsed={setCollapsed}
+        />
+
+        {/* Controls Panel */}
+        {!collapsed && (
+          <div
+            ref={panelRef}
             style={{
-              marginBottom: "1.5rem",
-              fontSize: "1.5rem",
-              fontWeight: 600,
-              background: "linear-gradient(90deg,#ff4fa3,#8a4dff,#0077ff)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              width: `${panelWidth}px`,
+              padding: "1rem",
+              overflowY: "auto",
+              background: "#fff",
+              borderRight: "1px solid #eee",
+              position: "relative",
+              transition: isResizing ? "none" : "width 0.2s",
             }}
           >
-            {templateName}
-          </h2>
-
-          {activeSection == "text" && (
-            <CurveLineTextPanel
-              setSubtitle={setSubtitle}
-              setSubtitleFontSize={setSubtitleFontSize}
-              setTitle={setTitle}
-              setTitleFontSize={setTitleFontSize}
-              subtitle={subtitle}
-              subtitleFontSize={subtitleFontSize}
-              title={title}
-              titleFontSize={titleFontSize}
-              fontFamily={fontFamily}
-              setFontFamily={setFontfamily}
-            />
-          )}
-
-          {activeSection === "data" && (
-            <CurveLineTrendDataPanel
-              data={data}
-              dataType={dataType}
-              setData={setData}
-              setDataType={setDataType}
-            />
-          )}
-
-          {activeSection === "background" && (
-            <PresetPanel preset={preset} setPreset={setPreset} />
-          )}
-
-          {activeSection === "animation" && (
-            <AnimationPanel
-              animationSpeed={animationSpeed}
-              duration={duration}
-              minimalMode={minimalMode}
-              setAnimationSpeed={setAnimationSpeed}
-              setDuration={setDuration}
-              setMinimalMode={setMinimalMode}
-            />
-          )}
-
-          {activeSection === "template" && (
-            <TemplateOptionsSection
-              onEnterBatchRender={() => {
-                window.location.assign("/template/curvelinetrend/mode/batchrendering");
+            {/* Drag Handle */}
+            <div
+              onMouseDown={() => setIsResizing(true)}
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: "6px",
+                cursor: "col-resize",
+                background: "#ddd",
               }}
-              setTemplateName={setTemplateName}
-              templateName={templateName}
             />
-          )}
 
-          {activeSection === "export" && (
-            <ExportSecTrial
-              handleExport={handleExport}
-              isExporting={isExporting}
-            />
-          )}
-        </div>
-      )}
+            {activeSection == "text" && (
+              <CurveLineTextPanel
+                setSubtitle={setSubtitle}
+                setSubtitleFontSize={setSubtitleFontSize}
+                setTitle={setTitle}
+                setTitleFontSize={setTitleFontSize}
+                subtitle={subtitle}
+                subtitleFontSize={subtitleFontSize}
+                title={title}
+                titleFontSize={titleFontSize}
+                fontFamily={fontFamily}
+                setFontFamily={setFontfamily}
+              />
+            )}
 
-      <SimpleTrendGraphPreview
-        {...graphProps}
-        duration={duration}
-        previewBg={previewBg}
-        cycleBg={cycleBg}
-        previewScale={previewSize}
-        showSafeMargins={showSafeMargins}
-        onPreviewScaleChange={setPreviewSize}
-        onToggleSafeMargins={setShowSafeMargins}
-      />
+            {activeSection === "data" && (
+              <CurveLineTrendDataPanel
+                data={data}
+                dataType={dataType}
+                setData={setData}
+                setDataType={setDataType}
+              />
+            )}
+
+            {activeSection === "background" && (
+              <PresetPanel preset={preset} setPreset={setPreset} />
+            )}
+
+            {activeSection === "animation" && (
+              <AnimationPanel
+                animationSpeed={animationSpeed}
+                duration={duration}
+                minimalMode={minimalMode}
+                setAnimationSpeed={setAnimationSpeed}
+                setDuration={setDuration}
+                setMinimalMode={setMinimalMode}
+              />
+            )}
+          </div>
+        )}
+
+        <SimpleTrendGraphPreview
+          {...graphProps}
+          duration={duration}
+          previewBg={previewBg}
+          cycleBg={cycleBg}
+          previewScale={previewSize}
+          showSafeMargins={showSafeMargins}
+          onPreviewScaleChange={setPreviewSize}
+          onToggleSafeMargins={setShowSafeMargins}
+        />
+      </div>
     </div>
   );
 };

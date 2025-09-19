@@ -29,6 +29,7 @@ import { CurveLineTrendBatchRendering } from "./pages/batchrendering/CurveLineTr
 import { KenBurnsSwipeBatchRendering } from "./pages/batchrendering/KenburnsStack.tsx";
 import { FactCardsBatchRendering } from "./pages/batchrendering/FactCardsTemplate.tsx";
 import { KpiFlipBatchRendering } from "./pages/batchrendering/KpilipCards.tsx";
+// import { QuoteTemplateEditor2 } from "./components/editors/QuoteTemplate/holder2.tsx";
 
 function App() {
   return (
@@ -93,6 +94,8 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/tester" element={<QuoteGenerator />} />
         <Route path="/qtester" element={<QuoteTester />} />
+        {/* <Route path="/testpage" element={<QuoteTemplateEditor2 />} /> */}
+
       </Routes>
     </BrowserRouter>
   );

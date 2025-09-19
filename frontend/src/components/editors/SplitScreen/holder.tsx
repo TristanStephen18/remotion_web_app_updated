@@ -1,20 +1,24 @@
 import React, { useState, useRef, useEffect } from "react";
 import { DisplayerModal } from "../Global/modal";
 // import { BackgroundSecTrial } from "../Global/sidenav_sections/bg";
-import { ExportSecTrial } from "../Global/sidenav_sections/export";
+// import { ExportSecTrial } from "../Global/sidenav_sections/export";
 import { SplitScreenSideNavs } from "./sidenav";
 // import { TextContentSection } from "./sidenav_sections/textcontent";
-import { OptionSectionTrial } from "../Global/sidenav_sections/options";
+// import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import { BottomVideoSelectorPanel } from "./sidnav_sections/bottomvidselection";
 import { SPlitScreenPreview } from "../../layout/EditorPreviews/SplitScreenPreview";
 import { VideoUploadPanel } from "./sidnav_sections/upload";
 import { VideoSettingsControlPanel } from "./sidnav_sections/videosettings";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
+// import { TopNav } from "../../navigations/single_editors/trialtopnav";
+import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
+import { ExportModal } from "../../layout/modals/exportmodal";
 // import { SoundAndDurationSection } from "./sidenav_sections/sound_and_duration";
 // import { TypographySection } from '../Global/sidenav_sections/typo';
 // import { TextTypingTemplatePreview } from "../../layout/EditorPreviews/TextTypingPreview";
 
 export const SplitScreenEditor: React.FC = () => {
+  const [templateName, setTemplateName] = useState("My splitscreen video");
   const [bottomVideoUrl, setBottomVideoUrl] = useState("");
   const [topVideoUrl, setTopVideoUrl] = useState("");
   const [bottomHeightPercent, setBottomHeightPercent] = useState(50);
@@ -27,19 +31,18 @@ export const SplitScreenEditor: React.FC = () => {
   const [duration, setDuration] = useState(10);
 
   const [showSafeMargins, setShowSafeMargins] = useState(true);
-    const [previewSize, setPreviewSize] = useState(1);
-  
+  const [previewSize, setPreviewSize] = useState(1);
+
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    "upload" | "bottomvid" | "settings" | "options" | "export"
+    "upload" | "bottomvid" | "settings"
   >("upload");
   const [collapsed, setCollapsed] = useState(false);
 
   const [isUploading, setIsUploading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [isExporting, setIsExporting] = useState<string | null>(null);
-  const [autoSave, setAutoSave] = useState(false);
 
   // 🔹 Resizable panel state
   const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
@@ -114,7 +117,7 @@ export const SplitScreenEditor: React.FC = () => {
 
   const handleExport = async (format: string) => {
     // const multiplier = (fontSize - 20) / 10 + 1;
-    setIsExporting(format);
+    setIsExporting(true);
     // console.log(fontSize);
     // console.log(backgroundImage)
 
@@ -151,139 +154,122 @@ export const SplitScreenEditor: React.FC = () => {
       console.error("Export failed:", error);
       alert(`Export failed: ${error || "Please try again."}`);
     } finally {
-      setIsExporting(null);
+      setIsExporting(false);
     }
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#fafafa" }}>
-      {/* modal */}
-      {showModal && exportUrl && (
-        <DisplayerModal exportUrl={exportUrl} setShowModal={setShowModal} />
-      )}
-
-      {/* sidenav */}
-      <SplitScreenSideNavs
-        activeSection={activeSection}
-        collapsed={collapsed}
-        setActiveSection={setActiveSection}
-        setCollapsed={setCollapsed}
+    <div style={{ display: "flex", height: "100%", flex: 1 }}>
+      <TopNavWithoutBatchrendering
+        templateName={templateName}
+        onSave={() => {}}
+        onExport={handleExport}
+        setTemplateName={setTemplateName}
+        onOpenExport={() => setShowModal(true)}
+        template="🎬 Split Screen Video Template"
       />
-
-      {/* Controls Panel */}
-      {!collapsed && (
-        <div
-          ref={panelRef}
-          style={{
-            width: `${panelWidth}px`,
-            padding: "2rem",
-            overflowY: "auto",
-            background: "#fff",
-            borderRight: "1px solid #eee",
-            position: "relative",
-            transition: isResizing ? "none" : "width 0.2s",
-          }}
-        >
-          {/* Drag Handle */}
-          <div
-            onMouseDown={() => setIsResizing(true)}
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: "6px",
-              cursor: "col-resize",
-              background:"#ddd" 
-            }}
+      <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
+        {/* modal */}
+        {showModal && (
+          <ExportModal
+            showExport={showModal}
+            setShowExport={setShowModal}
+            isExporting={isExporting}
+            exportUrl={exportUrl}
+            onExport={handleExport}
           />
+        )}
+        {/* sidenav */}
+        <SplitScreenSideNavs
+          activeSection={activeSection}
+          collapsed={collapsed}
+          setActiveSection={setActiveSection}
+          setCollapsed={setCollapsed}
+        />
 
-          <h2
+        {/* Controls Panel */}
+        {!collapsed && (
+          <div
+            ref={panelRef}
             style={{
-              marginBottom: "1.5rem",
-              fontSize: "1.5rem",
-              fontWeight: 600,
-              background: "linear-gradient(90deg,#ff4fa3,#8a4dff,#0077ff)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              width: `${panelWidth}px`,
+              padding: "1rem",
+              overflowY: "auto",
+              background: "#fff",
+              borderRight: "1px solid #eee",
+              position: "relative",
+              transition: isResizing ? "none" : "width 0.2s",
             }}
           >
-            🎬 Split Screen Video Template
-          </h2>
-
-          {activeSection === "upload" && (
-            <VideoUploadPanel
-              handleVideoUpload={handleVideoUpload}
-              setTopVideoUrl={setTopVideoUrl}
-              topVideoUrl={topVideoUrl}
+            {/* Drag Handle */}
+            <div
+              onMouseDown={() => setIsResizing(true)}
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: "6px",
+                cursor: "col-resize",
+                background: "#ddd",
+              }}
             />
-          )}
 
-          {activeSection === "bottomvid" && (
-            <BottomVideoSelectorPanel
-              bottomVideoUrl={bottomVideoUrl}
-              setBottomVideoUrl={setBottomVideoUrl}
-            />
-          )}
+            {activeSection === "upload" && (
+              <VideoUploadPanel
+                handleVideoUpload={handleVideoUpload}
+                setTopVideoUrl={setTopVideoUrl}
+                topVideoUrl={topVideoUrl}
+              />
+            )}
 
-          {activeSection === "settings" && (
-            <VideoSettingsControlPanel
-              bottomHeightPercent={bottomHeightPercent}
-              bottomOpacity={bottomOpacity}
-              bottomVolume={bottomVolumem}
-              setBottomHeightPercent={setBottomHeightPercent}
-              setBottomOpacity={setBottomOpacity}
-              setBottomVolume={setBottomVolume}
-              setSwap={setSwap}
-              setTopHeightPercent={setTopHeightPercent}
-              setTopOpacity={setTopOpacity}
-              setTopVolume={setTopVolume}
-              swap={swap}
-              topHeightPercent={topHeightPercent}
-              topOpacity={topOpacity}
-              topVolume={topVolume}
-            />
-          )}
+            {activeSection === "bottomvid" && (
+              <BottomVideoSelectorPanel
+                bottomVideoUrl={bottomVideoUrl}
+                setBottomVideoUrl={setBottomVideoUrl}
+              />
+            )}
 
-          {activeSection === "options" && (
-            <OptionSectionTrial
-              setShowSafeMargins={setShowSafeMargins}
-              showSafeMargins={showSafeMargins}
-              setAutoSave={setAutoSave}
-              autoSave={autoSave}
-              previewSize={previewSize}
-              setPreviewSize={setPreviewSize}
-            />
-          )}
-          {activeSection === "export" && (
-            <ExportSecTrial
-              handleExport={handleExport}
-              isExporting={isExporting}
-            />
-          )}
-        </div>
-      )}
+            {activeSection === "settings" && (
+              <VideoSettingsControlPanel
+                bottomHeightPercent={bottomHeightPercent}
+                bottomOpacity={bottomOpacity}
+                bottomVolume={bottomVolumem}
+                setBottomHeightPercent={setBottomHeightPercent}
+                setBottomOpacity={setBottomOpacity}
+                setBottomVolume={setBottomVolume}
+                setSwap={setSwap}
+                setTopHeightPercent={setTopHeightPercent}
+                setTopOpacity={setTopOpacity}
+                setTopVolume={setTopVolume}
+                swap={swap}
+                topHeightPercent={topHeightPercent}
+                topOpacity={topOpacity}
+                topVolume={topVolume}
+              />
+            )}
+          </div>
+        )}
 
-      <SPlitScreenPreview
-        bottomHeightPercent={bottomHeightPercent}
-        bottomOpacity={bottomOpacity}
-        bottomVideoUrl={bottomVideoUrl}
-        bottomVolume={bottomVolumem}
-        cycleBg={cycleBg}
-        duration={duration}
-        previewBg={previewBg}
-        swap={swap}
-        topHeightPercent={topHeightPercent}
-        topOpacity={topOpacity}
-        topVideoUrl={topVideoUrl}
-        topVolume={topVolume}
-        previewScale={previewSize}
-        showSafeMargins={showSafeMargins}
-        onPreviewScaleChange={setPreviewSize}
-        onToggleSafeMargins={setShowSafeMargins}
-      />
-
-  
+        <SPlitScreenPreview
+          bottomHeightPercent={bottomHeightPercent}
+          bottomOpacity={bottomOpacity}
+          bottomVideoUrl={bottomVideoUrl}
+          bottomVolume={bottomVolumem}
+          cycleBg={cycleBg}
+          duration={duration}
+          previewBg={previewBg}
+          swap={swap}
+          topHeightPercent={topHeightPercent}
+          topOpacity={topOpacity}
+          topVideoUrl={topVideoUrl}
+          topVolume={topVolume}
+          previewScale={previewSize}
+          showSafeMargins={showSafeMargins}
+          onPreviewScaleChange={setPreviewSize}
+          onToggleSafeMargins={setShowSafeMargins}
+        />
+      </div>
     </div>
   );
 };

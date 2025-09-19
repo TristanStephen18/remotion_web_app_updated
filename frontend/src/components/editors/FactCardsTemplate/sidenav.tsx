@@ -1,49 +1,58 @@
 import type React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import Button from "@mui/material/Button";
 import { factCardsnavitems } from "../../../data/navdata_live_editor";
-// import { quoteeditornavs } from "../../../data/navdata_live_editor.tsx";
-// import 
-
 
 interface SidenavProps {
-    collapsed: boolean;
-    setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
-    activeSection: string;
-    setActiveSection: React.Dispatch<React.SetStateAction< "template" | "background" | "typography" | "export" | "endpoints"| "facts"| "duration">>;
+  collapsed: boolean;
+  setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  activeSection: string;
+  setActiveSection: React.Dispatch<
+    React.SetStateAction<
+      "background" | "typography" | "endpoints" | "facts" | "duration"
+    >
+  >;
 }
 
-export const FactCardsSidenav: React.FC<SidenavProps>=({collapsed, setCollapsed, activeSection, setActiveSection})=>{
-    return (
-        <div
+export const FactCardsSidenav: React.FC<SidenavProps> = ({
+  collapsed,
+  setCollapsed,
+  activeSection,
+  setActiveSection,
+}) => {
+  return (
+    <div
+      style={{
+        width: collapsed ? "60px" : "200px",
+        background: "#fff",
+        borderRight: "1px solid #eee",
+        display: "flex",
+        flexDirection: "column",
+        transition: "width 0.3s",
+        overflow: "hidden",
+        position: "relative",
+      }}
+    >
+      {/* Collapse Toggle */}
+      <button
+        onClick={() => setCollapsed(!collapsed)}
         style={{
-          width: collapsed ? "60px" : "180px",
-          background: "#fff",
-          borderRight: "1px solid #eee",
+          padding: "0.75rem",
+          border: "none",
+          background: "transparent",
+          cursor: "pointer",
           display: "flex",
-          flexDirection: "column",
-          transition: "width 0.3s",
-          overflow: "hidden",
-          position: "relative",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        {/* Collapse Toggle */}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          style={{
-            padding: "0.75rem",
-            border: "none",
-            background: "transparent",
-            cursor: "pointer",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {collapsed ? <MenuIcon /> : <ChevronLeftIcon />}
-        </button>
+        {collapsed ? <MenuIcon /> : <ChevronLeftIcon />}
+      </button>
 
-        {/* Nav Items */}
+      {/* Nav Items */}
+      <div style={{ flex: 1 }}>
         {factCardsnavitems.map(({ key, label, icon }) => (
           <button
             key={key}
@@ -59,6 +68,7 @@ export const FactCardsSidenav: React.FC<SidenavProps>=({collapsed, setCollapsed,
               alignItems: "center",
               gap: collapsed ? "0" : "0.5rem",
               justifyContent: collapsed ? "center" : "flex-start",
+              width: "100%",
             }}
           >
             {icon}
@@ -66,7 +76,32 @@ export const FactCardsSidenav: React.FC<SidenavProps>=({collapsed, setCollapsed,
           </button>
         ))}
       </div>
-    );
-}
 
-// export default SideNav;
+      {!collapsed && (
+        <div style={{ padding: "1rem" }}>
+          <Button
+            title="Switch to batch rendering mode?"
+            fullWidth={!collapsed}
+            variant="outlined"
+            startIcon={<SwapHorizIcon />}
+            onClick={() =>
+              window.location.assign("/template/factcards/mode/batchrendering")
+            }
+            sx={{
+              borderRadius: 2,
+              textTransform: "none",
+              fontWeight: 600,
+              borderColor: "#d81b60",
+              color: "#d81b60",
+              minWidth: collapsed ? "40px" : "auto",
+              justifyContent: collapsed ? "center" : "flex-start",
+              "&:hover": { borderColor: "#42a5f5", color: "#42a5f5" },
+            }}
+          >
+            Batch Output
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+};

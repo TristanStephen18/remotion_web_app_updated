@@ -8,7 +8,7 @@ const SignupPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
-  const [role, setRole] = useState<"user" | "admin">("user");
+  // const [role, setRole] = useState<"user" | "admin">("user");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +38,7 @@ const SignupPage: React.FC = () => {
       setLoading(true);
       // Hook up API call here
       await new Promise((r) => setTimeout(r, 900));
-      console.log({ username, email, password, role });
+      console.log({ username, email, password });
       // navigate("/dashboard");
     } catch (err) {
       setError("Signup failed. Please try again.");
@@ -127,37 +127,7 @@ const SignupPage: React.FC = () => {
               />
             </div>
 
-            {/* Role */}
-            {/* Role */}
-            <div className="field role-field">
-              <span className="role-label">Choose Role:</span>
-              <div className="role-options">
-                <label
-                  className={`role-option ${role === "user" ? "active" : ""}`}
-                >
-                  <input
-                    type="radio"
-                    name="role"
-                    value="user"
-                    checked={role === "user"}
-                    onChange={() => setRole("user")}
-                  />
-                  User
-                </label>
-                <label
-                  className={`role-option ${role === "admin" ? "active" : ""}`}
-                >
-                  <input
-                    type="radio"
-                    name="role"
-                    value="admin"
-                    checked={role === "admin"}
-                    onChange={() => setRole("admin")}
-                  />
-                  Admin
-                </label>
-              </div>
-            </div>
+            
 
             <button
               className="btn btn--primary"

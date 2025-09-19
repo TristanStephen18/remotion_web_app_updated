@@ -1,21 +1,25 @@
 import React, { useState, useRef, useEffect } from "react";
-import { DisplayerModal } from "../Global/modal";
+// import { DisplayerModal } from "../Global/modal";
 import { SideNavTrial } from "./sidenav";
 import { QuoteSecTrial } from "./sidenav_sections/quote";
 import { BackgroundSecTrial } from "../Global/sidenav_sections/bg";
-import { OptionSectionTrial } from "../Global/sidenav_sections/options";
-import { ExportSecTrial } from "../Global/sidenav_sections/export";
+// import { OptionSectionTrial } from "../Global/sidenav_sections/options";
+// import { ExportSecTrial } from "../Global/sidenav_sections/export";
 // import { TypographySection } from "../Global/sidenav_sections/typo";
 import { QuoteSpotlightPreview } from "../../layout/EditorPreviews/QuoteTemplatePreview";
 import { TypographySectionQuote } from "./sidenav_sections/typo";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
-import { TemplateOptionsSection } from "../Global/templatesettings";
+// import { TemplateOptionsSection } from "../Global/templatesettings";
 import {
   fontSizeIndicatorQuote,
   quoteSpotlightDurationCalculator,
 } from "../../../utils/quotespotlighthelpers";
 import type { QuoteConfigDataset } from "../../../models/QuoteSpotlight";
 import { AiSetupPanel } from "./sidenav_sections/aisetup";
+// import { TopNav } from "./holder2";
+import { ExportModal } from "../../layout/modals/exportmodal";
+// import { TopNav } from "../../navigations/single_editors/trialtopnav";
+import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
 
 export const QuoteTemplateEditor: React.FC = () => {
   // add this new state
@@ -27,13 +31,13 @@ export const QuoteTemplateEditor: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [previewSize, setPreviewSize] = useState(1);
   const [templateName, setTemplateName] = useState(
-    "🎬 Quote Spotlight Template"
+    "My Quote Spotlight Template"
   );
 
   const [quote, setQuote] = useState("Your Quote");
   const [author, setAuthor] = useState("Author");
   const [backgroundImage, setBackgroundImage] = useState(
-    "http://localhost:3000/bgimages/colors/bg1.jpg"
+    `${window.location.origin}/bgimages/colors/bg1.jpg`
   );
   const [backgroundSource, setBackgroundSource] = useState<
     "upload" | "default"
@@ -45,21 +49,15 @@ export const QuoteTemplateEditor: React.FC = () => {
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    | "quote"
-    | "background"
-    | "typography"
-    | "options"
-    | "template"
-    | "ai"
-    | "export"
+    "quote" | "background" | "typography" | "ai"
   >("quote");
   const [collapsed, setCollapsed] = useState(false);
 
   const [isUploading, setIsUploading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [isExporting, setIsExporting] = useState<string | null>(null);
-  const [autoSave, setAutoSave] = useState(false);
+  // const [autoSave, setAutoSave] = useState(false);
 
   // 🔹 Resizable panel state
   const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
@@ -89,11 +87,6 @@ export const QuoteTemplateEditor: React.FC = () => {
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isResizing]);
-
-  const onSwitchMode = () => {
-    console.log("Entering Batch Rendering Mode");
-    window.location.assign("/template/quotetemplate/mode/batchrendering");
-  };
 
   const cycleBg = () => {
     if (previewBg === "dark") setPreviewBg("light");
@@ -241,12 +234,12 @@ export const QuoteTemplateEditor: React.FC = () => {
 
   const handleExport = async (format: string) => {
     // const multiplier = (fontSize - 100) / 10 + 1;
-    setIsExporting(format);
+    setIsExporting(true);
     // console.log(backgroundImage)
 
     try {
       let finalImageUrl = backgroundImage;
-      const origin = window.location.origin;
+      const origin = "http://localhost:3000";
       if (!finalImageUrl.startsWith(origin)) {
         finalImageUrl = `${origin}${finalImageUrl}`;
       }
@@ -273,153 +266,137 @@ export const QuoteTemplateEditor: React.FC = () => {
       }
 
       const data = await response.json();
+      console.log(data.job);
+      console.log(data.url);
       setExportUrl(data.url);
       setShowModal(true);
     } catch (error) {
       console.error("Export failed:", error);
       alert(`Export failed: ${error || "Please try again."}`);
     } finally {
-      setIsExporting(null);
+      setIsExporting(false);
     }
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#fafafa" }}>
+    <div style={{ display: "flex", height: "100%", flex: 1 }}>
       {/* modal */}
-      {showModal && exportUrl && (
-        <DisplayerModal exportUrl={exportUrl} setShowModal={setShowModal} />
-      )}
-
-      {/* sidenav */}
-      <SideNavTrial
-        activeSection={activeSection}
-        collapsed={collapsed}
-        setActiveSection={setActiveSection}
-        setCollapsed={setCollapsed}
+      <TopNavWithoutBatchrendering
+        templateName={templateName}
+        // onSwitchMode={onSwitchMode}
+        onSave={() => {}}
+        onExport={handleExport}
+        setTemplateName={setTemplateName}
+        onOpenExport={() => setShowModal(true)}
+        template="🎬 Quote Spotlight Template"
       />
 
-      {/* Controls Panel */}
-      {!collapsed && (
-        <div
-          ref={panelRef}
-          style={{
-            width: `${panelWidth}px`,
-            padding: "2rem",
-            overflowY: "auto",
-            background: "#fff",
-            borderRight: "1px solid #eee",
-            position: "relative",
-            transition: isResizing ? "#add" : "width 0.2s",
-          }}
-        >
-          {/* Drag Handle */}
-          <div
-            onMouseDown={() => setIsResizing(true)}
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: "6px",
-              cursor: "col-resize",
-              background: "#ddd",
-            }}
+      <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
+        {showModal && (
+          <ExportModal
+            showExport={showModal}
+            setShowExport={setShowModal}
+            isExporting={isExporting}
+            exportUrl={exportUrl}
+            onExport={handleExport}
           />
+        )}
 
-          <h2
+        {/* sidenav */}
+        <SideNavTrial
+          activeSection={activeSection}
+          collapsed={collapsed}
+          setActiveSection={setActiveSection}
+          setCollapsed={setCollapsed}
+        />
+
+        {/* Controls Panel */}
+        {!collapsed && (
+          <div
+            ref={panelRef}
             style={{
-              marginBottom: "1.5rem",
-              fontSize: "1.5rem",
-              fontWeight: 600,
-              background: "linear-gradient(90deg,#ff4fa3,#8a4dff,#0077ff)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              width: `${panelWidth}px`,
+              padding: "1rem",
+              overflowY: "auto",
+              background: "#fff",
+              borderRight: "1px solid #eee",
+              position: "relative",
+              transition: isResizing ? "#add" : "width 0.2s",
             }}
           >
-            {templateName}
-          </h2>
+            {/* Drag Handle */}
+            <div
+              onMouseDown={() => setIsResizing(true)}
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: "6px",
+                cursor: "col-resize",
+                background: "#ddd",
+              }}
+            />
 
-          {activeSection === "quote" && (
-            <QuoteSecTrial
-              author={author}
-              quote={quote}
-              setAuthor={setAuthor}
-              setQuote={setQuote}
-              handleAISuggestion={handleAISuggestion}
-              isGenerating={isGenerating}
-            />
-          )}
-          {activeSection === "background" && (
-            <BackgroundSecTrial
-              backgroundImage={backgroundImage}
-              backgroundSource={backgroundSource}
-              handleFileUpload={handleFileUpload}
-              isUploading={isUploading}
-              setBackgroundImage={setBackgroundImage}
-              setBackgroundSource={setBackgroundSource}
-            />
-          )}
-          {activeSection === "typography" && (
-            <TypographySectionQuote
-              fontColor={fontColor}
-              fontFamily={fontFamily}
-              fontSize={fontSize}
-              setFontColor={setFontColor}
-              setFontFamily={setFontFamily}
-              setFontSize={setFontSize}
-            />
-          )}
-          {activeSection === "template" && (
-            <TemplateOptionsSection
-              onEnterBatchRender={onSwitchMode}
-              setTemplateName={setTemplateName}
-              templateName={templateName}
-            />
-          )}
+            {activeSection === "quote" && (
+              <QuoteSecTrial
+                author={author}
+                quote={quote}
+                setAuthor={setAuthor}
+                setQuote={setQuote}
+                handleAISuggestion={handleAISuggestion}
+                isGenerating={isGenerating}
+              />
+            )}
+            {activeSection === "background" && (
+              <BackgroundSecTrial
+                backgroundImage={backgroundImage}
+                backgroundSource={backgroundSource}
+                handleFileUpload={handleFileUpload}
+                isUploading={isUploading}
+                setBackgroundImage={setBackgroundImage}
+                setBackgroundSource={setBackgroundSource}
+              />
+            )}
+            {activeSection === "typography" && (
+              <TypographySectionQuote
+                fontColor={fontColor}
+                fontFamily={fontFamily}
+                fontSize={fontSize}
+                setFontColor={setFontColor}
+                setFontFamily={setFontFamily}
+                setFontSize={setFontSize}
+              />
+            )}
 
-          {activeSection === "ai" && (
-            <AiSetupPanel
-              handleAiSetup={handleAiSetup}
-              isSettingUp={isSettingUp}
-              selectedNiches={selectedNiches}
-              setSelectedNiches={setSelectedNiches}
-              aiMessage={aiMessage}
-            />
-          )}
-          {activeSection === "options" && (
-            <OptionSectionTrial
-              setShowSafeMargins={setShowSafeMargins}
-              showSafeMargins={showSafeMargins}
-              setAutoSave={setAutoSave}
-              autoSave={autoSave}
-              previewSize={previewSize}
-              setPreviewSize={setPreviewSize}
-            />
-          )}
-          {activeSection === "export" && (
-            <ExportSecTrial
-              handleExport={handleExport}
-              isExporting={isExporting}
-            />
-          )}
-        </div>
-      )}
+            {activeSection === "ai" && (
+              <AiSetupPanel
+                handleAiSetup={handleAiSetup}
+                isSettingUp={isSettingUp}
+                selectedNiches={selectedNiches}
+                setSelectedNiches={setSelectedNiches}
+                aiMessage={aiMessage}
+              />
+            )}
+          </div>
+        )}
 
-      <QuoteSpotlightPreview
-        quote={quote}
-        author={author}
-        backgroundImage={backgroundImage}
-        fontSize={fontSize}
-        fontFamily={fontFamily}
-        fontColor={fontColor}
-        showSafeMargins={showSafeMargins}
-        previewBg={previewBg}
-        cycleBg={cycleBg}
-        previewScale={previewSize}
-        onPreviewScaleChange={setPreviewSize}
-        onToggleSafeMargins={setShowSafeMargins}
-        duration={duration}
-      />
+        <QuoteSpotlightPreview
+          quote={quote}
+          author={author}
+          backgroundImage={backgroundImage}
+          fontSize={fontSize}
+          fontFamily={fontFamily}
+          fontColor={fontColor}
+          showSafeMargins={showSafeMargins}
+          previewBg={previewBg}
+          cycleBg={cycleBg}
+          previewScale={previewSize}
+          onPreviewScaleChange={setPreviewSize}
+          onToggleSafeMargins={setShowSafeMargins}
+          duration={duration}
+        />
+      </div>
     </div>
   );
 };

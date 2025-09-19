@@ -50,8 +50,9 @@ export const RedditTypoGraphy: React.FC<{
         display: "flex",
         flexDirection: "column",
         gap: "1.25rem",
-        height: "100%",
+        // height: "100%",
         boxSizing: "border-box",
+        marginBottom: '1rem'
       }}
     >
       <h3 style={{ marginBottom: 8, color: "#0b63ff" }}>🖌️ Style Settings</h3>

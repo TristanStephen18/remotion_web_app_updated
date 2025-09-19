@@ -2,7 +2,7 @@ import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
 import ImageIcon from "@mui/icons-material/Image";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
-import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
+// import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 // import SettingsIcon from "@mui/icons-material/Settings";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import TextFieldsSharpIcon from "@mui/icons-material/TextFieldsSharp";
@@ -38,18 +38,11 @@ export const quoteeditornavs = [
   { key: "background", label: "Background", icon: <ImageIcon /> },
   { key: "typography", label: "Typography", icon: <TextFieldsIcon /> },
   {
-    key: "template",
-    label: "Template Settings",
-    icon: <SettingsApplicationsIcon />,
-  },
-  {
     key: "ai",
     label: "Ai",
     icon: <AutoAwesomeIcon />,
   },
 
-  // { key: "options", label: "Options", icon: <SettingsIcon /> },
-  { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
 
 export const typingtemplatenavs = [
@@ -71,13 +64,6 @@ export const factCardsnavitems = [
   { key: "background", label: "Background", icon: <ImageIcon /> },
   { key: "typography", label: "Typography", icon: <TextFieldsIcon /> },
   { key: "duration", label: "Duration", icon: <TimerIcon /> },
-  {
-    key: "template",
-    label: "Template Settings",
-    icon: <SettingsApplicationsIcon />,
-  },
-  // { key: "options", label: "Options", icon: <SettingsIcon /> },
-  { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
 
 export const BarChartNavItems = [
@@ -85,13 +71,6 @@ export const BarChartNavItems = [
   { key: "data", label: "Data", icon: <DataArrayIcon /> },
   { key: "graph", label: "Bar Graph", icon: <BarChartIcon /> },
   { key: "background", label: "Background", icon: <ImageIcon /> },
-  {
-    key: "template",
-    label: "Template Settings",
-    icon: <SettingsApplicationsIcon />,
-  },
-  // { key: "options", label: "Options", icon: <SettingsIcon /> },
-  { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
 
 export const SplitScreenNavs = [
@@ -102,9 +81,6 @@ export const SplitScreenNavs = [
     icon: <VideoLibraryIcon />,
   },
   { key: "settings", label: "Video Settings", icon: <VideoSettingsIcon /> },
-
-  // { key: "options", label: "Options", icon: <SettingsIcon /> },
-  { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
 
 export const KpiFlipCardsNavs = [
@@ -114,13 +90,6 @@ export const KpiFlipCardsNavs = [
   { key: "data", label: "Card Data", icon: <DataArrayIcon /> },
   { key: "animation", label: "Animation", icon: <AnimationIcon /> },
   { key: "background", label: "Background", icon: <ImageIcon /> },
-  {
-    key: "template",
-    label: "Template Settings",
-    icon: <SettingsApplicationsIcon />,
-  },
-  // { key: "options", label: "Options", icon: <SettingsIcon /> },
-  { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
 
 export const KenBurnsNav = [
@@ -130,27 +99,13 @@ export const KenBurnsNav = [
     label: "Proportions",
     icon: <PhotoSizeSelectLargeIcon />,
   },
-  {
-    key: "template",
-    label: "Template Settings",
-    icon: <SettingsApplicationsIcon />,
-  },
-  // { key: "options", label: "Options", icon: <SettingsIcon /> },
-  { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
 
 export const CurveLineTrendNavs = [
   { key: "text", label: "Title & Subtitle", icon: <TextFieldsSharpIcon /> },
   { key: "data", label: "Data", icon: <DataArrayIcon /> },
-  { key: "background", label: "Presets/Background", icon: <DarkModeIcon /> },
+  { key: "background", label: "Themes", icon: <DarkModeIcon /> },
   { key: "animation", label: "Animarion & Timing", icon: <AnimationIcon /> },
-  {
-    key: "template",
-    label: "Template Settings",
-    icon: <SettingsApplicationsIcon />,
-  },
-  // { key: "options", label: "Options", icon: <SettingsIcon /> },
-  { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
 
 export const FakeTextSideNavs = [
@@ -160,8 +115,6 @@ export const FakeTextSideNavs = [
   { key: "display", label: "Theme & Fonts", icon: <DarkModeIcon /> },
   { key: "background", label: "Background Video", icon: <VideoLibraryIcon /> },
   { key: "music", label: "Background Music", icon: <LibraryMusicIcon /> },
-  // { key: "options", label: "Options", icon: <SettingsIcon /> },
-  { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
 
 export const RedditVideoNavs = [
@@ -170,8 +123,6 @@ export const RedditVideoNavs = [
   { key: "text", label: "Text", icon: <TextFieldsSharpIcon /> },
   { key: "background", label: "Background Video", icon: <VideoLibraryIcon /> },
   { key: "music", label: "Background Music", icon: <LibraryMusicIcon /> },
-  // { key: "options", label: "Options", icon: <SettingsIcon /> },
-  { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
 
 export const StoryTellingNavs = [
@@ -180,8 +131,6 @@ export const StoryTellingNavs = [
   { key: "text", label: "Text", icon: <TextFieldsSharpIcon /> },
   { key: "background", label: "Background Video", icon: <VideoLibraryIcon /> },
   { key: "music", label: "Background Music", icon: <LibraryMusicIcon /> },
-  // { key: "options", label: "Options", icon: <SettingsIcon /> },
-  { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];
 
 export const NewTextTypingNavs = [
@@ -189,11 +138,4 @@ export const NewTextTypingNavs = [
   { key: "fonts", label: "Fonts", icon: <TextFieldsSharpIcon /> },
   { key: "background", label: "Themes", icon: <DarkModeIcon /> },
   { key: "sound", label: "Audio", icon: <LibraryMusicIcon /> },
-  {
-    key: "template",
-    label: "Template Settings",
-    icon: <SettingsApplicationsIcon />,
-  },
-  // { key: "options", label: "Options", icon: <SettingsIcon /> },
-  { key: "export", label: "Export", icon: <FileDownloadIcon /> },
 ];

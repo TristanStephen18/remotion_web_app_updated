@@ -1,7 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { DisplayerModal } from "../Global/modal";
-import { ExportSecTrial } from "../Global/sidenav_sections/export";
-
 import { defaultpanelwidth } from "../../../data/defaultvalues";
 import { NewTypingTemplateSideNav } from "./sidenav";
 import type { Phrase } from "../../../models/TextTyping";
@@ -11,7 +8,9 @@ import { PhraseSideNav } from "./sidenav_sections/phrase";
 import { FontSideNavTextTyping } from "./sidenav_sections/fonts";
 import { BackgroundSideNav } from "./sidenav_sections/backgrounds";
 import { SoundSideNav } from "./sidenav_sections/sounds";
-import { TemplateOptionsSection } from "../Global/templatesettings";
+// import { TopNav } from "../../navigations/single_editors/trialtopnav";
+import { ExportModal } from "../../layout/modals/exportmodal";
+import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
 
 export const NewTypingEditor: React.FC = () => {
   const defaultphrasedata = {
@@ -20,7 +19,7 @@ export const NewTypingEditor: React.FC = () => {
     mood: "iconic",
   };
 
-  const [templateName, setTemplateName] = useState("🎬 Text Typing Template");
+  const [templateName, setTemplateName] = useState("My Text Typing Template");
 
   const [mood, setMood] = useState(defaultphrasedata.mood);
   const [category, setCategory] = useState(defaultphrasedata.category);
@@ -38,15 +37,15 @@ export const NewTypingEditor: React.FC = () => {
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    "phrase" | "fonts" | "background" | "sound" | "template" | "export"
+    "phrase" | "fonts" | "background" | "sound" 
   >("phrase");
   const [collapsed, setCollapsed] = useState(false);
 
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [isExporting, setIsExporting] = useState<string | null>(null);
   // const [autoSave, setAutoSave] = useState(false);
 
   // 🔹 Resizable panel state
@@ -121,7 +120,7 @@ export const NewTypingEditor: React.FC = () => {
   };
 
   const handleExport = async (format: string) => {
-    setIsExporting(format);
+    setIsExporting(true);
     // console.log(fontSize);
     try {
       const response = await fetch("/generatevideo/newtexttypingrender", {
@@ -148,131 +147,115 @@ export const NewTypingEditor: React.FC = () => {
       console.error("Export failed:", error);
       alert(`Export failed: ${error || "Please try again."}`);
     } finally {
-      setIsExporting(null);
+      setIsExporting(false);
     }
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#fafafa" }}>
-      {/* modal */}
-      {showModal && exportUrl && (
-        <DisplayerModal exportUrl={exportUrl} setShowModal={setShowModal} />
-      )}
-
-      {/* sidenav */}
-      <NewTypingTemplateSideNav
-        activeSection={activeSection}
-        collapsed={collapsed}
-        setActiveSection={setActiveSection}
-        setCollapsed={setCollapsed}
+    <div style={{ display: "flex", height: "100%", flex: 1}}>
+      <TopNavWithoutBatchrendering
+        templateName={templateName}
+        onSave={() => {}}
+        onExport={handleExport}
+        setTemplateName={setTemplateName}
+        onOpenExport={() => setShowModal(true)}
+        template="🎬 Text Typing Template"
       />
-
-      {/* Controls Panel */}
-      {!collapsed && (
-        <div
-          ref={panelRef}
-          style={{
-            width: `${panelWidth}px`,
-            padding: "2rem",
-            overflowY: "auto",
-            background: "#fff",
-            borderRight: "1px solid #eee",
-            position: "relative",
-            transition: isResizing ? "none" : "width 0.2s",
-          }}
-        >
-          {/* Drag Handle */}
-          <div
-            onMouseDown={() => setIsResizing(true)}
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: "6px",
-              cursor: "col-resize",
-              background: "#ddd", // 👈 always visible
-            }}
+      {/* modal */}
+      <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
+        {showModal && (
+          <ExportModal
+            showExport={showModal}
+            setShowExport={setShowModal}
+            isExporting={isExporting}
+            exportUrl={exportUrl}
+            onExport={handleExport}
           />
+        )}
 
-          <h2
+        {/* sidenav */}
+        <NewTypingTemplateSideNav
+          activeSection={activeSection}
+          collapsed={collapsed}
+          setActiveSection={setActiveSection}
+          setCollapsed={setCollapsed}
+        />
+
+        {/* Controls Panel */}
+        {!collapsed && (
+          <div
+            ref={panelRef}
             style={{
-              marginBottom: "1.5rem",
-              fontSize: "1.5rem",
-              fontWeight: 600,
-              background: "linear-gradient(90deg,#ff4fa3,#8a4dff,#0077ff)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              width: `${panelWidth}px`,
+              padding: "1rem",
+              overflowY: "auto",
+              background: "#fff",
+              borderRight: "1px solid #eee",
+              position: "relative",
+              transition: isResizing ? "none" : "width 0.2s",
             }}
           >
-            {templateName}
-          </h2>
-          {activeSection === "phrase" && (
-            <PhraseSideNav
-              category={category}
-              handleAISuggestion={handleAISuggestion}
-              mood={mood}
-              phrase={phrase}
-              setCategory={setCategory}
-              setMood={setMood}
-              setPhrase={setPhrase}
-              setPhraseData={setPhraseData}
-              isGenerating={isGenerating}
-            />
-          )}
-          {activeSection === "fonts" && (
-            <FontSideNavTextTyping
-              fontIndex={fontIndex}
-              setFontIndex={setFontIndex}
-            />
-          )}
-          {activeSection == "background" && (
-            <BackgroundSideNav
-              backgroundIndex={backgroundIndex}
-              setBackgroundIndex={setBackgroundIndex}
-            />
-          )}
-
-          {activeSection === "sound" && (
-            <SoundSideNav
-              setSoundIndex={setSoundIndex}
-              soundIndex={soundIndex}
-            />
-          )}
-
-          {activeSection === "template" && (
-            <TemplateOptionsSection
-              onEnterBatchRender={() => {
-                window.location.assign(
-                  "/template/newtexttyping/mode/batchrendering"
-                );
+            {/* Drag Handle */}
+            <div
+              onMouseDown={() => setIsResizing(true)}
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: "6px",
+                cursor: "col-resize",
+                background: "#ddd", // 👈 always visible
               }}
-              setTemplateName={setTemplateName}
-              templateName={templateName}
             />
-          )}
+            {activeSection === "phrase" && (
+              <PhraseSideNav
+                category={category}
+                handleAISuggestion={handleAISuggestion}
+                mood={mood}
+                phrase={phrase}
+                setCategory={setCategory}
+                setMood={setMood}
+                setPhrase={setPhrase}
+                setPhraseData={setPhraseData}
+                isGenerating={isGenerating}
+              />
+            )}
+            {activeSection === "fonts" && (
+              <FontSideNavTextTyping
+                fontIndex={fontIndex}
+                setFontIndex={setFontIndex}
+              />
+            )}
+            {activeSection == "background" && (
+              <BackgroundSideNav
+                backgroundIndex={backgroundIndex}
+                setBackgroundIndex={setBackgroundIndex}
+              />
+            )}
 
-          {activeSection === "export" && (
-            <ExportSecTrial
-              handleExport={handleExport}
-              isExporting={isExporting}
-            />
-          )}
-        </div>
-      )}
-      <NewTypingAnimationPreview
-        audioIndex={soundIndex}
-        backgroundIndex={backgroundIndex}
-        cycleBg={cycleBg}
-        duration={duration}
-        fontIndex={fontIndex}
-        onPreviewScaleChange={setPreviewSize}
-        onToggleSafeMargins={setShowSafeMargins}
-        previewBg={previewBg}
-        previewScale={previewSize}
-        showSafeMargins={showSafeMargins}
-        phraseData={phraseData}
-      />
+            {activeSection === "sound" && (
+              <SoundSideNav
+                setSoundIndex={setSoundIndex}
+                soundIndex={soundIndex}
+              />
+            )}
+          </div>
+        )}
+        <NewTypingAnimationPreview
+          audioIndex={soundIndex}
+          backgroundIndex={backgroundIndex}
+          cycleBg={cycleBg}
+          duration={duration}
+          fontIndex={fontIndex}
+          onPreviewScaleChange={setPreviewSize}
+          onToggleSafeMargins={setShowSafeMargins}
+          previewBg={previewBg}
+          previewScale={previewSize}
+          showSafeMargins={showSafeMargins}
+          phraseData={phraseData}
+        />
+      </div>
     </div>
   );
 };
