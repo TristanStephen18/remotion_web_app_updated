@@ -263,7 +263,7 @@ const ChatBubble: React.FC<{
       >
         {persona.avatar ? (
           <img
-            src={staticFile(persona.avatar)}
+            src={persona.avatar}
             alt={persona.name}
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />

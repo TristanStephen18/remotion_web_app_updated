@@ -18,6 +18,14 @@ interface SaveProjectModalProps {
   initialTitle?: string;
 }
 
+const progressMessages = [
+  "Still working on saving your project…",
+  "Crunching data, almost there…",
+  "Polishing up the final details…",
+  "Hang tight, just a little longer…",
+  "Making sure everything is perfect…",
+];
+
 export const SaveProjectModal: React.FC<SaveProjectModalProps> = ({
   open,
   onClose,
@@ -29,14 +37,31 @@ export const SaveProjectModal: React.FC<SaveProjectModalProps> = ({
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // 🔹 Index for rotating messages
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  // Reset state when modal opens
   useEffect(() => {
     if (open) {
       setTitle(initialTitle);
       setStatus(null);
       setError(null);
       setLoading(false);
+      setMessageIndex(0);
     }
   }, [open, initialTitle]);
+
+  // 🔹 Rotate messages every 20 seconds while loading
+  useEffect(() => {
+    if (!loading) return;
+
+    const interval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % progressMessages.length);
+      setStatus(progressMessages[messageIndex]);
+    }, 20000); // 20 seconds
+
+    return () => clearInterval(interval);
+  }, [loading, messageIndex]);
 
   const handleSaveClick = async () => {
     if (!title.trim()) {
@@ -46,20 +71,21 @@ export const SaveProjectModal: React.FC<SaveProjectModalProps> = ({
     setError(null);
     setLoading(true);
     setStatus("Starting…");
+    setMessageIndex(0);
 
     try {
-      // Pass setStatus so the caller can update the modal text (e.g. "Exporting...", "Saving...")
+      // Pass setStatus so caller can override status messages too
       await onSave(title.trim(), (s) => setStatus(s));
       // success
       setStatus("Done");
       setTimeout(() => {
         setLoading(false);
         onClose();
-      }, 400); // tiny delay so user sees "Done"
+      }, 400);
     } catch (err: any) {
       console.error("Save failed:", err);
       const message =
-        (err && (err.message || (err.error ?? err))) || "Failed to save project";
+        (err && (err.message || (err.error ?? err))) || "Failed to save template";
       setError(String(message));
       setLoading(false);
     }
@@ -88,19 +114,19 @@ export const SaveProjectModal: React.FC<SaveProjectModalProps> = ({
           pb: 0,
         }}
       >
-        Save Project
+        Save this Template?
       </DialogTitle>
 
       <DialogContent sx={{ pt: 2, pb: 1 }}>
         <TextField
-          label="Project name"
+          label="Give your template a name"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           fullWidth
           size="small"
           disabled={loading}
           error={!!error}
-          helperText={error ?? "Give your project a descriptive name"}
+          helperText={error ?? "Give your template a descriptive name"}
           autoFocus
         />
 
@@ -115,7 +141,7 @@ export const SaveProjectModal: React.FC<SaveProjectModalProps> = ({
             variant="body2"
             color={status ? "text.primary" : "text.secondary"}
           >
-            {status ?? "Enter a name and click Save to this template as a project."}
+            {status ?? "Enter a name and click Save to save this template. "}
           </Typography>
         </Box>
       </DialogContent>
@@ -140,7 +166,7 @@ export const SaveProjectModal: React.FC<SaveProjectModalProps> = ({
             px: 3,
           }}
         >
-          {loading ? "Saving..." : "Save"}
+          {loading ? "Saving template..." : "Save"}
         </Button>
       </DialogActions>
     </Dialog>

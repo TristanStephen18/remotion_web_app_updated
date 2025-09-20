@@ -1,6 +1,7 @@
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { Button, Typography, CircularProgress } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import React, { useEffect, useRef, useState } from "react";
 
 export const TopNavWithSave: React.FC<{
   templateName?: string;
@@ -10,7 +11,40 @@ export const TopNavWithSave: React.FC<{
   onOpenExport: () => void;
   template: string;
   isSaving?: boolean;
-}> = ({ onSave, onOpenExport, template, isSaving = false }) => {
+  isExporting?: boolean;
+}> = ({ onSave, onOpenExport, template, isSaving = false, isExporting = false }) => {
+  const savingMessages = [
+    "Saving...",
+    "Hang tight, almost done...",
+    "Crunching data...",
+    "Optimizing your template...",
+    "Just a moment, making magic...",
+    "Finalizing changes..."
+  ];
+  const [messageIndex, setMessageIndex] = useState(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (isSaving) {
+      setMessageIndex(0);
+      intervalRef.current = setInterval(() => {
+        setMessageIndex((prev) => (prev + 1) % savingMessages.length);
+      }, 20000);
+    } else {
+      setMessageIndex(0);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    }
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [isSaving]);
+
   return (
     <div
       style={{
@@ -64,13 +98,14 @@ export const TopNavWithSave: React.FC<{
             "&:hover": { borderColor: "#42a5f5", color: "#42a5f5" },
           }}
         >
-          {isSaving ? "Saving..." : "Save"}
+          {isSaving ? savingMessages[messageIndex] : "Save"}
         </Button>
 
         <Button
           variant="outlined"
           startIcon={<FileDownloadIcon />}
           onClick={onOpenExport}
+          disabled={isSaving || isExporting}
           sx={{
             borderRadius: 2,
             textTransform: "none",

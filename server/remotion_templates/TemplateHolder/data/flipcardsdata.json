@@ -1,89 +1,75 @@
 {
-  "backgroundImage": "http://localhost:3000/bgimages/colors/bg21.jpg",
-  "title": "Website Traffic Analysis",
-  "titleFontSize": 93,
-  "titleFontColor": "white",
-  "titleFontFamily": "'Russo One', sans-serif",
-  "subtitle": "Key Metrics for User Engagement",
+  "backgroundImage": "http://localhost:3000/bgimages/colors/bg8.jpg",
+  "title": "Performance\nDashboard",
+  "titleFontSize": 96,
+  "titleFontColor": "#FFFFFF",
+  "titleFontFamily": "'Luckiest Guy', sans-serif",
+  "subtitle": "Real-time Analytics",
   "subtitleFontSize": 36,
-  "subtitleFontColor": "white",
-  "subtitleFontFamily": "'Russo One', sans-serif",
+  "subtitleFontColor": "#E5E7EB",
+  "subtitleFontFamily": "Inter, system-ui, sans-serif",
   "cardsData": [
     {
       "front": {
-        "label": "Unique Visitors",
-        "value": "120,560",
-        "color": "#FFFFFF"
+        "label": "CTR",
+        "value": "12.5%",
+        "color": "#3B82F6"
       },
       "back": {
-        "label": "Change vs Prev Month",
-        "value": "+8.2%",
-        "color": "#FFFFFF"
+        "label": "Clicks",
+        "value": "2.4K",
+        "color": "#10B981"
       }
     },
     {
       "front": {
-        "label": "Page Views",
-        "value": "350,890",
-        "color": "#FFFFFF"
+        "label": "CPA",
+        "value": "$24",
+        "color": "#8B5CF6"
       },
       "back": {
-        "label": "Average Session Duration",
-        "value": "00:04:35",
-        "color": "#FFFFFF"
+        "label": "ROAS",
+        "value": "4.2x",
+        "color": "#F59E0B"
       }
     },
     {
       "front": {
-        "label": "Bounce Rate",
-        "value": "48.7%",
-        "color": "#FFFFFF"
+        "label": "CTR",
+        "value": "12.5%",
+        "color": "#3B82F6"
       },
       "back": {
-        "label": "New vs Returning",
-        "value": "65% New",
-        "color": "#FFFFFF"
+        "label": "Clicks",
+        "value": "2.4K",
+        "color": "#10B981"
       }
     },
     {
       "front": {
-        "label": "Conversion Rate",
-        "value": "3.15%",
-        "color": "#FFFFFF"
+        "label": "CPA",
+        "value": "$24",
+        "color": "#8B5CF6"
       },
       "back": {
-        "label": "Goal Completions",
-        "value": "3,800",
-        "color": "#FFFFFF"
-      }
-    },
-    {
-      "front": {
-        "label": "Top Source",
-        "value": "Organic Search",
-        "color": "#FFFFFF"
-      },
-      "back": {
-        "label": "Traffic Share",
-        "value": "45%",
-        "color": "#FFFFFF"
+        "label": "ROAS",
+        "value": "4.2x",
+        "color": "#F59E0B"
       }
     }
   ],
-  "cardWidth": 360,
-  "cardHeight": 220,
-  "cardBorderRadius": 28,
-  "cardBorderColor": "#F39C12",
-  "cardLabelColor": "#FFFFFF",
-  "cardLabelFontSize": 29,
-  "cardContentFontFamily": "'Russo One', sans-serif",
+  "cardWidth": 383,
+  "cardHeight": 267,
+  "cardBorderRadius": 80,
+  "cardBorderColor": "#0fff4b",
+  "cardLabelColor": "#6B7280",
+  "cardLabelFontSize": 28,
+  "cardContentFontFamily": "Inter, system-ui, sans-serif",
   "cardGrid": {
     "rows": 2,
     "cols": 2
   },
   "delayStart": 0.5,
   "delayStep": 1,
-  "cardColorBack": "#E67E22",
-  "cardColorFront": "#9B59B6",
-  "valueFontSize": 42
+  "valueFontSize": 46
 }

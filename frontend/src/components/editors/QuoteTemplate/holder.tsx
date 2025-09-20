@@ -12,10 +12,15 @@ import {
 import type { QuoteConfigDataset } from "../../../models/QuoteSpotlight";
 import { AiSetupPanel } from "./sidenav_sections/aisetup";
 import { ExportModal } from "../../layout/modals/exportmodal";
-import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
+// import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
+import { useProjectSave } from "../../../hooks/saveproject";
+import { useParams } from "react-router-dom";
+import { TopNavWithSave } from "../../navigations/single_editors/withsave";
+import { LoadingOverlay } from "../../layout/modals/loadingprojectmodal";
+import { SaveProjectModal } from "../../layout/modals/savemodal";
 
 export const QuoteTemplateEditor: React.FC = () => {
-  // add this new state
+  const { id } = useParams();
   const [aiMessage, setAiMessage] = useState<string | null>(null);
 
   const [aiSetupData, setAiSetupData] = useState<QuoteConfigDataset>();
@@ -57,6 +62,7 @@ export const QuoteTemplateEditor: React.FC = () => {
   const [isResizing, setIsResizing] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [duration, setDuration] = useState(9);
+  const [isLoading, setIsLoading] = useState(false);
 
   // 🔹 Drag handlers
   useEffect(() => {
@@ -80,6 +86,72 @@ export const QuoteTemplateEditor: React.FC = () => {
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isResizing]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("quoteTemplateEditorState");
+
+    if (id) {
+      // 🟢 Load project from backend
+      setIsLoading(true);
+      fetch(`/projects/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to load project");
+          return res.json();
+        })
+        .then((data) => {
+          setProjectId(data.id);
+          // restore from backend
+          setQuote(data.props.quote);
+          setAuthor(data.props.author);
+          setBackgroundImage(data.props.imageurl);
+          setFontFamily(data.props.fontfamily ?? "Cormorant Garamond, serif");
+          setFontColor(data.props.fontcolor ?? "white");
+          setFontSize(data.props.fontsize ?? 1);
+          setDuration(data.props.duration);
+
+          // 🟢 Overlay any unsaved local edits
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            Object.entries(parsed).forEach(([key, value]) => {
+              if (value !== undefined) {
+                // @ts-ignore safely apply matching state
+                if (
+                  typeof eval(
+                    `set${key.charAt(0).toUpperCase() + key.slice(1)}`
+                  ) === "function"
+                ) {
+                  eval(
+                    `set${key.charAt(0).toUpperCase() + key.slice(1)}(value)`
+                  );
+                }
+              }
+            });
+          }
+
+          lastSavedProps.current = data.props;
+        })
+        .catch((err) => console.error("❌ Project load failed:", err))
+        .finally(() => setIsLoading(false));
+    } else if (saved) {
+      // 🟢 No project, just restore from localStorage
+      const parsed = JSON.parse(saved);
+      setQuote(parsed.quote);
+      setAuthor(parsed.author);
+      setBackgroundImage(parsed.backgroundImage);
+      setFontFamily(parsed.fontFamily);
+      setFontColor(parsed.fontColor);
+      setFontSize(parsed.fontSize);
+      setDuration(parsed.duration);
+      setTemplateName(parsed.templateName ?? "My Quote Spotlight Template");
+      setPreviewBg(parsed.previewBg ?? "dark");
+      setPreviewSize(parsed.previewSize ?? 1);
+      setCollapsed(parsed.collapsed ?? false);
+      setActiveSection(parsed.activeSection ?? "quote");
+      setShowSafeMargins(parsed.showSafeMargins ?? true);
+    }
+  }, [id]);
 
   const cycleBg = () => {
     if (previewBg === "dark") setPreviewBg("light");
@@ -232,7 +304,7 @@ export const QuoteTemplateEditor: React.FC = () => {
 
     try {
       let finalImageUrl = backgroundImage;
-      const origin = "http://localhost:3000";
+      const origin = `${window.location.origin}`;
       if (!finalImageUrl.startsWith(origin)) {
         finalImageUrl = `${origin}${finalImageUrl}`;
       }
@@ -271,17 +343,97 @@ export const QuoteTemplateEditor: React.FC = () => {
     }
   };
 
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  const messages = [
+    "⏳ Preparing your template...",
+
+    "🙇 Sorry for the wait, still working on it...",
+    "🚀 Almost there, thanks for your patience!",
+  ];
+
+  // 🟢 Cycle loader messages every 10s
+  useEffect(() => {
+    if (!isLoading) return;
+    const interval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % messages.length);
+    }, 10000); // every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [isLoading]);
+
+  const {
+    projectId,
+    setProjectId,
+    isSaving,
+    showSaveModal,
+    setShowSaveModal,
+    handleSave,
+    saveNewProject,
+    lastSavedProps,
+  } = useProjectSave({
+    templateId: 1,
+    buildProps: () => ({
+      quote,
+      author,
+      imageurl: backgroundImage.startsWith("http")
+        ? backgroundImage
+        : `${window.location.origin}${backgroundImage}`,
+
+      fontsize: fontSize,
+      fontcolor: fontColor,
+      fontfamily: fontFamily,
+      duration,
+    }),
+    videoEndpoint: "/generatevideo/quotetemplatewchoices",
+  });
+  // 🟢 Build one object representing ALL state you want persisted locally
+  const editorState = {
+    templateName,
+    quote,
+    author,
+    backgroundImage,
+    backgroundSource,
+    fontFamily,
+    fontColor,
+    fontSize,
+    showSafeMargins,
+    previewBg,
+    activeSection,
+    collapsed,
+    previewSize,
+    duration,
+  };
+  
+
+  // 🟢 Sync to localStorage on every change
+  useEffect(() => {
+    localStorage.setItem(
+      "quoteTemplateEditorState",
+      JSON.stringify(editorState)
+    );
+  }, [editorState]);
+
   return (
     <div style={{ display: "flex", height: "100%", flex: 1 }}>
+      {isLoading && <LoadingOverlay message={messages[messageIndex]} />}
+
       {/* modal */}
-      <TopNavWithoutBatchrendering
+      <TopNavWithSave
         templateName={templateName}
         // onSwitchMode={onSwitchMode}
-        onSave={() => {}}
+        onSave={handleSave}
         onExport={handleExport}
         setTemplateName={setTemplateName}
         onOpenExport={() => setShowModal(true)}
         template="🎬 Quote Spotlight Template"
+        isSaving={isSaving}
+      />
+
+      <SaveProjectModal
+        open={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onSave={saveNewProject}
       />
 
       <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>

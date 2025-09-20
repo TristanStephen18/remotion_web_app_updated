@@ -2,21 +2,21 @@
   "language_code": "eng",
   "segments": [
     {
-      "text": "Hey, have you tried The Green Fork yet?",
+      "text": "Hello EveryNyan!!! How are you? Fine, thank you. ",
       "start_time": 0,
-      "end_time": 2.4555,
-      "speaker": {
-        "id": "person_1",
-        "name": "person 1"
-      }
-    },
-    {
-      "text": "Not yet. Is it any good?",
-      "start_time": 2.4555,
-      "end_time": 4.257937,
+      "end_time": 4.179563,
       "speaker": {
         "id": "person_2",
         "name": "person 2"
+      }
+    },
+    {
+      "text": "Oh my ghadd!",
+      "start_time": 4.179563,
+      "end_time": 5.328938,
+      "speaker": {
+        "id": "person_1",
+        "name": "person 1"
       }
     }
   ]

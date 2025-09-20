@@ -8,12 +8,16 @@ import { PhraseSideNav } from "./sidenav_sections/phrase";
 import { FontSideNavTextTyping } from "./sidenav_sections/fonts";
 import { BackgroundSideNav } from "./sidenav_sections/backgrounds";
 import { SoundSideNav } from "./sidenav_sections/sounds";
-// import { TopNav } from "../../navigations/single_editors/trialtopnav";
 import { ExportModal } from "../../layout/modals/exportmodal";
-import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
+import { TopNavWithSave } from "../../navigations/single_editors/withsave";
+import { useProjectSave } from "../../../hooks/saveproject";
+import { SaveProjectModal } from "../../layout/modals/savemodal";
+import { LoadingOverlay } from "../../layout/modals/loadingprojectmodal";
+import { useParams } from "react-router-dom";
 
 export const NewTypingEditor: React.FC = () => {
-  const defaultphrasedata = {
+  const { id } = useParams();
+  const defaultphrasedata: Phrase = {
     lines: ["Dream big, start small", "but start today"],
     category: "wisdom",
     mood: "iconic",
@@ -24,38 +28,41 @@ export const NewTypingEditor: React.FC = () => {
   const [mood, setMood] = useState(defaultphrasedata.mood);
   const [category, setCategory] = useState(defaultphrasedata.category);
   const [phrase, setPhrase] = useState<string[]>(defaultphrasedata.lines);
-  const [fontIndex, setFontIndex] = useState(1);
   const [phraseData, setPhraseData] = useState<Phrase>(defaultphrasedata);
+
+  const [fontIndex, setFontIndex] = useState(1);
   const [backgroundIndex, setBackgroundIndex] = useState(10);
   const [soundIndex, setSoundIndex] = useState(1);
-  const [duration, setDuration] = useState(
-    calculateDuration(defaultphrasedata)
-  );
-  //   const [aiprompt, setPrompt] = useState("");
-  const [previewSize, setPreviewSize] = useState(1);
+  const [duration, setDuration] = useState(calculateDuration(defaultphrasedata));
 
+  const [previewSize, setPreviewSize] = useState(1);
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    "phrase" | "fonts" | "background" | "sound" 
+    "phrase" | "fonts" | "background" | "sound"
   >("phrase");
   const [collapsed, setCollapsed] = useState(false);
 
   const [isGenerating, setIsGenerating] = useState(false);
-
   const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  // const [autoSave, setAutoSave] = useState(false);
 
-  // 🔹 Resizable panel state
-  const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
+  const [panelWidth, setPanelWidth] = useState(defaultpanelwidth);
   const [isResizing, setIsResizing] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
 
-  //   console.log(duration);
+  const [isLoading, setIsLoading] = useState(false);
+  const [messageIndex, setMessageIndex] = useState(0);
+  const messages = [
+        "⏳ Preparing your template...",
+
+    "🙇 Sorry for the wait, still working on it...",
+    "🚀 Almost there, thanks for your patience!",
+  ];
+
+  // 🟢 Auto recalc duration when phraseData changes
   useEffect(() => {
-    console.log("changes made in phrase data");
     setDuration(calculateDuration(phraseData));
   }, [phraseData]);
 
@@ -82,12 +89,66 @@ export const NewTypingEditor: React.FC = () => {
     };
   }, [isResizing]);
 
+  // 🟢 Cycle loader messages every 10s
+  useEffect(() => {
+    if (!isLoading) return;
+    const interval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % messages.length);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [isLoading]);
+
+  // 🟢 Load project if opened from /projects/:id/editor
+  useEffect(() => {
+    if (id) {
+      setIsLoading(true);
+      fetch(`/projects/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to load project");
+          return res.json();
+        })
+        .then((data) => {
+          setProjectId(data.id);
+
+          setPhraseData(data.props.phrase ?? defaultphrasedata);
+          setCategory(data.props.phrase?.category ?? "wisdom");
+          setMood(data.props.phrase?.mood ?? "iconic");
+          setPhrase(data.props.phrase?.lines ?? defaultphrasedata.lines);
+
+          setFontIndex(data.props.fontIndex ?? 1);
+          setBackgroundIndex(data.props.backgroundIndex ?? 10);
+          setSoundIndex(data.props.audioIndex ?? 1);
+          setDuration(data.props.duration);
+
+          lastSavedProps.current = data.props;
+        })
+        .catch((err) => console.error("❌ Project load failed:", err))
+        .finally(() => setIsLoading(false));
+    } else {
+      // 🟢 fallback: load from localStorage
+      const saved = localStorage.getItem("newTypingEditorState");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setPhraseData(parsed.phraseData ?? defaultphrasedata);
+        setCategory(parsed.category);
+        setMood(parsed.mood);
+        setPhrase(parsed.phrase);
+        setFontIndex(parsed.fontIndex);
+        setBackgroundIndex(parsed.backgroundIndex);
+        setSoundIndex(parsed.soundIndex);
+        setDuration(parsed.duration);
+        lastSavedProps.current = parsed;
+      }
+    }
+  }, [id]);
+
   const cycleBg = () => {
     if (previewBg === "dark") setPreviewBg("light");
     else if (previewBg === "light") setPreviewBg("grey");
     else setPreviewBg("dark");
   };
-  //for background images upload
 
   const handleAISuggestion = async () => {
     setIsGenerating(true);
@@ -95,22 +156,14 @@ export const NewTypingEditor: React.FC = () => {
       const response = await fetch("/api/generate-phrase", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          category,
-          mood,
-        }),
+        body: JSON.stringify({ category, mood }),
       });
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(
-          `HTTP error! status: ${response.status}, message: ${errorText}`
-        );
+        throw new Error(`HTTP error! ${response.status}, ${errorText}`);
       }
       const data = await response.json();
-      console.log(data.phrase);
-      // console.log()
       setPhrase(data.phrase);
-      // setTextContent(data.textcontent);
     } catch (error) {
       console.error("error generating ai suggestion");
       alert(error);
@@ -121,7 +174,6 @@ export const NewTypingEditor: React.FC = () => {
 
   const handleExport = async (format: string) => {
     setIsExporting(true);
-    // console.log(fontSize);
     try {
       const response = await fetch("/generatevideo/newtexttypingrender", {
         method: "POST",
@@ -136,9 +188,7 @@ export const NewTypingEditor: React.FC = () => {
       });
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(
-          `HTTP error! status: ${response.status}, message: ${errorText}`
-        );
+        throw new Error(`HTTP error! ${response.status}, ${errorText}`);
       }
       const data = await response.json();
       setExportUrl(data.url);
@@ -151,17 +201,77 @@ export const NewTypingEditor: React.FC = () => {
     }
   };
 
+  // 🟢 Hook for saving/updating projects
+  const {
+    projectId,
+    setProjectId,
+    isSaving,
+    showSaveModal,
+    setShowSaveModal,
+    handleSave,
+    saveNewProject,
+    lastSavedProps,
+  } = useProjectSave({
+    templateId: 2, // 👈 unique ID for text typing template
+    buildProps: () => ({
+      phrase: phraseData,
+      backgroundIndex,
+      fontIndex,
+      audioIndex: soundIndex,
+      duration,
+    }),
+    videoEndpoint: "/generatevideo/newtexttypingrender",
+  });
+
+  // 🟢 Persist state in localStorage
+  useEffect(() => {
+    const currentProps = {
+      phraseData,
+      category,
+      mood,
+      phrase,
+      fontIndex,
+      backgroundIndex,
+      soundIndex,
+      duration,
+    };
+    localStorage.setItem("newTypingEditorState", JSON.stringify(currentProps));
+
+    if (projectId) {
+      localStorage.setItem("projectId", projectId.toString());
+    }
+  }, [
+    phraseData,
+    category,
+    mood,
+    phrase,
+    fontIndex,
+    backgroundIndex,
+    soundIndex,
+    duration,
+    projectId,
+  ]);
+
   return (
-    <div style={{ display: "flex", height: "100%", flex: 1}}>
-      <TopNavWithoutBatchrendering
+    <div style={{ display: "flex", height: "100%", flex: 1 }}>
+      {isLoading && <LoadingOverlay message={messages[messageIndex]} />}
+
+      <TopNavWithSave
         templateName={templateName}
-        onSave={() => {}}
+        onSave={handleSave}
         onExport={handleExport}
         setTemplateName={setTemplateName}
         onOpenExport={() => setShowModal(true)}
         template="🎬 Text Typing Template"
+        isSaving={isSaving}
       />
-      {/* modal */}
+
+      <SaveProjectModal
+        open={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onSave={saveNewProject}
+      />
+
       <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
         {showModal && (
           <ExportModal
@@ -173,7 +283,7 @@ export const NewTypingEditor: React.FC = () => {
           />
         )}
 
-        {/* sidenav */}
+        {/* Side Nav */}
         <NewTypingTemplateSideNav
           activeSection={activeSection}
           collapsed={collapsed}
@@ -195,7 +305,6 @@ export const NewTypingEditor: React.FC = () => {
               transition: isResizing ? "none" : "width 0.2s",
             }}
           >
-            {/* Drag Handle */}
             <div
               onMouseDown={() => setIsResizing(true)}
               style={{
@@ -205,9 +314,10 @@ export const NewTypingEditor: React.FC = () => {
                 bottom: 0,
                 width: "6px",
                 cursor: "col-resize",
-                background: "#ddd", // 👈 always visible
+                background: "#ddd",
               }}
             />
+
             {activeSection === "phrase" && (
               <PhraseSideNav
                 category={category}
@@ -227,21 +337,18 @@ export const NewTypingEditor: React.FC = () => {
                 setFontIndex={setFontIndex}
               />
             )}
-            {activeSection == "background" && (
+            {activeSection === "background" && (
               <BackgroundSideNav
                 backgroundIndex={backgroundIndex}
                 setBackgroundIndex={setBackgroundIndex}
               />
             )}
-
             {activeSection === "sound" && (
-              <SoundSideNav
-                setSoundIndex={setSoundIndex}
-                soundIndex={soundIndex}
-              />
+              <SoundSideNav setSoundIndex={setSoundIndex} soundIndex={soundIndex} />
             )}
           </div>
         )}
+
         <NewTypingAnimationPreview
           audioIndex={soundIndex}
           backgroundIndex={backgroundIndex}

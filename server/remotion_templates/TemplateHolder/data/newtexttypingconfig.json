@@ -1,13 +1,17 @@
 {
   "phrase": {
     "lines": [
-      "Dream big, start small",
-      "but start today"
+      "Let your dreams ignite,",
+      "Fueling a spirit",
+      "bold and bright.",
+      "Embrace the power,",
+      "And rise to conquer",
+      "every height."
     ],
-    "category": "wisdom",
-    "mood": "iconic"
+    "category": "dreams",
+    "mood": "empowering"
   },
-  "backgroundIndex": 10,
-  "fontIndex": 1,
+  "backgroundIndex": 2,
+  "fontIndex": 16,
   "audioIndex": 1
 }

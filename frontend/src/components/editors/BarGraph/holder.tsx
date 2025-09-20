@@ -8,15 +8,19 @@ import { DataPanel } from "./sidenav_sections/dataenrty";
 import { BarGraphControlsPanel } from "./sidenav_sections/bargraphconfig";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
 import { ExportModal } from "../../layout/modals/exportmodal";
-import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
+import { TopNavWithSave } from "../../navigations/single_editors/withsave";
+import { useProjectSave } from "../../../hooks/saveproject";
+import { SaveProjectModal } from "../../layout/modals/savemodal";
+import { LoadingOverlay } from "../../layout/modals/loadingprojectmodal";
+import { useParams } from "react-router-dom";
 
 export const BarGraphEditor: React.FC = () => {
-  const [templateName, setTemplateName] = useState(
-    "My Bar Graph Analytics Template"
-  );
+  const { id } = useParams();
+
+  const [templateName, setTemplateName] = useState("My Bar Graph Analytics Template");
   const [previewSize, setPreviewSize] = useState(1);
 
-  //header states
+  // header states
   const [title, setTitle] = useState("Your title");
   const [subtitle, setSubtitle] = useState("Your subtitle");
   const [titleFontSize, setTitleFontSize] = useState(80);
@@ -25,7 +29,8 @@ export const BarGraphEditor: React.FC = () => {
   const [subtitleFontColor, setSubtitleFontColor] = useState("white");
   const [fontFamily, setFontFamily] = useState("Inter, sans-serif");
   const [accent, setAccent] = useState("#3B82F6");
-  //data
+
+  // data
   const [data, setData] = useState<BargraphData[]>([
     { name: "Data1", value: 124500 },
     { name: "Data2", value: 110200 },
@@ -35,15 +40,11 @@ export const BarGraphEditor: React.FC = () => {
     { name: "Data6", value: 49800 },
   ]);
 
-  //bg
-  const [backgroundImage, setBackgroundImage] = useState(
-    "/bgimages/colors/bg1.jpg"
-  );
-  const [backgroundSource, setBackgroundSource] = useState<
-    "upload" | "default"
-  >("default");
+  // bg
+  const [backgroundImage, setBackgroundImage] = useState("/bgimages/colors/bg1.jpg");
+  const [backgroundSource, setBackgroundSource] = useState<"upload" | "default">("default");
 
-  //bargraph configuration
+  // bargraph config
   const [barHeight, setBarHeight] = useState(100);
   const [barGap, setBarGap] = useState(36);
   const [barLabelFontSize, setBarLabelFontSize] = useState(36);
@@ -51,34 +52,44 @@ export const BarGraphEditor: React.FC = () => {
 
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
-  const [activeSection, setActiveSection] = useState<
-    "title" | "graph" | "data" | "background" 
-  >("title");
+  const [activeSection, setActiveSection] = useState<"title" | "graph" | "data" | "background">("title");
   const [collapsed, setCollapsed] = useState(false);
 
   const [isUploading, setIsUploading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  // const [autoSave, setAutoSave] = useState(false);
   const [duration, setDuration] = useState(8);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // 🔹 Loader messages
+  const [messageIndex, setMessageIndex] = useState(0);
+  const messages = [
+    "⏳ Preparing your template...",
+    "🙇 Sorry for the wait, still working on it...",
+    "🚀 Almost there, thanks for your patience!",
+  ];
+
+  useEffect(() => {
+    if (!isLoading) return;
+    const interval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % messages.length);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   // 🔹 Resizable panel state
-  const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); 
+  const [panelWidth, setPanelWidth] = useState(defaultpanelwidth);
   const [isResizing, setIsResizing] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
 
-  // 🔹 Drag handlers
+  // Drag handlers
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isResizing) return;
-      const newWidth =
-        e.clientX - (panelRef.current?.getBoundingClientRect().left || 0);
-      if (newWidth > 200 && newWidth < 600) {
-        setPanelWidth(newWidth);
-      }
+      const newWidth = e.clientX - (panelRef.current?.getBoundingClientRect().left || 0);
+      if (newWidth > 200 && newWidth < 600) setPanelWidth(newWidth);
     };
-
     const handleMouseUp = () => setIsResizing(false);
 
     if (isResizing) {
@@ -96,10 +107,9 @@ export const BarGraphEditor: React.FC = () => {
     else if (previewBg === "light") setPreviewBg("grey");
     else setPreviewBg("dark");
   };
-  //for background images upload
+
   const handleFileUpload = async (file: File) => {
     if (!file) return;
-
     setIsUploading(true);
     const formData = new FormData();
     formData.append("image", file);
@@ -110,13 +120,9 @@ export const BarGraphEditor: React.FC = () => {
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error(`Upload failed: ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
       const data = await response.json();
       setBackgroundImage(data.url);
-      console.log("Image uploaded successfully:", data.url);
     } catch (error) {
       console.error("Upload failed:", error);
       alert("Failed to upload image. Please try again.");
@@ -127,13 +133,10 @@ export const BarGraphEditor: React.FC = () => {
 
   const handleExport = async (format: string) => {
     setIsExporting(true);
-    console.log(backgroundImage);
     try {
       let finalImageUrl = backgroundImage;
       const origin = window.location.origin;
-      if (!finalImageUrl.startsWith(origin)) {
-        finalImageUrl = `${origin}${finalImageUrl}`;
-      }
+      if (!finalImageUrl.startsWith(origin)) finalImageUrl = `${origin}${finalImageUrl}`;
 
       const response = await fetch("/generatevideo/bargraph", {
         method: "POST",
@@ -158,12 +161,8 @@ export const BarGraphEditor: React.FC = () => {
           format,
         }),
       });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `HTTP error! status: ${response.status}, message: ${errorText}`
-        );
-      }
+
+      if (!response.ok) throw new Error(await response.text());
       const result = await response.json();
       setExportUrl(result.url);
       setShowModal(true);
@@ -175,18 +174,93 @@ export const BarGraphEditor: React.FC = () => {
     }
   };
 
+  // 🟢 Project save hook
+  const {
+    projectId,
+    setProjectId,
+    isSaving,
+    showSaveModal,
+    setShowSaveModal,
+    handleSave,
+    saveNewProject,
+    lastSavedProps,
+  } = useProjectSave({
+    templateId: 3, // 👈 assign unique template ID
+    buildProps: () => ({
+      data,
+      title,
+      subtitle,
+      titleFontSize,
+      subtitleFontSize,
+      titleFontColor,
+      subtitleFontColor,
+      fontFamily,
+      accent,
+      barHeight,
+      barGap,
+      barLabelFontSize,
+      barValueFontSize,
+      backgroundImage: backgroundImage.startsWith("http")
+        ? backgroundImage
+        : `${window.location.origin}${backgroundImage}`,
+      duration,
+    }),
+    videoEndpoint: "/generatevideo/bargraph",
+  });
+
+  // 🟢 Load project if editing existing
+  useEffect(() => {
+    if (id) {
+      setIsLoading(true);
+      fetch(`/projects/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to load project");
+          return res.json();
+        })
+        .then((data) => {
+          setProjectId(data.id);
+          setTitle(data.props.title);
+          setSubtitle(data.props.subtitle);
+          setTitleFontSize(data.props.titleFontSize);
+          setSubtitleFontSize(data.props.subtitleFontSize);
+          setTitleFontColor(data.props.titleFontColor);
+          setSubtitleFontColor(data.props.subtitleFontColor);
+          setFontFamily(data.props.fontFamily);
+          setAccent(data.props.accent);
+          setBarHeight(data.props.barHeight);
+          setBarGap(data.props.barGap);
+          setBarLabelFontSize(data.props.barLabelFontSize);
+          setBarValueFontSize(data.props.barValueFontSize);
+          setBackgroundImage(data.props.backgroundImage);
+          setData(data.props.data);
+          setDuration(data.props.duration);
+          lastSavedProps.current = data.props;
+        })
+        .catch((err) => console.error("❌ Project load failed:", err))
+        .finally(() => setIsLoading(false));
+    }
+  }, [id]);
+
   return (
     <div style={{ display: "flex", height: "100%", flex: 1 }}>
-      {/* modal */}
+      {isLoading && <LoadingOverlay message={messages[messageIndex]} />}
 
-      <TopNavWithoutBatchrendering
+      <TopNavWithSave
         templateName={templateName}
-        
-        onSave={() => {}}
+        onSave={handleSave}
         onExport={handleExport}
         setTemplateName={setTemplateName}
         onOpenExport={() => setShowModal(true)}
         template="🎬 Bar Graph Analytics Template"
+        isSaving={isSaving}
+      />
+
+      <SaveProjectModal
+        open={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onSave={saveNewProject}
       />
 
       <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>

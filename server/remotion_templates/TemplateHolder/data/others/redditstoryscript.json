@@ -1,948 +1,593 @@
 {
-  "story": "Boom! Sunog na naman mga DDS, Oo nga naman, bakit di pa rin nakikita yung 51B ni Pulong? House Majority Leader Sandro Marcos hits back at Davao City Rep. Paolo Duterte, who earlier accused him of handpicking Bojie Dy as the next Speaker in a supposed “cover-up move.”\n\nMarcos insisted party and House leaders were consulted, then took a swipe at Pulong: “Kung nagpakita sana siya sa trabaho at sa session, baka nakita rin niya. Pero siguro busy pa siyang hanapin kung saan napunta ang ₱51 billion flood control funds sa distrito niya.”",
-  "duration": 37.851375,
+  "story": "Shuvee's shady glam team. why is she instigating another drama lol the issue died naman na, at this point hindi ko alam kung nananadya na siya kasi yan lang yung only message na may reply sections e, very sus shuveedoo. With all of her blessings you would think na wala na siyang bitterness sa katawan niya but eto nanaman.",
+  "duration": 18.991,
   "words": [
     {
-      "word": "Boom!",
-      "start": 0.179,
-      "end": 0.539
+      "word": "Shuvee's",
+      "start": 0.079,
+      "end": 0.699
     },
     {
       "word": " ",
-      "start": 0.539,
-      "end": 1.579
+      "start": 0.699,
+      "end": 0.719
     },
     {
-      "word": "Sunog",
-      "start": 1.579,
-      "end": 1.919
-    },
-    {
-      "word": " ",
-      "start": 1.919,
-      "end": 1.939
-    },
-    {
-      "word": "na",
-      "start": 1.939,
-      "end": 2.019
+      "word": "shady",
+      "start": 0.719,
+      "end": 1.039
     },
     {
       "word": " ",
-      "start": 2.019,
-      "end": 2.079
+      "start": 1.039,
+      "end": 1.12
     },
     {
-      "word": "naman",
-      "start": 2.079,
+      "word": "glam",
+      "start": 1.12,
+      "end": 1.339
+    },
+    {
+      "word": " ",
+      "start": 1.339,
+      "end": 1.399
+    },
+    {
+      "word": "team.",
+      "start": 1.399,
+      "end": 1.62
+    },
+    {
+      "word": " ",
+      "start": 1.62,
       "end": 2.359
     },
     {
-      "word": " ",
+      "word": "why",
       "start": 2.359,
-      "end": 2.399
+      "end": 2.579
     },
     {
-      "word": "mga",
-      "start": 2.399,
+      "word": " ",
+      "start": 2.579,
       "end": 2.639
     },
     {
-      "word": " ",
+      "word": "is",
       "start": 2.639,
-      "end": 2.659
-    },
-    {
-      "word": "DDS,",
-      "start": 2.659,
-      "end": 3.199
+      "end": 2.74
     },
     {
       "word": " ",
-      "start": 3.199,
-      "end": 3.519
+      "start": 2.74,
+      "end": 2.779
     },
     {
-      "word": "Oo",
-      "start": 3.519,
-      "end": 3.599
-    },
-    {
-      "word": " ",
-      "start": 3.599,
-      "end": 3.679
-    },
-    {
-      "word": "nga",
-      "start": 3.679,
-      "end": 3.799
+      "word": "she",
+      "start": 2.779,
+      "end": 2.96
     },
     {
       "word": " ",
-      "start": 3.799,
-      "end": 3.859
+      "start": 2.96,
+      "end": 3.019
     },
     {
-      "word": "naman,",
-      "start": 3.859,
-      "end": 4.179
-    },
-    {
-      "word": " ",
-      "start": 4.179,
-      "end": 4.719
-    },
-    {
-      "word": "bakit",
-      "start": 4.719,
-      "end": 4.92
+      "word": "instigating",
+      "start": 3.019,
+      "end": 3.579
     },
     {
       "word": " ",
-      "start": 4.92,
-      "end": 4.96
+      "start": 3.579,
+      "end": 3.659
     },
     {
-      "word": "di",
-      "start": 4.96,
-      "end": 5.039
+      "word": "another",
+      "start": 3.659,
+      "end": 3.939
     },
     {
       "word": " ",
-      "start": 5.039,
-      "end": 5.119
+      "start": 3.939,
+      "end": 4.039
     },
     {
-      "word": "pa",
-      "start": 5.119,
+      "word": "drama",
+      "start": 4.039,
+      "end": 4.319
+    },
+    {
+      "word": " ",
+      "start": 4.319,
+      "end": 4.38
+    },
+    {
+      "word": "lol",
+      "start": 4.38,
+      "end": 4.679
+    },
+    {
+      "word": " ",
+      "start": 4.679,
+      "end": 4.739
+    },
+    {
+      "word": "the",
+      "start": 4.739,
+      "end": 4.819
+    },
+    {
+      "word": " ",
+      "start": 4.819,
+      "end": 4.859
+    },
+    {
+      "word": "issue",
+      "start": 4.859,
+      "end": 5.139
+    },
+    {
+      "word": " ",
+      "start": 5.139,
       "end": 5.179
     },
     {
-      "word": " ",
+      "word": "died",
       "start": 5.179,
-      "end": 5.219
-    },
-    {
-      "word": "rin",
-      "start": 5.219,
-      "end": 5.319
+      "end": 5.42
     },
     {
       "word": " ",
-      "start": 5.319,
-      "end": 5.339
+      "start": 5.42,
+      "end": 5.46
     },
     {
-      "word": "nakikita",
-      "start": 5.339,
-      "end": 5.799
-    },
-    {
-      "word": " ",
-      "start": 5.799,
-      "end": 5.839
-    },
-    {
-      "word": "yung",
-      "start": 5.839,
-      "end": 5.94
+      "word": "naman",
+      "start": 5.46,
+      "end": 5.699
     },
     {
       "word": " ",
-      "start": 5.94,
-      "end": 6.139
+      "start": 5.699,
+      "end": 5.739
     },
     {
-      "word": "51B",
-      "start": 6.139,
-      "end": 6.639
-    },
-    {
-      "word": " ",
-      "start": 6.639,
-      "end": 6.659
-    },
-    {
-      "word": "ni",
-      "start": 6.659,
-      "end": 6.759
+      "word": "na,",
+      "start": 5.739,
+      "end": 5.879
     },
     {
       "word": " ",
-      "start": 6.759,
-      "end": 6.839
+      "start": 5.879,
+      "end": 6.46
     },
     {
-      "word": "Pulong?",
-      "start": 6.839,
+      "word": "at",
+      "start": 6.46,
+      "end": 6.519
+    },
+    {
+      "word": " ",
+      "start": 6.519,
+      "end": 6.579
+    },
+    {
+      "word": "this",
+      "start": 6.579,
+      "end": 6.739
+    },
+    {
+      "word": " ",
+      "start": 6.739,
+      "end": 6.779
+    },
+    {
+      "word": "point",
+      "start": 6.779,
+      "end": 6.96
+    },
+    {
+      "word": " ",
+      "start": 6.96,
+      "end": 6.98
+    },
+    {
+      "word": "hindi",
+      "start": 6.98,
+      "end": 7.139
+    },
+    {
+      "word": " ",
+      "start": 7.139,
       "end": 7.199
     },
     {
-      "word": " ",
+      "word": "ko",
       "start": 7.199,
-      "end": 8.179
-    },
-    {
-      "word": "House",
-      "start": 8.179,
-      "end": 8.38
+      "end": 7.279
     },
     {
       "word": " ",
-      "start": 8.38,
+      "start": 7.279,
+      "end": 7.299
+    },
+    {
+      "word": "alam",
+      "start": 7.299,
+      "end": 7.46
+    },
+    {
+      "word": " ",
+      "start": 7.46,
+      "end": 7.519
+    },
+    {
+      "word": "kung",
+      "start": 7.519,
+      "end": 7.639
+    },
+    {
+      "word": " ",
+      "start": 7.639,
+      "end": 7.679
+    },
+    {
+      "word": "nananadya",
+      "start": 7.679,
+      "end": 8.139
+    },
+    {
+      "word": " ",
+      "start": 8.139,
+      "end": 8.199
+    },
+    {
+      "word": "na",
+      "start": 8.199,
+      "end": 8.26
+    },
+    {
+      "word": " ",
+      "start": 8.26,
+      "end": 8.3
+    },
+    {
+      "word": "siya",
+      "start": 8.3,
       "end": 8.46
     },
     {
-      "word": "Majority",
+      "word": " ",
       "start": 8.46,
-      "end": 8.899
+      "end": 8.519
+    },
+    {
+      "word": "kasi",
+      "start": 8.519,
+      "end": 8.779
     },
     {
       "word": " ",
-      "start": 8.899,
-      "end": 8.979
+      "start": 8.779,
+      "end": 9.26
     },
     {
-      "word": "Leader",
-      "start": 8.979,
-      "end": 9.3
-    },
-    {
-      "word": " ",
-      "start": 9.3,
+      "word": "yan",
+      "start": 9.26,
       "end": 9.38
     },
     {
-      "word": "Sandro",
+      "word": " ",
       "start": 9.38,
-      "end": 9.719
+      "end": 9.439
+    },
+    {
+      "word": "lang",
+      "start": 9.439,
+      "end": 9.559
     },
     {
       "word": " ",
-      "start": 9.719,
-      "end": 9.76
+      "start": 9.559,
+      "end": 9.579
     },
     {
-      "word": "Marcos",
-      "start": 9.76,
-      "end": 10.219
+      "word": "yung",
+      "start": 9.579,
+      "end": 9.739
     },
     {
       "word": " ",
-      "start": 10.219,
-      "end": 10.279
+      "start": 9.739,
+      "end": 9.819
     },
     {
-      "word": "hits",
-      "start": 10.279,
+      "word": "only",
+      "start": 9.819,
+      "end": 10.02
+    },
+    {
+      "word": " ",
+      "start": 10.02,
+      "end": 10.099
+    },
+    {
+      "word": "message",
+      "start": 10.099,
+      "end": 10.439
+    },
+    {
+      "word": " ",
+      "start": 10.439,
       "end": 10.46
     },
     {
-      "word": " ",
+      "word": "na",
       "start": 10.46,
       "end": 10.559
     },
     {
-      "word": "back",
+      "word": " ",
       "start": 10.559,
-      "end": 10.739
+      "end": 10.599
+    },
+    {
+      "word": "may",
+      "start": 10.599,
+      "end": 10.76
     },
     {
       "word": " ",
-      "start": 10.739,
-      "end": 10.779
+      "start": 10.76,
+      "end": 10.819
     },
     {
-      "word": "at",
-      "start": 10.779,
-      "end": 10.88
-    },
-    {
-      "word": " ",
-      "start": 10.88,
-      "end": 10.92
-    },
-    {
-      "word": "Davao",
-      "start": 10.92,
-      "end": 11.219
+      "word": "reply",
+      "start": 10.819,
+      "end": 11.139
     },
     {
       "word": " ",
-      "start": 11.219,
-      "end": 11.3
+      "start": 11.139,
+      "end": 11.239
     },
     {
-      "word": "City",
-      "start": 11.3,
-      "end": 11.579
-    },
-    {
-      "word": " ",
-      "start": 11.579,
-      "end": 11.659
-    },
-    {
-      "word": "Rep.",
-      "start": 11.659,
-      "end": 11.819
+      "word": "sections",
+      "start": 11.239,
+      "end": 11.619
     },
     {
       "word": " ",
-      "start": 11.819,
-      "end": 12.159
+      "start": 11.619,
+      "end": 11.699
     },
     {
-      "word": "Paolo",
-      "start": 12.159,
-      "end": 12.5
-    },
-    {
-      "word": " ",
-      "start": 12.5,
-      "end": 12.519
-    },
-    {
-      "word": "Duterte,",
-      "start": 12.519,
-      "end": 13.019
+      "word": "e,",
+      "start": 11.699,
+      "end": 11.739
     },
     {
       "word": " ",
-      "start": 13.019,
-      "end": 13.559
+      "start": 11.739,
+      "end": 12.119
     },
     {
-      "word": "who",
-      "start": 13.559,
-      "end": 13.699
-    },
-    {
-      "word": " ",
-      "start": 13.699,
-      "end": 13.779
-    },
-    {
-      "word": "earlier",
-      "start": 13.779,
-      "end": 14.139
+      "word": "very",
+      "start": 12.119,
+      "end": 12.34
     },
     {
       "word": " ",
-      "start": 14.139,
-      "end": 14.219
+      "start": 12.34,
+      "end": 12.439
     },
     {
-      "word": "accused",
-      "start": 14.219,
-      "end": 14.579
+      "word": "sus",
+      "start": 12.439,
+      "end": 12.64
     },
     {
       "word": " ",
-      "start": 14.579,
-      "end": 14.599
+      "start": 12.64,
+      "end": 12.659
     },
     {
-      "word": "him",
-      "start": 14.599,
+      "word": "shuveedoo.",
+      "start": 12.659,
+      "end": 13.139
+    },
+    {
+      "word": " ",
+      "start": 13.139,
+      "end": 14.179
+    },
+    {
+      "word": "With",
+      "start": 14.179,
+      "end": 14.34
+    },
+    {
+      "word": " ",
+      "start": 14.34,
+      "end": 14.42
+    },
+    {
+      "word": "all",
+      "start": 14.42,
+      "end": 14.519
+    },
+    {
+      "word": " ",
+      "start": 14.519,
+      "end": 14.559
+    },
+    {
+      "word": "of",
+      "start": 14.559,
+      "end": 14.639
+    },
+    {
+      "word": " ",
+      "start": 14.639,
+      "end": 14.659
+    },
+    {
+      "word": "her",
+      "start": 14.659,
       "end": 14.739
     },
     {
       "word": " ",
       "start": 14.739,
-      "end": 14.799
+      "end": 14.839
     },
     {
-      "word": "of",
-      "start": 14.799,
-      "end": 14.88
-    },
-    {
-      "word": " ",
-      "start": 14.88,
-      "end": 14.939
-    },
-    {
-      "word": "handpicking",
-      "start": 14.939,
-      "end": 15.399
+      "word": "blessings",
+      "start": 14.839,
+      "end": 15.319
     },
     {
       "word": " ",
-      "start": 15.399,
-      "end": 15.479
+      "start": 15.319,
+      "end": 15.359
     },
     {
-      "word": "Bojie",
-      "start": 15.479,
-      "end": 15.799
-    },
-    {
-      "word": " ",
-      "start": 15.799,
-      "end": 15.859
-    },
-    {
-      "word": "Dy",
-      "start": 15.859,
-      "end": 16.299
+      "word": "you",
+      "start": 15.359,
+      "end": 15.42
     },
     {
       "word": " ",
-      "start": 16.299,
-      "end": 16.359
+      "start": 15.42,
+      "end": 15.439
     },
     {
-      "word": "as",
-      "start": 16.359,
-      "end": 16.459
-    },
-    {
-      "word": " ",
-      "start": 16.459,
-      "end": 16.5
-    },
-    {
-      "word": "the",
-      "start": 16.5,
-      "end": 16.579
+      "word": "would",
+      "start": 15.439,
+      "end": 15.579
     },
     {
       "word": " ",
-      "start": 16.579,
-      "end": 16.619
+      "start": 15.579,
+      "end": 15.639
     },
     {
-      "word": "next",
-      "start": 16.619,
-      "end": 16.799
-    },
-    {
-      "word": " ",
-      "start": 16.799,
-      "end": 16.899
-    },
-    {
-      "word": "Speaker",
-      "start": 16.899,
-      "end": 17.18
+      "word": "think",
+      "start": 15.639,
+      "end": 15.779
     },
     {
       "word": " ",
-      "start": 17.18,
-      "end": 17.279
+      "start": 15.779,
+      "end": 15.839
     },
     {
-      "word": "in",
-      "start": 17.279,
-      "end": 17.34
-    },
-    {
-      "word": " ",
-      "start": 17.34,
-      "end": 17.399
-    },
-    {
-      "word": "a",
-      "start": 17.399,
-      "end": 17.44
+      "word": "na",
+      "start": 15.839,
+      "end": 15.92
     },
     {
       "word": " ",
-      "start": 17.44,
-      "end": 17.479
+      "start": 15.92,
+      "end": 15.979
     },
     {
-      "word": "supposed",
-      "start": 17.479,
-      "end": 17.92
-    },
-    {
-      "word": " ",
-      "start": 17.92,
-      "end": 18.199
-    },
-    {
-      "word": "“cover-up",
-      "start": 18.199,
-      "end": 18.719
+      "word": "wala",
+      "start": 15.979,
+      "end": 16.1
     },
     {
       "word": " ",
-      "start": 18.719,
-      "end": 18.819
+      "start": 16.1,
+      "end": 16.159
     },
     {
-      "word": "move.”",
-      "start": 18.819,
-      "end": 19.18
-    },
-    {
-      "word": "\r",
-      "start": 19.18,
-      "end": 19.181
-    },
-    {
-      "word": "\n",
-      "start": 19.181,
-      "end": 20.1
-    },
-    {
-      "word": "\r",
-      "start": 20.1,
-      "end": 20.12
-    },
-    {
-      "word": "\n",
-      "start": 20.12,
-      "end": 20.139
-    },
-    {
-      "word": "Marcos",
-      "start": 20.139,
-      "end": 20.459
+      "word": "na",
+      "start": 16.159,
+      "end": 16.219
     },
     {
       "word": " ",
-      "start": 20.459,
-      "end": 20.52
-    },
-    {
-      "word": "insisted",
-      "start": 20.52,
-      "end": 20.979
-    },
-    {
-      "word": " ",
-      "start": 20.979,
-      "end": 21.1
-    },
-    {
-      "word": "party",
-      "start": 21.1,
-      "end": 21.439
-    },
-    {
-      "word": " ",
-      "start": 21.439,
-      "end": 21.479
-    },
-    {
-      "word": "and",
-      "start": 21.479,
-      "end": 21.559
-    },
-    {
-      "word": " ",
-      "start": 21.559,
-      "end": 21.619
-    },
-    {
-      "word": "House",
-      "start": 21.619,
-      "end": 21.84
-    },
-    {
-      "word": " ",
-      "start": 21.84,
-      "end": 21.899
-    },
-    {
-      "word": "leaders",
-      "start": 21.899,
-      "end": 22.26
-    },
-    {
-      "word": " ",
-      "start": 22.26,
-      "end": 22.299
-    },
-    {
-      "word": "were",
-      "start": 22.299,
-      "end": 22.42
-    },
-    {
-      "word": " ",
-      "start": 22.42,
-      "end": 22.459
-    },
-    {
-      "word": "consulted,",
-      "start": 22.459,
-      "end": 22.959
-    },
-    {
-      "word": " ",
-      "start": 22.959,
-      "end": 23.5
-    },
-    {
-      "word": "then",
-      "start": 23.5,
-      "end": 23.679
-    },
-    {
-      "word": " ",
-      "start": 23.679,
-      "end": 23.739
-    },
-    {
-      "word": "took",
-      "start": 23.739,
-      "end": 23.859
-    },
-    {
-      "word": " ",
-      "start": 23.859,
-      "end": 23.92
-    },
-    {
-      "word": "a",
-      "start": 23.92,
-      "end": 23.959
-    },
-    {
-      "word": " ",
-      "start": 23.959,
-      "end": 24.019
-    },
-    {
-      "word": "swipe",
-      "start": 24.019,
-      "end": 24.319
-    },
-    {
-      "word": " ",
-      "start": 24.319,
-      "end": 24.34
-    },
-    {
-      "word": "at",
-      "start": 24.34,
-      "end": 24.439
-    },
-    {
-      "word": " ",
-      "start": 24.439,
-      "end": 24.479
-    },
-    {
-      "word": "Pulong:",
-      "start": 24.479,
-      "end": 24.939
-    },
-    {
-      "word": " ",
-      "start": 24.939,
-      "end": 25.92
-    },
-    {
-      "word": "“Kung",
-      "start": 25.92,
-      "end": 26.099
-    },
-    {
-      "word": " ",
-      "start": 26.099,
-      "end": 26.139
-    },
-    {
-      "word": "nagpakita",
-      "start": 26.139,
-      "end": 26.659
-    },
-    {
-      "word": " ",
-      "start": 26.659,
-      "end": 26.719
-    },
-    {
-      "word": "sana",
-      "start": 26.719,
-      "end": 26.959
-    },
-    {
-      "word": " ",
-      "start": 26.959,
-      "end": 27
-    },
-    {
-      "word": "siya",
-      "start": 27,
-      "end": 27.099
-    },
-    {
-      "word": " ",
-      "start": 27.099,
-      "end": 27.139
-    },
-    {
-      "word": "sa",
-      "start": 27.139,
-      "end": 27.239
-    },
-    {
-      "word": " ",
-      "start": 27.239,
-      "end": 27.279
-    },
-    {
-      "word": "trabaho",
-      "start": 27.279,
-      "end": 27.84
-    },
-    {
-      "word": " ",
-      "start": 27.84,
-      "end": 27.899
-    },
-    {
-      "word": "at",
-      "start": 27.899,
-      "end": 27.979
-    },
-    {
-      "word": " ",
-      "start": 27.979,
-      "end": 28.039
-    },
-    {
-      "word": "sa",
-      "start": 28.039,
-      "end": 28.119
-    },
-    {
-      "word": " ",
-      "start": 28.119,
-      "end": 28.18
-    },
-    {
-      "word": "session,",
-      "start": 28.18,
-      "end": 28.559
-    },
-    {
-      "word": " ",
-      "start": 28.559,
-      "end": 29.099
-    },
-    {
-      "word": "baka",
-      "start": 29.099,
-      "end": 29.259
-    },
-    {
-      "word": " ",
-      "start": 29.259,
-      "end": 29.319
-    },
-    {
-      "word": "nakita",
-      "start": 29.319,
-      "end": 29.659
-    },
-    {
-      "word": " ",
-      "start": 29.659,
-      "end": 29.699
-    },
-    {
-      "word": "rin",
-      "start": 29.699,
-      "end": 29.84
-    },
-    {
-      "word": " ",
-      "start": 29.84,
-      "end": 29.879
-    },
-    {
-      "word": "niya.",
-      "start": 29.879,
-      "end": 30.159
-    },
-    {
-      "word": " ",
-      "start": 30.159,
-      "end": 30.779
-    },
-    {
-      "word": "Pero",
-      "start": 30.779,
-      "end": 30.979
-    },
-    {
-      "word": " ",
-      "start": 30.979,
-      "end": 31.019
-    },
-    {
-      "word": "siguro",
-      "start": 31.019,
-      "end": 31.399
-    },
-    {
-      "word": " ",
-      "start": 31.399,
-      "end": 31.459
-    },
-    {
-      "word": "busy",
-      "start": 31.459,
-      "end": 31.719
-    },
-    {
-      "word": " ",
-      "start": 31.719,
-      "end": 31.76
-    },
-    {
-      "word": "pa",
-      "start": 31.76,
-      "end": 31.839
-    },
-    {
-      "word": " ",
-      "start": 31.839,
-      "end": 31.859
+      "start": 16.219,
+      "end": 16.26
     },
     {
       "word": "siyang",
-      "start": 31.859,
-      "end": 32.02
+      "start": 16.26,
+      "end": 16.379
     },
     {
       "word": " ",
-      "start": 32.02,
-      "end": 32.059
+      "start": 16.379,
+      "end": 16.44
     },
     {
-      "word": "hanapin",
-      "start": 32.059,
-      "end": 32.899
-    },
-    {
-      "word": " ",
-      "start": 32.899,
-      "end": 32.959
-    },
-    {
-      "word": "kung",
-      "start": 32.959,
-      "end": 33.099
+      "word": "bitterness",
+      "start": 16.44,
+      "end": 16.879
     },
     {
       "word": " ",
-      "start": 33.099,
-      "end": 33.139
-    },
-    {
-      "word": "saan",
-      "start": 33.139,
-      "end": 33.419
-    },
-    {
-      "word": " ",
-      "start": 33.419,
-      "end": 33.439
-    },
-    {
-      "word": "napunta",
-      "start": 33.439,
-      "end": 33.919
-    },
-    {
-      "word": " ",
-      "start": 33.919,
-      "end": 33.959
-    },
-    {
-      "word": "ang",
-      "start": 33.959,
-      "end": 34.139
-    },
-    {
-      "word": " ",
-      "start": 34.139,
-      "end": 34.18
-    },
-    {
-      "word": "₱51",
-      "start": 34.18,
-      "end": 34.84
-    },
-    {
-      "word": " ",
-      "start": 34.84,
-      "end": 34.86
-    },
-    {
-      "word": "billion",
-      "start": 34.86,
-      "end": 35.279
-    },
-    {
-      "word": " ",
-      "start": 35.279,
-      "end": 35.34
-    },
-    {
-      "word": "flood",
-      "start": 35.34,
-      "end": 35.54
-    },
-    {
-      "word": " ",
-      "start": 35.54,
-      "end": 35.619
-    },
-    {
-      "word": "control",
-      "start": 35.619,
-      "end": 35.959
-    },
-    {
-      "word": " ",
-      "start": 35.959,
-      "end": 36.079
-    },
-    {
-      "word": "funds",
-      "start": 36.079,
-      "end": 36.36
-    },
-    {
-      "word": " ",
-      "start": 36.36,
-      "end": 36.68
+      "start": 16.879,
+      "end": 16.899
     },
     {
       "word": "sa",
-      "start": 36.68,
-      "end": 36.739
+      "start": 16.899,
+      "end": 16.959
     },
     {
       "word": " ",
-      "start": 36.739,
-      "end": 36.779
+      "start": 16.959,
+      "end": 17
     },
     {
-      "word": "distrito",
-      "start": 36.779,
-      "end": 37.259
+      "word": "katawan",
+      "start": 17,
+      "end": 17.319
     },
     {
       "word": " ",
-      "start": 37.259,
-      "end": 37.299
+      "start": 17.319,
+      "end": 17.359
     },
     {
-      "word": "niya.”",
-      "start": 37.299,
-      "end": 37.819
+      "word": "niya",
+      "start": 17.359,
+      "end": 17.5
+    },
+    {
+      "word": " ",
+      "start": 17.5,
+      "end": 17.559
+    },
+    {
+      "word": "but",
+      "start": 17.559,
+      "end": 17.859
+    },
+    {
+      "word": " ",
+      "start": 17.859,
+      "end": 17.899
+    },
+    {
+      "word": "eto",
+      "start": 17.899,
+      "end": 18.079
+    },
+    {
+      "word": " ",
+      "start": 18.079,
+      "end": 18.139
+    },
+    {
+      "word": "nanaman.",
+      "start": 18.139,
+      "end": 18.599
     }
   ],
-  "title": "Boom! Sunog na naman mga DDS, Oo nga naman, bakit di pa rin nakikita yung 51B ni Pulong?",
-  "text": "House Majority Leader Sandro Marcos hits back at Davao City Rep. Paolo Duterte, who earlier accused him of handpicking Bojie Dy as the next Speaker in a supposed “cover-up move.”\n\nMarcos insisted party and House leaders were consulted, then took a swipe at Pulong: “Kung nagpakita sana siya sa trabaho at sa session, baka nakita rin niya. Pero siguro busy pa siyang hanapin kung saan napunta ang ₱51 billion flood control funds sa distrito niya.”"
+  "title": "Shuvee's shady glam team",
+  "text": "why is she instigating another drama lol the issue died naman na, at this point hindi ko alam kung nananadya na siya kasi yan lang yung only message na may reply sections e, very sus shuveedoo. With all of her blessings you would think na wala na siyang bitterness sa katawan niya but eto nanaman. "
 }

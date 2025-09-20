@@ -13,7 +13,7 @@ import { BarGraphEditor } from "./components/editors/BarGraph/holder.tsx";
 import GraphEditor from "./components/editors/trials/clt.tsx";
 import { SplitScreenEditor } from "./components/editors/SplitScreen/holder.tsx";
 import { KpiFlipCardEditor } from "./components/editors/KpiFlipCards/holder.tsx";
-import { KernBurnsEditor } from "./components/editors/KenBurnsCarousel/holder.tsx";
+import { KenBurnsEditor } from "./components/editors/KenBurnsCarousel/holder.tsx";
 import { Fakeconvo } from "./components/editors/trials/fconvo.tsx";
 import { FakeTextConversationEditor } from "./components/editors/FakeTextConversation/holder.tsx";
 import { RedditVideoEditor } from "./components/editors/RedditTemplate/holder.tsx";
@@ -30,7 +30,6 @@ import { KenBurnsSwipeBatchRendering } from "./pages/batchrendering/KenburnsStac
 import { FactCardsBatchRendering } from "./pages/batchrendering/FactCardsTemplate.tsx";
 import { KpiFlipBatchRendering } from "./pages/batchrendering/KpilipCards.tsx";
 import RequireAuth from "./pages/auth/AuthChecker.tsx";
-// import { QuoteTemplateEditor2 } from "./components/editors/QuoteTemplate/holder2.tsx";
 
 function App() {
   return (
@@ -46,6 +45,14 @@ function App() {
         />
         <Route
           path="/template/quotetemplate"
+          element={
+            <RequireAuth>
+              <QuoteTemplateEditor />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/project/:id/quotetemplate"
           element={
             <RequireAuth>
               <QuoteTemplateEditor />
@@ -69,6 +76,14 @@ function App() {
           }
         />
         <Route
+          path="/project/:id/splitscreen"
+          element={
+            <RequireAuth>
+              <SplitScreenEditor />
+            </RequireAuth>
+          }
+        />
+        <Route
           path="/template/texttypingtemplate"
           element={
             <RequireAuth>
@@ -81,6 +96,15 @@ function App() {
           element={
             <RequireAuth>
               <TextTypingTemplateBatchRendering />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/project/:id/texttypingtemplate"
+          element={
+            <RequireAuth>
+              <NewTypingEditor />
             </RequireAuth>
           }
         />
@@ -111,6 +135,14 @@ function App() {
           }
         />
         <Route
+          path="/project/:id/bargraph"
+          element={
+            <RequireAuth>
+              <BarGraphEditor />
+            </RequireAuth>
+          }
+        />
+        <Route
           path="/template/bargraph/mode/batchrendering"
           element={
             <RequireAuth>
@@ -121,6 +153,14 @@ function App() {
 
         <Route
           path="/template/kpiflipcards"
+          element={
+            <RequireAuth>
+              <KpiFlipCardEditor />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/project/:id/kpiflipcards"
           element={
             <RequireAuth>
               <KpiFlipCardEditor />
@@ -139,7 +179,22 @@ function App() {
           path="/template/kenburnscarousel"
           element={
             <RequireAuth>
-              <KernBurnsEditor />
+              <KenBurnsEditor />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/project/:id/kenburnscarousel"
+          element={
+            <RequireAuth>
+              <KenBurnsEditor />
+            </RequireAuth>
+          }
+        /><Route
+          path="/template/kenburnscarousel"
+          element={
+            <RequireAuth>
+              <KenBurnsEditor />
             </RequireAuth>
           }
         />
@@ -153,6 +208,14 @@ function App() {
         />
         <Route
           path="/template/curvelinetrend"
+          element={
+            <RequireAuth>
+              <CurveLineTrendEditor />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/project/:id/curvelinetrend"
           element={
             <RequireAuth>
               <CurveLineTrendEditor />
@@ -177,6 +240,14 @@ function App() {
           }
         />
         <Route
+          path="/project/:id/faketextconversation"
+          element={
+            <RequireAuth>
+              <FakeTextConversationEditor />
+            </RequireAuth>
+          }
+        />
+        <Route
           path="/template/redditvideo"
           element={
             <RequireAuth>
@@ -185,7 +256,23 @@ function App() {
           }
         />
         <Route
+          path="/project/:id/redditvideo"
+          element={
+            <RequireAuth>
+              <RedditVideoEditor />
+            </RequireAuth>
+          }
+        />
+        <Route
           path="/template/storytelling"
+          element={
+            <RequireAuth>
+              <StoryTellingVideoEditor />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/project/:id/storytelling"
           element={
             <RequireAuth>
               <StoryTellingVideoEditor />

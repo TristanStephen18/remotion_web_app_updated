@@ -1,12 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-// import { DisplayerModal } from "../Global/modal";
-// import { BackgroundSecTrial } from "../Global/sidenav_sections/bg";
 import { CurveLineSideNav } from "./sidenav";
 import { SimpleTrendGraphPreview } from "../../layout/EditorPreviews/SimpleTrendMapPreview";
 import type { SimpleGraphProps } from "../../remotion_compositions/Curvelinetrend/SimplifiedTemplateHolder";
 import { CurveLineTextPanel } from "./sidenav_sections/titleandsubtitle";
-// import { ExportSecTrial } from "../Global/sidenav_sections/export";
-// import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import {
   CurveLineTrendDataPanel,
   type DataPoint,
@@ -14,12 +10,12 @@ import {
 import { PresetPanel, type GraphThemeKey } from "./sidenav_sections/themes";
 import { AnimationPanel } from "./sidenav_sections/animation";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
-// import { TopNav } from "../../navigations/single_editors/trialtopnav";
 import { ExportModal } from "../../layout/modals/exportmodal";
-// import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
 import { SaveProjectModal } from "../../layout/modals/savemodal";
 import { TopNavWithSave } from "../../navigations/single_editors/withsave";
-// import { TemplateOptionsSection } from "../Global/templatesettings";
+import { useParams } from "react-router-dom";
+import isEqual from "lodash/isEqual";
+import { LoadingOverlay } from "../../layout/modals/loadingprojectmodal";
 
 const initialData = [
   { label: 2015, value: 100 },
@@ -35,6 +31,8 @@ const initialData = [
 ];
 
 export const CurveLineTrendEditor: React.FC = () => {
+  const { id } = useParams(); // will be defined if /project/:id/editor
+  // const location = useLocation();
   const [projectId, setProjectId] = useState<number | null>(null);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -86,6 +84,7 @@ export const CurveLineTrendEditor: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   // const [autoSave, setAutoSave] = useState(false);
   const [duration, setDuration] = useState(13);
+  const [isLoading, setIsLoading] = useState(false);
 
   // 🔹 Resizable panel state
   const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
@@ -136,16 +135,15 @@ export const CurveLineTrendEditor: React.FC = () => {
     duration,
   });
 
-  // Save for existing project: export then update
   const handleSave = async () => {
     const currentProps = buildPropsObject();
+    // const currentPropsStr = JSON.stringify(currentProps);
 
-    // 🟢 check if project already exists
     if (projectId) {
-      // 🟢 compare with last saved props
+      // ✅ Check if nothing changed since last save
       if (
         lastSavedProps.current &&
-        JSON.stringify(lastSavedProps.current) === JSON.stringify(currentProps)
+        isEqual(lastSavedProps.current, currentProps)
       ) {
         alert("✅ Your project has already been saved");
         return;
@@ -153,7 +151,7 @@ export const CurveLineTrendEditor: React.FC = () => {
 
       setIsSaving(true);
       try {
-        // 1) export
+        // 🔹 generate video
         const exportRes = await fetch("/generatevideo/curvelinetrend", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -170,7 +168,7 @@ export const CurveLineTrendEditor: React.FC = () => {
         const exportResult = await exportRes.json();
         const projectVidUrl = exportResult.url;
 
-        // 2) update project with props + projectVidUrl
+        // 🔹 update project in DB
         const response = await fetch(`/projects/update/${projectId}`, {
           method: "PUT",
           headers: {
@@ -189,8 +187,14 @@ export const CurveLineTrendEditor: React.FC = () => {
           throw new Error(msg || "Failed to update project");
         }
 
-        // ✅ success
-        lastSavedProps.current = currentProps; // update ref
+        const result = await response.json();
+
+        // ✅ store new snapshot
+        lastSavedProps.current = currentProps;
+
+        setProjectId(result.project.id);
+        localStorage.setItem("projectId", result.project.id.toString());
+
         alert("✅ Project exported and updated successfully!");
       } catch (err: any) {
         console.error(err);
@@ -203,6 +207,7 @@ export const CurveLineTrendEditor: React.FC = () => {
       setShowSaveModal(true);
     }
   };
+
   const saveNewProject = async (
     titleFromModal: string,
     setStatus: (s: string) => void
@@ -210,8 +215,9 @@ export const CurveLineTrendEditor: React.FC = () => {
     try {
       setStatus("Saving project...");
       const currentProps = buildPropsObject();
+      // const currentPropsStr = JSON.stringify(currentProps);
 
-      // export
+      // 🔹 export video
       const exportRes = await fetch("/generatevideo/curvelinetrend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -229,7 +235,7 @@ export const CurveLineTrendEditor: React.FC = () => {
       const exportResult = await exportRes.json();
       const projectVidUrl = exportResult.url;
 
-      // save to DB
+      // 🔹 save to DB
       const response = await fetch("/projects/save", {
         method: "POST",
         headers: {
@@ -238,7 +244,7 @@ export const CurveLineTrendEditor: React.FC = () => {
         },
         body: JSON.stringify({
           title: titleFromModal,
-          templateId: 5, // use actual template id for Curve Line Trend
+          templateId: 5,
           props: currentProps,
           projectVidUrl,
         }),
@@ -254,8 +260,10 @@ export const CurveLineTrendEditor: React.FC = () => {
       const result = await response.json();
       setProjectId(result.project.id);
 
-      // 🟢 FIX: mark current props as last saved
+      // ✅ mark snapshot as saved
       lastSavedProps.current = currentProps;
+
+      localStorage.setItem("projectId", result.project.id.toString());
 
       setStatus("Saved!");
     } catch (err: any) {
@@ -305,8 +313,106 @@ export const CurveLineTrendEditor: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const currentProps = buildPropsObject();
+    localStorage.setItem("curveLineEditorState", JSON.stringify(currentProps));
+    if (projectId) {
+      localStorage.setItem("projectId", projectId.toString());
+    }
+  }, [
+    title,
+    subtitle,
+    titleFontSize,
+    subtitleFontSize,
+    fontFamily,
+    data,
+    dataType,
+    preset,
+    animationSpeed,
+    minimalMode,
+    duration,
+    projectId,
+  ]);
+
+  useEffect(() => {
+    if (id) {
+      setIsLoading(true);
+      // 🟢 User opened from "My Projects"
+      fetch(`/projects/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to load project");
+          return res.json();
+        })
+        .then((data) => {
+          setProjectId(data.id);
+          setTitle(data.props.title);
+          setSubtitle(data.props.subtitle);
+          setTitleFontSize(data.props.titleFontSize);
+          setSubtitleFontSize(data.props.subtitleFontSize);
+          setFontfamily(data.props.fontFamily);
+          setData(data.props.data);
+          setDataType(data.props.dataType);
+          setPreset(data.props.preset);
+          setAnimationSpeed(data.props.animationSpeed);
+          setMinimalMode(data.props.minimalMode);
+          setDuration(data.props.duration);
+
+          lastSavedProps.current = data.props;
+        })
+        .catch((err) => {
+          console.error("❌ Project load failed:", err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      // 🟢 User opened from "Templates"
+      const saved = localStorage.getItem("curveLineEditorState");
+      if (saved) {
+        hydrateFromParsed(JSON.parse(saved));
+      }
+    }
+  }, [id]);
+
+  const hydrateFromParsed = (parsed: any) => {
+    setTitle(parsed.title);
+    setSubtitle(parsed.subtitle);
+    setTitleFontSize(parsed.titleFontSize);
+    setSubtitleFontSize(parsed.subtitleFontSize);
+    setFontfamily(parsed.fontFamily);
+    setData(parsed.data);
+    setDataType(parsed.dataType);
+    setPreset(parsed.preset);
+    setAnimationSpeed(parsed.animationSpeed);
+    setMinimalMode(parsed.minimalMode);
+    setDuration(parsed.duration);
+    lastSavedProps.current = parsed;
+  };
+
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  const messages = [
+    "⏳ Preparing your template...",
+
+    "🙇 Sorry for the wait, still working on it...",
+    "🚀 Almost there, thanks for your patience!",
+  ];
+
+  useEffect(() => {
+    if (!isLoading) return;
+
+    const interval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % messages.length);
+    }, 10000); // every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [isLoading]);
+
   return (
     <div style={{ display: "flex", height: "100vh", background: "#fafafa" }}>
+      {isLoading && <LoadingOverlay message={messages[messageIndex]} />}
       <TopNavWithSave
         templateName={templateName}
         onSave={handleSave}
@@ -316,6 +422,7 @@ export const CurveLineTrendEditor: React.FC = () => {
         template="🎬 Curve Line Trend Template"
         isSaving={isSaving}
       />
+
       <SaveProjectModal
         open={showSaveModal}
         onClose={() => setShowSaveModal(false)}
@@ -323,7 +430,6 @@ export const CurveLineTrendEditor: React.FC = () => {
       />
 
       <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
-        {/* modal */}
         {showModal && (
           <ExportModal
             showExport={showModal}
@@ -333,8 +439,6 @@ export const CurveLineTrendEditor: React.FC = () => {
             onExport={handleExport}
           />
         )}
-
-        {/* sidenav */}
         <CurveLineSideNav
           activeSection={activeSection}
           collapsed={collapsed}
@@ -365,6 +469,7 @@ export const CurveLineTrendEditor: React.FC = () => {
                 top: 0,
                 bottom: 0,
                 width: "6px",
+                height: "100vh",
                 cursor: "col-resize",
                 background: "#ddd",
               }}

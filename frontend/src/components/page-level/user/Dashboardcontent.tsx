@@ -1,11 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import Fab from "@mui/material/Fab";
 import {
   Box,
   Card,
   CardContent,
   Typography,
   Button,
-  CardMedia,
+  // CardMedia,
   Divider,
   Dialog,
   DialogTitle,
@@ -17,35 +18,12 @@ import {
   TextField,
   IconButton,
   Chip,
+  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { templateCategories } from "../../../data/dashboardcardsdata";
+import { getTemplateRoute } from "../../../utils/temlplatenavigator";
 
-const projects = [
-  {
-    id: 1,
-    name: "Cool Animation",
-    created: "2025-08-01",
-    updated: "2025-08-15",
-    image: "https://picsum.photos/1080/1920",
-  },
-  {
-    id: 2,
-    name: "AI TikTok Intro",
-    created: "2025-07-10",
-    updated: "2025-08-12",
-    image: "https://picsum.photos/1080/1920",
-  },
-  {
-    id: 3,
-    name: "Dance Overlay",
-    created: "2025-06-22",
-    updated: "2025-07-05",
-    image: "https://picsum.photos/1080/1920",
-  },
-];
-
-// 🔹 Template Card Component
 const TemplateCard: React.FC<{
   label: string;
   description: string;
@@ -137,7 +115,7 @@ const ModalTemplateCard: React.FC<{
 
   const handleMouseEnter = () => {
     if (videoRef.current) {
-      videoRef.current.playbackRate = 2;
+      videoRef.current.playbackRate = 3;
       videoRef.current.play();
     }
   };
@@ -223,6 +201,7 @@ const ModalTemplateCard: React.FC<{
 
 // 🔹 Dashboard Content
 export const DashboardContent: React.FC = () => {
+  const [chatOpen, setChatOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [selectedDescription, setSelectedDescription] = useState<string>("");
@@ -233,6 +212,40 @@ export const DashboardContent: React.FC = () => {
   const [newProjectSearch, setNewProjectSearch] = useState("");
 
   const categories = ["All", ...Object.keys(templateCategories)];
+
+  const [projects, setProjects] = useState<any[]>([]);
+  const [loadingProjects, setLoadingProjects] = useState(true);
+  const [deletingProjects, setDeletingProjects] = useState(false);
+
+  // selection state
+  const [selectedProjects, setSelectedProjects] = useState<number[]>([]);
+  const [hoveredId, setHoveredId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch("/projects", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        if (!res.ok) throw new Error("Failed to fetch projects");
+        const data = await res.json();
+        setProjects(data);
+      } catch (err) {
+        console.error("Error loading projects:", err);
+      } finally {
+        setLoadingProjects(false);
+      }
+    };
+    fetchProjects();
+  }, []);
+
+  const toggleProjectSelection = (id: number) => {
+    setSelectedProjects((prev) =>
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
+    );
+  };
 
   const Navigator = (template: string) => {
     const leading = "/template";
@@ -286,14 +299,71 @@ export const DashboardContent: React.FC = () => {
       : templateCategories[categories[tab] as keyof typeof templateCategories];
 
   return (
-    <Box
-      sx={{
-        p: 3,
-        backgroundColor: "background.default",
-        minHeight: "100vh",
-        width: "100%",
-      }}
-    >
+    <Box sx={{ position: "relative", p: 3, backgroundColor: "background.default", minHeight: "100vh", width: "100%" }}>
+      {/* Floating Action Button for Chat */}
+      <Fab
+      title="Chat with us"
+        sx={{
+          position: "fixed",
+          bottom: 32,
+          right: 32,
+          zIndex: 1200,
+          boxShadow: "0 4px 12px rgba(139,92,246,.45)",
+          backgroundColor: "#fff",
+          // border: "2px solid #222",
+          color: "#222",
+          '&:hover': {
+            backgroundColor: "#f5f5f5",
+          },
+        }}
+        onClick={() => setChatOpen(true)}
+      >
+        <span
+          style={{
+            width: "100%",
+            height: "100%",
+            borderRadius: "50%",
+            display: "block",
+            background: "conic-gradient(from 120deg, var(--primary-1), var(--primary-2), var(--primary-3))",
+            boxShadow: "0 4px 12px rgba(139,92,246,.45)",
+          }}
+        />
+      </Fab>
+
+      {/* Mini Messaging Modal */}
+      {chatOpen && (
+        <Box
+          sx={{
+            position: "fixed",
+            bottom: 90,
+            right: 40,
+            width: 340,
+            bgcolor: "background.paper",
+            boxShadow: 4,
+            borderRadius: 3,
+            p: 2,
+            zIndex: 1300,
+          }}
+        >
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+            <Typography fontWeight="bold">Chat with Us</Typography>
+            <IconButton size="small" onClick={() => setChatOpen(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <Box sx={{ height: 180, overflowY: "auto", mb: 1 }}>
+            <Typography variant="body2" color="text.secondary">How can we help you today?</Typography>
+            {/* Chat messages would go here */}
+          </Box>
+          <TextField
+            variant="outlined"
+            placeholder="Type your message..."
+            fullWidth
+            size="small"
+            sx={{ mt: 1 }}
+          />
+        </Box>
+      )}
       {/* Templates Section */}
       <Typography variant="h5" fontWeight="bold" gutterBottom>
         Try our templates
@@ -401,12 +471,11 @@ export const DashboardContent: React.FC = () => {
 
       {/* Projects Section */}
       <Typography variant="h6" fontWeight="bold" gutterBottom>
-        My Projects
+        My Saved Templates
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        Here’s where all your creativity lives 🚀. Manage your saved projects,
-        track your edits, and quickly jump back into your favorite designs. Keep
-        iterating — your next viral hit could be just one tweak away!
+        Here’s where all your creativity lives 🚀. Manage your saved templates,
+        track your edits, and quickly jump back into your favorite designs.
       </Typography>
 
       <Box
@@ -417,44 +486,138 @@ export const DashboardContent: React.FC = () => {
           pb: 1,
         }}
       >
-        {projects.map((project) => (
-          <Card
-            key={project.id}
-            sx={{
-              minWidth: 280,
-              borderRadius: 3,
-              flexShrink: 0,
-              overflow: "hidden",
-              transition: "transform 0.2s, box-shadow 0.2s",
-              "&:hover": {
-                transform: "translateY(-4px)",
-                boxShadow: "0px 6px 20px rgba(0,0,0,0.12)",
-              },
-              bgcolor: "background.paper",
-            }}
-          >
-            <CardMedia
-              component="img"
-              height="160"
-              image={project.image}
-              alt={project.name}
-            />
-            <CardContent>
-              <Typography variant="subtitle1" fontWeight="bold">
-                {project.name}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                Created: {project.created}
-              </Typography>
-              <br />
-              <Typography variant="caption" color="text.secondary">
-                Last Updated: {project.updated}
-              </Typography>
-            </CardContent>
-          </Card>
-        ))}
+        {loadingProjects ? (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2, py: 2 }}>
+            <Box
+              sx={{
+                width: 48,
+                height: 48,
+                borderRadius: "50%",
+                background: "linear-gradient(90deg,#42a5f5,#8a4dff,#ff4fa3)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                animation: "spin 1.2s linear infinite",
+                '@keyframes spin': {
+                  '0%': { transform: 'rotate(0deg)' },
+                  '100%': { transform: 'rotate(360deg)' }
+                }
+              }}
+            >
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                <circle cx="14" cy="14" r="12" stroke="#fff" strokeWidth="4" opacity="0.3" />
+                <path d="M14 2a12 12 0 0 1 12 12" stroke="#fff" strokeWidth="4" strokeLinecap="round" />
+              </svg>
+            </Box>
+            <Typography variant="body2" sx={{ fontWeight: 600, color: '#1976d2' }}>
+              Fetching your projects...
+            </Typography>
+          </Box>
+        ) : projects.length === 0 ? (
+          <Typography variant="body2" color="text.secondary">
+            No projects yet. Start by creating one!
+          </Typography>
+        ) : (
+          projects.map((project) => (
+            <Card
+              key={project.id}
+              onMouseEnter={() => setHoveredId(project.id)}
+              onMouseLeave={() => setHoveredId(null)}
+              sx={{
+                minWidth: 280,
+                borderRadius: 3,
+                flexShrink: 0,
+                overflow: "hidden",
+                position: "relative", // needed for checkbox overlay
+                transition: "transform 0.2s, box-shadow 0.2s",
+                "&:hover": {
+                  transform: "translateY(-4px)",
+                  boxShadow: "0px 6px 20px rgba(0,0,0,0.12)",
+                },
+                bgcolor: "background.paper",
+              }}
+            >
+              {/* Checkbox overlay */}
+              {(hoveredId === project.id || selectedProjects.length > 0) && (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 8,
+                    left: 8,
+                    // bgcolor: "white",
+                    borderRadius: "4px",
+                    zIndex: 2,
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedProjects.includes(project.id)}
+                    onChange={() => toggleProjectSelection(project.id)}
+                    style={{
+                      height: "20px",
+                      width: "20px",
+                    }}
+                  />
+                </Box>
+              )}
 
-        {/* ➕ New Project Card */}
+              {/* Video Preview */}
+              <Box sx={{ position: "relative", height: 160 }}>
+                <video
+                  src={project.projectVidUrl}
+                  muted
+                  playsInline
+                  preload="metadata"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    borderRadius: "4px",
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.play();
+                    e.currentTarget.playbackRate = 3.0;
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.pause();
+                    e.currentTarget.currentTime = 0;
+                  }}
+                />
+              </Box>
+
+              <CardContent>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  {project.title}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Created: {new Date(project.createdAt).toLocaleDateString()}
+                </Typography>
+
+                <Button
+                  size="small"
+                  fullWidth
+                  sx={{
+                    mt: 1,
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    fontWeight: 600,
+                  }}
+                  onClick={() => {
+                    const url = getTemplateRoute(
+                      project.templateId,
+                      project.id
+                    );
+                    window.open(url, "_blank");
+                  }}
+                >
+                  Open Project
+                </Button>
+              </CardContent>
+            </Card>
+          ))
+        )}
+
+        {/* ➕ New Project Card
         <Card
           sx={{
             minWidth: 280,
@@ -498,8 +661,92 @@ export const DashboardContent: React.FC = () => {
           <Typography variant="caption" color="text.secondary" align="center">
             Start from scratch or pick a template
           </Typography>
-        </Card>
+        </Card> */}
       </Box>
+
+      {selectedProjects.length > 0 && (
+        <Box
+          sx={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            bgcolor: "#1976d2",
+            color: "white",
+            borderTop: "1px solid rgba(0,0,0,0.1)",
+            p: 2,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            zIndex: 10,
+          }}
+        >
+          <Typography variant="body2">
+            {selectedProjects.length} selected
+          </Typography>
+          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+            {deletingProjects && (
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <CircularProgress size={24} color="inherit" />
+                <Typography variant="body2" sx={{ color: "white", fontWeight: 600 }}>
+                  Deleting...
+                </Typography>
+              </Box>
+            )}
+            <Button
+              color="inherit"
+              variant="outlined"
+              sx={{
+                borderColor: "white",
+                color: "white",
+                "&:hover": {
+                  borderColor: "white",
+                  bgcolor: "rgba(255,255,255,0.1)",
+                },
+              }}
+              disabled={deletingProjects}
+              onClick={async () => {
+                if (!window.confirm("Delete selected projects?")) return;
+                setDeletingProjects(true);
+                try {
+                  await Promise.all(
+                    selectedProjects.map((id) =>
+                      fetch(`/projects/${id}`, {
+                        method: "DELETE",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
+                      })
+                    )
+                  );
+                  setProjects((prev) =>
+                    prev.filter((p) => !selectedProjects.includes(p.id))
+                  );
+                  setSelectedProjects([]);
+                } catch (err) {
+                  console.error("Failed to delete projects", err);
+                } finally {
+                  setDeletingProjects(false);
+                }
+              }}
+            >
+              Delete
+            </Button>
+            <Button
+              color="inherit"
+              sx={{
+                color: "white",
+                "&:hover": { bgcolor: "rgba(255,255,255,0.1)" },
+              }}
+              disabled={deletingProjects}
+              onClick={() => setSelectedProjects([])}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </Box>
+      )}
 
       {/* 🔹 "Choose Template" Modal for New Project */}
       <Dialog

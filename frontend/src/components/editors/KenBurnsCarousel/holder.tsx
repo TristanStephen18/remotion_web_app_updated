@@ -1,63 +1,76 @@
 import React, { useState, useRef, useEffect } from "react";
-// import { DisplayerModal } from "../Global/modal";
-// import { OptionSectionTrial } from "../Global/sidenav_sections/options";
-// import { ExportSecTrial } from "../Global/sidenav_sections/export";
 import { KenBurnsSideNav } from "./sidenav";
 import { KenBurnsCarouselPreview } from "../../layout/EditorPreviews/KenBurnsCarouselPreview";
 import { KenBurnsImagesPanel } from "./sidenav_sections/images";
 import { ProportionsPanel } from "./sidenav_sections/proportions";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
-// import { TemplateOptionsSection } from "../Global/templatesettings";
 import { ExportModal } from "../../layout/modals/exportmodal";
-// import { TopNav } from "../../navigations/single_editors/trialtopnav";
-import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
+import { TopNavWithSave } from "../../navigations/single_editors/withsave";
+import { SaveProjectModal } from "../../layout/modals/savemodal";
+import { LoadingOverlay } from "../../layout/modals/loadingprojectmodal";
+import { useProjectSave } from "../../../hooks/saveproject";
+import { useParams } from "react-router-dom";
 
-export const KernBurnsEditor: React.FC = () => {
+export const KenBurnsEditor: React.FC = () => {
+  const { id } = useParams();
+
+  // 🟢 Core States
   const [templateName, setTemplateName] = useState(
     "🎬 Ken Burns Swipe Template"
   );
   const [previewSize, setPreviewSize] = useState(1);
-
-  const [images, setImages] = React.useState<string[]>([
+  const [images, setImages] = useState<string[]>([
     "/images/holder.jpg",
     "/images/holder.jpg",
     "/images/holder.jpg",
   ]);
-
-  const [duration, setDuration] = React.useState<number>(15);
-
-  const [cardWidthRatio, setCardWidthRatio] = React.useState<number>(0.75);
-
-  const [cardHeightRatio, setCardHeightRatio] = React.useState<number>(0.75);
+  const [duration, setDuration] = useState<number>(15);
+  const [cardWidthRatio, setCardWidthRatio] = useState<number>(0.75);
+  const [cardHeightRatio, setCardHeightRatio] = useState<number>(0.75);
   const blurBgOpacity = 0.0;
-  // const [blurBgOpacity, setBlurBgOpacity] = React.useState<number>(0.0);
+
+  // 🟢 UI States
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
-  const [activeSection, setActiveSection] = useState<
-    "images" | "proportions"
-  >("images");
+  const [activeSection, setActiveSection] = useState<"images" | "proportions">(
+    "images"
+  );
   const [collapsed, setCollapsed] = useState(false);
 
+  // 🟢 Export
   const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  // 🔹 Resizable panel state
-  const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
+  // 🟢 Loading overlay
+  const [isLoading, setIsLoading] = useState(false);
+  const [messageIndex, setMessageIndex] = useState(0);
+  const messages = [
+        "⏳ Preparing your template...",
+
+    "🙇 Sorry for the wait, still working on it...",
+    "🚀 Almost there, thanks for your patience!",
+  ];
+  useEffect(() => {
+    if (!isLoading) return;
+    const interval = setInterval(
+      () => setMessageIndex((prev) => (prev + 1) % messages.length),
+      10000
+    );
+    return () => clearInterval(interval);
+  }, [isLoading]);
+
+  // 🟢 Resizable Panel
+  const [panelWidth, setPanelWidth] = useState(defaultpanelwidth);
   const [isResizing, setIsResizing] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
-
-  // 🔹 Drag handlers
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isResizing) return;
       const newWidth =
         e.clientX - (panelRef.current?.getBoundingClientRect().left || 0);
-      if (newWidth > 200 && newWidth < 600) {
-        setPanelWidth(newWidth);
-      }
+      if (newWidth > 200 && newWidth < 600) setPanelWidth(newWidth);
     };
-
     const handleMouseUp = () => setIsResizing(false);
 
     if (isResizing) {
@@ -70,59 +83,114 @@ export const KernBurnsEditor: React.FC = () => {
     };
   }, [isResizing]);
 
+  // 🟢 Background cycle
   const cycleBg = () => {
     if (previewBg === "dark") setPreviewBg("light");
     else if (previewBg === "light") setPreviewBg("grey");
     else setPreviewBg("dark");
   };
 
+  // 🟢 Export Handler
   const handleExport = async (format: string) => {
     const prefix = window.location.origin;
+    const updatedImages = images.map((img) =>
+      img.startsWith("http") ? img : `${prefix}${img}`
+    );
 
-    const updatedimages = images.map((img) => `${prefix}${img}`);
-
-    console.log(updatedimages);
     setIsExporting(true);
     try {
       const response = await fetch("/generatevideo/kenburnsswipe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          images: updatedimages,
+          images: updatedImages,
           cardHeightRatio,
           cardWidthRatio,
           duration,
           format,
         }),
       });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `HTTP error! status: ${response.status}, message: ${errorText}`
-        );
-      }
+      if (!response.ok) throw new Error(await response.text());
       const data = await response.json();
       setExportUrl(data.url);
       setShowModal(true);
     } catch (error) {
       console.error("Export failed:", error);
-      alert(`Export failed: ${error || "Please try again."}`);
+      alert(`Export failed: ${error}`);
     } finally {
       setIsExporting(false);
     }
   };
 
+  // 🟢 Project Save Hook
+  const {
+    projectId,
+    setProjectId,
+    isSaving,
+    showSaveModal,
+    setShowSaveModal,
+    handleSave,
+    saveNewProject,
+    lastSavedProps,
+  } = useProjectSave({
+    templateId: 8, // 👈 unique ID for Ken Burns
+    buildProps: () => ({
+      images: images.map((img) =>
+        img.startsWith("http") ? img : `${window.location.origin}${img}`
+      ),
+      duration,
+      cardWidthRatio,
+      cardHeightRatio,
+    }),
+    videoEndpoint: "/generatevideo/kenburnsswipe",
+  });
+
+  // 🟢 Load project if editing existing
+  useEffect(() => {
+    if (id) {
+      setIsLoading(true);
+      fetch(`/projects/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to load project");
+          return res.json();
+        })
+        .then((data) => {
+          setProjectId(data.id);
+          setImages(data.props.images);
+          setDuration(data.props.duration);
+          setCardHeightRatio(data.props.cardHeightRatio);
+          setCardWidthRatio(data.props.cardWidthRatio);
+          lastSavedProps.current = data.props;
+        })
+        .catch((err) => console.error("❌ Project load failed:", err))
+        .finally(() => setIsLoading(false));
+    }
+  }, [id]);
+
   return (
     <div style={{ display: "flex", height: "100%", flex: 1 }}>
-      <TopNavWithoutBatchrendering
+      {isLoading && <LoadingOverlay message={messages[messageIndex]} />}
+
+      {/* 🔹 Top Navigation */}
+      <TopNavWithSave
         templateName={templateName}
-        onSave={() => {}}
+        onSave={handleSave}
         onExport={handleExport}
         setTemplateName={setTemplateName}
         onOpenExport={() => setShowModal(true)}
         template="🎬 Ken Burns Carousel Template"
+        isSaving={isSaving}
       />
-      {/* modal */}
+
+      {/* 🔹 Save Modal */}
+      <SaveProjectModal
+        open={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onSave={saveNewProject}
+      />
+
       <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
         {showModal && (
           <ExportModal
@@ -134,7 +202,7 @@ export const KernBurnsEditor: React.FC = () => {
           />
         )}
 
-        {/* sidenav */}
+        {/* 🔹 Side Navigation */}
         <KenBurnsSideNav
           activeSection={activeSection}
           collapsed={collapsed}
@@ -142,7 +210,7 @@ export const KernBurnsEditor: React.FC = () => {
           setCollapsed={setCollapsed}
         />
 
-        {/* Controls Panel */}
+        {/* 🔹 Side Panel */}
         {!collapsed && (
           <div
             ref={panelRef}
@@ -153,7 +221,7 @@ export const KernBurnsEditor: React.FC = () => {
               background: "#fff",
               borderRight: "1px solid #eee",
               position: "relative",
-              transition: isResizing ? "#add" : "width 0.2s",
+              transition: isResizing ? "none" : "width 0.2s",
             }}
           >
             {/* Drag Handle */}
@@ -189,6 +257,7 @@ export const KernBurnsEditor: React.FC = () => {
           </div>
         )}
 
+        {/* 🔹 Preview */}
         <KenBurnsCarouselPreview
           cycleBg={cycleBg}
           duration={duration}

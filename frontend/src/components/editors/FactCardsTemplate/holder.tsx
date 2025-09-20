@@ -1,8 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-// import { DisplayerModal } from "../Global/modal";
 import { BackgroundSecTrial } from "../Global/sidenav_sections/bg";
-// import { ExportSecTrial } from "../Global/sidenav_sections/export";
-// import { OptionSectionTrial } from "../Global/sidenav_sections/options";
 import { FactCardsSidenav } from "./sidenav";
 import { IntroOutroPanel } from "./sidenave_sections/endpoints";
 import type { Slide } from "../../layout/EditorPreviews/FacstCardTemplate";
@@ -11,12 +8,16 @@ import { TypographyPanelFactsTemplate } from "./sidenave_sections/typo";
 import { FacstCardPreview } from "../../layout/EditorPreviews/FacstCardTemplate";
 import { DurationSection } from "./sidenave_sections/duration";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
-// import { TemplateOptionsSection } from "../Global/templatesettings";
-// import { TopNav } from "../../navigations/single_editors/trialtopnav";
 import { ExportModal } from "../../layout/modals/exportmodal";
-import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
+import { TopNavWithSave } from "../../navigations/single_editors/withsave";
+import { SaveProjectModal } from "../../layout/modals/savemodal";
+import { LoadingOverlay } from "../../layout/modals/loadingprojectmodal";
+import { useProjectSave } from "../../../hooks/saveproject";
+import { useParams } from "react-router-dom";
 
 export const FactCardsEditor: React.FC = () => {
+  const { id } = useParams();
+
   const [templateName, setTemplateName] = useState("My Fact Cards Template");
   const [intro, setIntro] = useState<Slide>({
     title: "Your intro title",
@@ -27,19 +28,16 @@ export const FactCardsEditor: React.FC = () => {
     subtitle: "Your outro subtitle",
   });
   const [factsArray, setFactsArray] = useState<Slide[]>([
-    {
-      title: "Your fact no.1",
-      description: "The moon is made up of cheese",
-    },
+    { title: "Your fact no.1", description: "The moon is made up of cheese" },
   ]);
+
   const [titleFontSize, setTitleFontSize] = useState(80);
   const [subtitleFontSize, setSubtitleFontSize] = useState(50);
   const [titleFontColor, setTitleFontColor] = useState("white");
   const [subtitleFontColor, setSubtitleFontColor] = useState("white");
-  const [previewSize, setPreviewSize] = useState(1);
-
-  const [titlefontFamily, setTitleFontFamily] = useState("Russo");
+  const [titleFontFamily, setTitleFontFamily] = useState("Russo");
   const [subtitleFontFamily, setSubtitleFontFamily] = useState("Russo");
+
   const [backgroundImage, setBackgroundImage] = useState(
     "/bgimages/colors/bg1.jpg"
   );
@@ -47,8 +45,11 @@ export const FactCardsEditor: React.FC = () => {
     "upload" | "default"
   >("default");
 
+  const [duration, setDuration] = useState(20);
+  const [previewSize, setPreviewSize] = useState(1);
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
+
   const [activeSection, setActiveSection] = useState<
     "background" | "typography" | "endpoints" | "facts" | "duration"
   >("endpoints");
@@ -58,25 +59,36 @@ export const FactCardsEditor: React.FC = () => {
   const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  // const [autoSave, setAutoSave] = useState(false);
-  const [duration, setDuration] = useState(20);
 
-  // 🔹 Resizable panel state
-  const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
+  // 🟢 Loading overlay state
+  const [isLoading, setIsLoading] = useState(false);
+  const [messageIndex, setMessageIndex] = useState(0);
+  const messages = [
+       "⏳ Preparing your template...",
+
+    "🙇 Sorry for the wait, still working on it...",
+    "🚀 Almost there, thanks for your patience!",
+  ];
+  useEffect(() => {
+    if (!isLoading) return;
+    const interval = setInterval(
+      () => setMessageIndex((prev) => (prev + 1) % messages.length),
+      10000
+    );
+    return () => clearInterval(interval);
+  }, [isLoading]);
+
+  // 🔹 Resizable panel
+  const [panelWidth, setPanelWidth] = useState(defaultpanelwidth);
   const [isResizing, setIsResizing] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
-
-  // 🔹 Drag handlers
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isResizing) return;
       const newWidth =
         e.clientX - (panelRef.current?.getBoundingClientRect().left || 0);
-      if (newWidth > 200 && newWidth < 600) {
-        setPanelWidth(newWidth);
-      }
+      if (newWidth > 200 && newWidth < 600) setPanelWidth(newWidth);
     };
-
     const handleMouseUp = () => setIsResizing(false);
 
     if (isResizing) {
@@ -94,10 +106,10 @@ export const FactCardsEditor: React.FC = () => {
     else if (previewBg === "light") setPreviewBg("grey");
     else setPreviewBg("dark");
   };
-  //for background images upload
+
+  // 🟢 File upload
   const handleFileUpload = async (file: File) => {
     if (!file) return;
-
     setIsUploading(true);
     const formData = new FormData();
     formData.append("image", file);
@@ -107,14 +119,9 @@ export const FactCardsEditor: React.FC = () => {
         method: "POST",
         body: formData,
       });
-
-      if (!response.ok) {
-        throw new Error(`Upload failed: ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
       const data = await response.json();
       setBackgroundImage(data.url);
-      console.log("Image uploaded successfully:", data.url);
     } catch (error) {
       console.error("Upload failed:", error);
       alert("Failed to upload image. Please try again.");
@@ -123,15 +130,14 @@ export const FactCardsEditor: React.FC = () => {
     }
   };
 
+  // 🟢 Export
   const handleExport = async (format: string) => {
     setIsExporting(true);
-    // console.log(backgroundImage)
     try {
       let finalImageUrl = backgroundImage;
       const origin = window.location.origin;
-      if (!finalImageUrl.startsWith(origin)) {
+      if (!finalImageUrl.startsWith(origin))
         finalImageUrl = `${origin}${finalImageUrl}`;
-      }
 
       const response = await fetch("/generatevideo/factstemplaterender", {
         method: "POST",
@@ -143,7 +149,7 @@ export const FactCardsEditor: React.FC = () => {
           backgroundImage: finalImageUrl,
           fontSizeTitle: titleFontSize,
           fontSizeSubtitle: subtitleFontSize,
-          fontFamilyTitle: titlefontFamily,
+          fontFamilyTitle: titleFontFamily,
           fontColorTitle: titleFontColor,
           fontColorSubtitle: subtitleFontColor,
           fontFamilySubtitle: subtitleFontFamily,
@@ -151,32 +157,97 @@ export const FactCardsEditor: React.FC = () => {
           format,
         }),
       });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `HTTP error! status: ${response.status}, message: ${errorText}`
-        );
-      }
+      if (!response.ok) throw new Error(await response.text());
       const data = await response.json();
       setExportUrl(data.url);
       setShowModal(true);
     } catch (error) {
       console.error("Export failed:", error);
-      alert(`Export failed: ${error || "Please try again."}`);
+      alert(`Export failed: ${error}`);
     } finally {
       setIsExporting(false);
     }
   };
 
+  // 🟢 Project Save Hook
+  const {
+    projectId,
+    setProjectId,
+    isSaving,
+    showSaveModal,
+    setShowSaveModal,
+    handleSave,
+    saveNewProject,
+    lastSavedProps,
+  } = useProjectSave({
+    templateId: 7, // 👈 unique ID for Fact Cards
+    buildProps: () => ({
+      intro,
+      outro,
+      facts: factsArray,
+      backgroundImage: backgroundImage.startsWith("http")
+        ? backgroundImage
+        : `${window.location.origin}${backgroundImage}`,
+      fontSizeTitle: titleFontSize,
+      fontSizeSubtitle: subtitleFontSize,
+      fontFamilyTitle: titleFontFamily,
+      fontColorTitle: titleFontColor,
+      fontColorSubtitle: subtitleFontColor,
+      fontFamilySubtitle: subtitleFontFamily,
+      duration,
+    }),
+    videoEndpoint: "/generatevideo/factstemplaterender",
+  });
+
+  // 🟢 Load project if editing existing
+  useEffect(() => {
+    if (id) {
+      setIsLoading(true);
+      fetch(`/projects/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to load project");
+          return res.json();
+        })
+        .then((data) => {
+          setProjectId(data.id);
+          setIntro(data.props.intro);
+          setOutro(data.props.outro);
+          setFactsArray(data.props.facts);
+          setBackgroundImage(data.props.backgroundImage);
+          setTitleFontSize(data.props.fontSizeTitle);
+          setSubtitleFontSize(data.props.fontSizeSubtitle);
+          setTitleFontFamily(data.props.fontFamilyTitle);
+          setSubtitleFontFamily(data.props.fontFamilySubtitle);
+          setTitleFontColor(data.props.fontColorTitle);
+          setSubtitleFontColor(data.props.fontColorSubtitle);
+          setDuration(data.props.duration);
+          lastSavedProps.current = data.props;
+        })
+        .catch((err) => console.error("❌ Project load failed:", err))
+        .finally(() => setIsLoading(false));
+    }
+  }, [id]);
+
   return (
     <div style={{ display: "flex", height: "100%", flex: 1 }}>
-      <TopNavWithoutBatchrendering
+      {isLoading && <LoadingOverlay message={messages[messageIndex]} />}
+
+      <TopNavWithSave
         templateName={templateName}
-        onSave={() => {}}
+        onSave={handleSave}
         onExport={handleExport}
         setTemplateName={setTemplateName}
         onOpenExport={() => setShowModal(true)}
         template="🎬 Facts Cards Template"
+        isSaving={isSaving}
+      />
+
+      <SaveProjectModal
+        open={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onSave={saveNewProject}
       />
 
       <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
@@ -190,7 +261,6 @@ export const FactCardsEditor: React.FC = () => {
           />
         )}
 
-        {/* sidenav */}
         <FactCardsSidenav
           activeSection={activeSection}
           collapsed={collapsed}
@@ -198,7 +268,6 @@ export const FactCardsEditor: React.FC = () => {
           setCollapsed={setCollapsed}
         />
 
-        {/* Controls Panel */}
         {!collapsed && (
           <div
             ref={panelRef}
@@ -212,7 +281,6 @@ export const FactCardsEditor: React.FC = () => {
               transition: isResizing ? "none" : "width 0.2s",
             }}
           >
-            {/* Drag Handle */}
             <div
               onMouseDown={() => setIsResizing(true)}
               style={{
@@ -235,7 +303,6 @@ export const FactCardsEditor: React.FC = () => {
 
             {activeSection === "endpoints" && (
               <IntroOutroPanel
-                //   handleAISuggestion={handleAISuggestion}
                 intro={intro}
                 outro={outro}
                 setIntro={setIntro}
@@ -266,32 +333,14 @@ export const FactCardsEditor: React.FC = () => {
                 subtitleFontFamily={subtitleFontFamily}
                 subtitleFontSize={subtitleFontSize}
                 titleFontColor={titleFontColor}
-                titleFontFamily={titlefontFamily}
+                titleFontFamily={titleFontFamily}
                 titleFontSize={titleFontSize}
               />
             )}
+
             {activeSection === "duration" && (
               <DurationSection duration={duration} setDuration={setDuration} />
             )}
-
-            {/* {activeSection === "template" && (
-            <TemplateOptionsSection
-              onEnterBatchRender={() => {
-                window.location.assign(
-                  "/template/factcards/mode/batchrendering"
-                );
-              }}
-              setTemplateName={setTemplateName}
-              templateName={templateName}
-            />
-          )}
-
-          {activeSection === "export" && (
-            <ExportSecTrial
-              handleExport={handleExport}
-              isExporting={isExporting}
-            />
-          )} */}
           </div>
         )}
 
@@ -300,7 +349,7 @@ export const FactCardsEditor: React.FC = () => {
           cycleBg={cycleBg}
           facts={factsArray}
           fontColorTitle={titleFontColor}
-          fontFamilyTitle={titlefontFamily}
+          fontFamilyTitle={titleFontFamily}
           fontColorSubtitle={subtitleFontColor}
           fontFamilySubtitle={subtitleFontFamily}
           fontSizeSubtitle={subtitleFontSize}

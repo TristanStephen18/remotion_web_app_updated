@@ -10,10 +10,18 @@ import { BackgroundVideoSelectorPanel } from "../Global/sidenav_sections/bgvideo
 import { MusicSelector } from "../Global/bgmusic";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
 import { ExportModal } from "../../layout/modals/exportmodal";
-import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
+import { TopNavWithSave } from "../../navigations/single_editors/withsave";
+import { SaveProjectModal } from "../../layout/modals/savemodal";
+import { LoadingOverlay } from "../../layout/modals/loadingprojectmodal";
+import { useProjectSave } from "../../../hooks/saveproject";
+import { useParams } from "react-router-dom";
+
 type ChatLine = { speaker: "person_1" | "person_2"; text: string };
 
 export const FakeTextConversationEditor: React.FC = () => {
+  const { id } = useParams();
+
+  // 🟢 States
   const [templateName, setTemplateName] = useState(
     "My Fake Text Conversation Template"
   );
@@ -30,13 +38,13 @@ export const FakeTextConversationEditor: React.FC = () => {
   const [chatTheme, setChatTheme] = useState<
     "default" | "discord" | "messenger" | "whatsapp"
   >("discord");
-
   const [fontFamily, setFontFamily] = useState("Inter, sans-serif");
   const [fontSize, setFontSize] = useState(28);
   const [fontColor, setFontColor] = useState("");
 
   const [bgVideo, setBgVideo] = useState("/defaultvideos/minecraft/m1.mp4");
   const [chatAudio, setChatAudio] = useState("/fakeconvo/fakeconvo.mp3");
+  const [serverAudio, setServerAudio] = useState("");
   const [musicAudio, setMusicAudio] = useState(
     "/soundeffects/bgmusic/bg10.mp3"
   );
@@ -44,20 +52,16 @@ export const FakeTextConversationEditor: React.FC = () => {
     left: "/images/vectors/v1.jpg",
     right: "/images/vectors/v8.jpg",
   });
+
   const [isUpdatingTemplate, setIsUpdatingTemplate] = useState(false);
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
   const [activeSection, setActiveSection] = useState<
-    | "messages"
-    | "voice"
-    | "avatar"
-    | "display"
-    | "background"
-    | "music"
+    "messages" | "voice" | "avatar" | "display" | "background" | "music"
   >("messages");
   const [collapsed, setCollapsed] = useState(false);
 
-  //default variables
+  // Default values required for export/save
   const defaultvalues = {
     chatPath: "chats.json",
     chatAudio: "fakeconvo.mp3",
@@ -68,30 +72,39 @@ export const FakeTextConversationEditor: React.FC = () => {
     timeShiftSec: 0,
   };
 
-  //   const [isUploading, setIsUploading] = useState(false);
+  // 🟢 Export modal + loading
   const [isExporting, setIsExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  // const [autoSave, setAutoSave] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [messageIndex, setMessageIndex] = useState(0);
+  const messages = [
+       "⏳ Preparing your template...",
 
-  // 🔹 Resizable panel state
-  const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
+    "🙇 Sorry for the wait, still working on it...",
+    "🚀 Almost there, thanks for your patience!",
+  ];
+  useEffect(() => {
+    if (!isLoading) return;
+    const interval = setInterval(
+      () => setMessageIndex((p) => (p + 1) % messages.length),
+      10000
+    );
+    return () => clearInterval(interval);
+  }, [isLoading]);
+
+  // 🟢 Resizable panel
+  const [panelWidth, setPanelWidth] = useState(defaultpanelwidth);
   const [isResizing, setIsResizing] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
-
-  // 🔹 Drag handlers
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isResizing) return;
       const newWidth =
         e.clientX - (panelRef.current?.getBoundingClientRect().left || 0);
-      if (newWidth > 200 && newWidth < 600) {
-        setPanelWidth(newWidth);
-      }
+      if (newWidth > 200 && newWidth < 600) setPanelWidth(newWidth);
     };
-
     const handleMouseUp = () => setIsResizing(false);
-
     if (isResizing) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
@@ -108,25 +121,20 @@ export const FakeTextConversationEditor: React.FC = () => {
     else setPreviewBg("dark");
   };
 
+  // 🟢 Update JSON + Audio generation
   const createJsonFileandAudio = async () => {
     setIsUpdatingTemplate(true);
     try {
-      const payload = {
-        voices: [voice1, voice2],
-        chats,
-      };
-
+      const payload = { voices: [voice1, voice2], chats };
       const res = await fetch("/sound/test-generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       const data = await res.json();
       setChatData(data);
-      console.log(data);
       setChatAudio(data.serverfilename);
-      console.log(Math.ceil(data.duration));
+      setServerAudio(data.serverfilename);
       setDuration(Math.ceil(data.duration));
     } catch (err) {
       console.error("Failed to update template ❗", err);
@@ -136,15 +144,18 @@ export const FakeTextConversationEditor: React.FC = () => {
     }
   };
 
+  // 🟢 Export Handler
   const handleExport = async (format: string) => {
     const prefix = window.location.origin;
-
     const newavatars = {
-      left: prefix + avatars.left,
-      right: prefix + avatars.right,
+      left: avatars.left.startsWith("http")
+        ? avatars.left
+        : prefix + avatars.left,
+      right: avatars.right.startsWith("http")
+        ? avatars.right
+        : prefix + avatars.right,
     };
     setIsExporting(true);
-    console.log(fontSize);
     try {
       const response = await fetch("/generatevideo/faketextconvo", {
         method: "POST",
@@ -167,33 +178,149 @@ export const FakeTextConversationEditor: React.FC = () => {
           format,
         }),
       });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `HTTP error! status: ${response.status}, message: ${errorText}`
-        );
-      }
+      if (!response.ok) throw new Error(await response.text());
       const data = await response.json();
       setExportUrl(data.url);
       setShowModal(true);
     } catch (error) {
       console.error("Export failed:", error);
-      alert(`Export failed: ${error || "Please try again."}`);
+      alert(`Export failed: ${error}`);
     } finally {
       setIsExporting(false);
     }
   };
 
+  // 🟢 Project Save Hook
+  const {
+    projectId,
+    setProjectId,
+    isSaving,
+    showSaveModal,
+    setShowSaveModal,
+    handleSave,
+    saveNewProject,
+    lastSavedProps,
+  } = useProjectSave({
+    templateId: 9, // unique ID for FakeText
+    buildProps: () => {
+      const prefix = window.location.origin;
+      return {
+        // 🔹 Full project state (DB should remember all of this)
+        chats,
+        voice1,
+        voice2,
+        chatdata,
+        duration,
+        serverAudio,
+
+        // 🔹 Render-safe props
+        chatPath: defaultvalues.chatPath,
+        bgVideo,
+        chatAudio: defaultvalues.chatAudio,
+        musicAudio,
+        musicBase: defaultvalues.musicBase,
+        musicWhileTalking: defaultvalues.musicWhileTalking,
+        duckAttackMs: defaultvalues.duckAttackMs,
+        duckReleaseMs: defaultvalues.duckReleaseMs,
+        timeShiftSec: defaultvalues.timeShiftSec,
+        fontFamily,
+        fontSize,
+        fontColor,
+        chatTheme,
+        avatars: {
+          left: avatars.left.startsWith("http")
+            ? avatars.left
+            : prefix + avatars.left,
+          right: avatars.right.startsWith("http")
+            ? avatars.right
+            : prefix + avatars.right,
+        },
+      };
+    },
+    videoEndpoint: "/generatevideo/faketextconvo",
+
+    // 👇 NEW: strip extras before hitting video render API
+    filterRenderProps: (props) => {
+      const {
+        chats,
+        voice1,
+        voice2,
+        chatdata,
+        duration,
+        serverAudio,
+        ...renderProps
+      } = props;
+      return renderProps;
+    },
+  });
+
+  // 🟢 Load project if editing existing
+  useEffect(() => {
+    if (id) {
+      setIsLoading(true);
+      fetch(`/projects/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to load project");
+          return res.json();
+        })
+        .then((data) => {
+          const newavatars = {
+            left: data.props.avatars.left.replaceAll(
+              `${window.location.origin}`,
+              ""
+            ),
+            right: data.props.avatars.right.replaceAll(
+              `${window.location.origin}`,
+              ""
+            ),
+          };
+          setProjectId(data.id);
+          setBgVideo(data.props.bgVideo);
+          setMusicAudio(data.props.musicAudio);
+          setFontFamily(data.props.fontFamily);
+          setFontSize(data.props.fontSize);
+          setFontColor(data.props.fontColor);
+          setChatTheme(data.props.chatTheme);
+          setAvatars(newavatars);
+          // ✅ Restore persisted states
+          if (data.props.chats) setChats(data.props.chats);
+          if (data.props.voice1) setVoice1(data.props.voice1);
+          if (data.props.voice2) setVoice2(data.props.voice2);
+          if (data.props.chatdata) setChatData(data.props.chatdata);
+          if (data.props.duration) setDuration(data.props.duration);
+          if (data.props.serverAudio) setChatAudio(data.props.serverAudio);
+
+          lastSavedProps.current = data.props;
+        })
+        .catch((err) => console.error("❌ Project load failed:", err))
+        .finally(() => setIsLoading(false));
+    }
+  }, [id]);
+
   return (
     <div style={{ display: "flex", height: "100%", flex: 1 }}>
-      <TopNavWithoutBatchrendering
+      {isLoading && <LoadingOverlay message={messages[messageIndex]} />}
+
+      {/* 🔹 Top Navigation */}
+      <TopNavWithSave
         templateName={templateName}
-        onSave={() => {}}
+        onSave={handleSave}
         onExport={handleExport}
         setTemplateName={setTemplateName}
         onOpenExport={() => setShowModal(true)}
         template="🎬 Fake Text Conversation Template"
+        isSaving={isSaving}
       />
+
+      {/* 🔹 Save Modal */}
+      <SaveProjectModal
+        open={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onSave={saveNewProject}
+      />
+
       <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
         {showModal && (
           <ExportModal
@@ -205,7 +332,7 @@ export const FakeTextConversationEditor: React.FC = () => {
           />
         )}
 
-        {/* sidenav */}
+        {/* 🔹 Side Navigation */}
         <FakeTextVideoSideNavigation
           activeSection={activeSection}
           collapsed={collapsed}
@@ -213,7 +340,7 @@ export const FakeTextConversationEditor: React.FC = () => {
           setCollapsed={setCollapsed}
         />
 
-        {/* Controls Panel */}
+        {/* 🔹 Control Panel */}
         {!collapsed && (
           <div
             ref={panelRef}
@@ -227,6 +354,7 @@ export const FakeTextConversationEditor: React.FC = () => {
               transition: isResizing ? "none" : "width 0.2s",
             }}
           >
+            {/* Drag Handle */}
             <div
               onMouseDown={() => setIsResizing(true)}
               style={{
@@ -236,7 +364,7 @@ export const FakeTextConversationEditor: React.FC = () => {
                 bottom: 0,
                 width: "6px",
                 cursor: "col-resize",
-                background: "#ddd", // 👈 always visible
+                background: "#ddd",
               }}
             />
 
@@ -250,14 +378,12 @@ export const FakeTextConversationEditor: React.FC = () => {
                 voice1={voice1}
                 voice2={voice2}
                 onUpdateTemplate={createJsonFileandAudio}
-                isUpdatingTemplate={isUpdatingTemplate} // ✅ new prop
+                isUpdatingTemplate={isUpdatingTemplate}
               />
             )}
-
             {activeSection === "avatar" && (
               <AvatarSelector avatars={avatars} setAvatars={setAvatars} />
             )}
-
             {activeSection === "display" && (
               <ChatStylePanel
                 chatTheme={chatTheme}
@@ -270,25 +396,22 @@ export const FakeTextConversationEditor: React.FC = () => {
                 setFontSize={setFontSize}
               />
             )}
-
             {activeSection === "background" && (
               <BackgroundVideoSelectorPanel
                 bgVideo={bgVideo}
                 setBgVideo={setBgVideo}
               />
             )}
-
             {activeSection === "music" && (
               <MusicSelector
                 musicAudio={musicAudio}
                 setMusicAudio={setMusicAudio}
               />
             )}
-
-            
           </div>
         )}
 
+        {/* 🔹 Preview */}
         <ChatVideoPreview
           chatdata={chatdata}
           cycleBg={cycleBg}
@@ -306,7 +429,6 @@ export const FakeTextConversationEditor: React.FC = () => {
           showSafeMargins={showSafeMargins}
           onPreviewScaleChange={setPreviewSize}
           onToggleSafeMargins={setShowSafeMargins}
-          //   timeShiftSec={}
         />
       </div>
     </div>

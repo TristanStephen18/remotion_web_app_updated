@@ -5,10 +5,16 @@ import { SPlitScreenPreview } from "../../layout/EditorPreviews/SplitScreenPrevi
 import { VideoUploadPanel } from "./sidnav_sections/upload";
 import { VideoSettingsControlPanel } from "./sidnav_sections/videosettings";
 import { defaultpanelwidth } from "../../../data/defaultvalues";
-import { TopNavWithoutBatchrendering } from "../../navigations/single_editors/withoutswitchmodesbutton";
 import { ExportModal } from "../../layout/modals/exportmodal";
+import { TopNavWithSave } from "../../navigations/single_editors/withsave";
+import { SaveProjectModal } from "../../layout/modals/savemodal";
+import { LoadingOverlay } from "../../layout/modals/loadingprojectmodal";
+import { useProjectSave } from "../../../hooks/saveproject";
+import { useParams } from "react-router-dom";
 
 export const SplitScreenEditor: React.FC = () => {
+  const { id } = useParams();
+
   const [templateName, setTemplateName] = useState("My splitscreen video");
   const [bottomVideoUrl, setBottomVideoUrl] = useState("");
   const [topVideoUrl, setTopVideoUrl] = useState("");
@@ -17,14 +23,14 @@ export const SplitScreenEditor: React.FC = () => {
   const [bottomOpacity, setBottomOpacity] = useState(1);
   const [topOpacity, setTopOpacity] = useState(1);
   const [swap, setSwap] = useState(false);
-  const [bottomVolumem, setBottomVolume] = useState(0);
+  const [bottomVolume, setBottomVolume] = useState(0);
   const [topVolume, setTopVolume] = useState(1);
   const [duration, setDuration] = useState(10);
 
   const [showSafeMargins, setShowSafeMargins] = useState(true);
   const [previewSize, setPreviewSize] = useState(1);
-
   const [previewBg, setPreviewBg] = useState<"dark" | "light" | "grey">("dark");
+
   const [activeSection, setActiveSection] = useState<
     "upload" | "bottomvid" | "settings"
   >("upload");
@@ -35,22 +41,34 @@ export const SplitScreenEditor: React.FC = () => {
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
+  // 🟢 Loading overlay state
+  const [isLoading, setIsLoading] = useState(false);
+  const [messageIndex, setMessageIndex] = useState(0);
+  const messages = [
+       "⏳ Preparing your template...",
+
+    "🙇 Sorry for the wait, still working on it...",
+    "🚀 Almost there, thanks for your patience!",
+  ];
+  useEffect(() => {
+    if (!isLoading) return;
+    const interval = setInterval(
+      () => setMessageIndex((prev) => (prev + 1) % messages.length),
+      10000
+    );
+    return () => clearInterval(interval);
+  }, [isLoading]);
+
   // 🔹 Resizable panel state
-  const [panelWidth, setPanelWidth] = useState(defaultpanelwidth); // default width
+  const [panelWidth, setPanelWidth] = useState(defaultpanelwidth);
   const [isResizing, setIsResizing] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
-
-  // 🔹 Drag handlers
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isResizing) return;
-      const newWidth =
-        e.clientX - (panelRef.current?.getBoundingClientRect().left || 0);
-      if (newWidth > 200 && newWidth < 600) {
-        setPanelWidth(newWidth);
-      }
+      const newWidth = e.clientX - (panelRef.current?.getBoundingClientRect().left || 0);
+      if (newWidth > 200 && newWidth < 600) setPanelWidth(newWidth);
     };
-
     const handleMouseUp = () => setIsResizing(false);
 
     if (isResizing) {
@@ -68,12 +86,11 @@ export const SplitScreenEditor: React.FC = () => {
     else if (previewBg === "light") setPreviewBg("grey");
     else setPreviewBg("dark");
   };
-  //for background images upload
-  // SplitScreenEditor.tsx
+
+  // 🟢 Video Upload
   const handleVideoUpload = async (file: File) => {
     if (!file) return;
     setIsUploading(true);
-
     const formData = new FormData();
     formData.append("video", file);
 
@@ -82,22 +99,10 @@ export const SplitScreenEditor: React.FC = () => {
         method: "POST",
         body: formData,
       });
-
-      if (!response.ok) {
-        throw new Error(`Upload failed: ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
       const data = await response.json();
-      // backend returns { url, filename, size, durationSeconds }
-
-      setTopVideoUrl(data.url); // 👈 sets preview
-      setDuration(data.durationSeconds); // 👈 store video duration
-      console.log(
-        "✅ Video uploaded:",
-        data.url,
-        "⏱ Duration:",
-        data.durationSeconds
-      );
+      setTopVideoUrl(data.url);
+      setDuration(data.durationSeconds);
     } catch (error) {
       console.error("❌ Upload failed:", error);
       alert("Failed to upload video. Please try again.");
@@ -106,12 +111,9 @@ export const SplitScreenEditor: React.FC = () => {
     }
   };
 
+  // 🟢 Export
   const handleExport = async (format: string) => {
-    // const multiplier = (fontSize - 20) / 10 + 1;
     setIsExporting(true);
-    // console.log(fontSize);
-    // console.log(backgroundImage)
-
     try {
       const response = await fetch("/generatevideo/splitscreen", {
         method: "POST",
@@ -120,7 +122,7 @@ export const SplitScreenEditor: React.FC = () => {
           bottomHeightPercent,
           bottomOpacity,
           bottomVideoUrl,
-          bottomVolume: bottomVolumem,
+          bottomVolume,
           swap,
           topHeightPercent,
           topOpacity,
@@ -130,37 +132,96 @@ export const SplitScreenEditor: React.FC = () => {
           format,
         }),
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `HTTP error! status: ${response.status}, message: ${errorText}`
-        );
-      }
-
+      if (!response.ok) throw new Error(await response.text());
       const data = await response.json();
       setExportUrl(data.url);
       setShowModal(true);
     } catch (error) {
       console.error("Export failed:", error);
-      alert(`Export failed: ${error || "Please try again."}`);
+      alert(`Export failed: ${error}`);
     } finally {
       setIsExporting(false);
     }
   };
 
+  // 🟢 Project Save Hook
+  const {
+    projectId,
+    setProjectId,
+    isSaving,
+    showSaveModal,
+    setShowSaveModal,
+    handleSave,
+    saveNewProject,
+    lastSavedProps,
+  } = useProjectSave({
+    templateId: 6,
+    buildProps: () => ({
+      bottomHeightPercent,
+      bottomOpacity,
+      bottomVideoUrl,
+      bottomVolume,
+      swap,
+      topHeightPercent,
+      topOpacity,
+      topVideoUrl,
+      topVolume,
+      duration,
+    }),
+    videoEndpoint: "/generatevideo/splitscreen",
+  });
+
+  // 🟢 Load project if editing existing
+  useEffect(() => {
+    if (id) {
+      setIsLoading(true);
+      fetch(`/projects/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to load project");
+          return res.json();
+        })
+        .then((data) => {
+          setProjectId(data.id);
+          setBottomHeightPercent(data.props.bottomHeightPercent);
+          setBottomOpacity(data.props.bottomOpacity);
+          setBottomVideoUrl(data.props.bottomVideoUrl);
+          setBottomVolume(data.props.bottomVolume);
+          setSwap(data.props.swap);
+          setTopHeightPercent(data.props.topHeightPercent);
+          setTopOpacity(data.props.topOpacity);
+          setTopVideoUrl(data.props.topVideoUrl);
+          setTopVolume(data.props.topVolume);
+          setDuration(data.props.duration);
+          lastSavedProps.current = data.props;
+        })
+        .catch((err) => console.error("❌ Project load failed:", err))
+        .finally(() => setIsLoading(false));
+    }
+  }, [id]);
+
   return (
     <div style={{ display: "flex", height: "100%", flex: 1 }}>
-      <TopNavWithoutBatchrendering
+      {isLoading && <LoadingOverlay message={messages[messageIndex]} />}
+
+      <TopNavWithSave
         templateName={templateName}
-        onSave={() => {}}
+        onSave={handleSave}
         onExport={handleExport}
         setTemplateName={setTemplateName}
         onOpenExport={() => setShowModal(true)}
         template="🎬 Split Screen Video Template"
+        isSaving={isSaving}
       />
+
+      <SaveProjectModal
+        open={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onSave={saveNewProject}
+      />
+
       <div style={{ display: "flex", flex: 1, marginTop: "60px" }}>
-        {/* modal */}
         {showModal && (
           <ExportModal
             showExport={showModal}
@@ -170,7 +231,7 @@ export const SplitScreenEditor: React.FC = () => {
             onExport={handleExport}
           />
         )}
-        {/* sidenav */}
+
         <SplitScreenSideNavs
           activeSection={activeSection}
           collapsed={collapsed}
@@ -178,7 +239,6 @@ export const SplitScreenEditor: React.FC = () => {
           setCollapsed={setCollapsed}
         />
 
-        {/* Controls Panel */}
         {!collapsed && (
           <div
             ref={panelRef}
@@ -192,7 +252,6 @@ export const SplitScreenEditor: React.FC = () => {
               transition: isResizing ? "none" : "width 0.2s",
             }}
           >
-            {/* Drag Handle */}
             <div
               onMouseDown={() => setIsResizing(true)}
               style={{
@@ -225,7 +284,7 @@ export const SplitScreenEditor: React.FC = () => {
               <VideoSettingsControlPanel
                 bottomHeightPercent={bottomHeightPercent}
                 bottomOpacity={bottomOpacity}
-                bottomVolume={bottomVolumem}
+                bottomVolume={bottomVolume}
                 setBottomHeightPercent={setBottomHeightPercent}
                 setBottomOpacity={setBottomOpacity}
                 setBottomVolume={setBottomVolume}
@@ -246,7 +305,7 @@ export const SplitScreenEditor: React.FC = () => {
           bottomHeightPercent={bottomHeightPercent}
           bottomOpacity={bottomOpacity}
           bottomVideoUrl={bottomVideoUrl}
-          bottomVolume={bottomVolumem}
+          bottomVolume={bottomVolume}
           cycleBg={cycleBg}
           duration={duration}
           previewBg={previewBg}

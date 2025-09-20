@@ -1,17 +1,20 @@
-import React from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Box,
-  Card,
-  CardContent,
-  Button,
-} from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
-import { Activity } from "lucide-react";
+import React, { useState } from "react";
+import IconButton from "@mui/material/IconButton";
+import Avatar from "@mui/material/Avatar";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { AppBar, Toolbar, Typography, Box } from "@mui/material";
 
 export const Navbar: React.FC = () => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleProfileClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <AppBar
       position="sticky"
@@ -19,21 +22,22 @@ export const Navbar: React.FC = () => {
       sx={{
         backgroundColor: "background.paper",
         color: "black",
-        p: 1.5, 
+        p: 1.5,
       }}
     >
       <Toolbar
         sx={{
           display: "flex",
-          flexDirection: { xs: "column", md: "row" },
+          flexDirection: "row",
           justifyContent: "space-between",
-          alignItems: { xs: "flex-start", md: "center" },
+          alignItems: "center",
           gap: 1.5,
         }}
       >
+        {/* Title and subtitle */}
         <Box>
           <Typography
-            variant="h5" // smaller than h4
+            variant="h5"
             sx={{
               fontWeight: "bold",
               background:
@@ -46,67 +50,31 @@ export const Navbar: React.FC = () => {
           >
             ViralMotion Creator
           </Typography>
-
           <Typography variant="body2" color="text.secondary">
-            Create viral TikTok-style animations with AI-powered content
-            generation
+            Create viral TikTok-style animations with AI-powered content generation
           </Typography>
         </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            gap: 1.5,
-            alignItems: "center",
-            flexWrap: "wrap",
-          }}
-        >
-          <Card
-            variant="outlined"
-            sx={{
-              borderRadius: 2,
-              minWidth: 220,
-              backgroundColor: "background.paper",
-            }}
+        {/* Profile Icon at right */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <IconButton onClick={handleProfileClick} size="large" sx={{ p: 0 }}>
+            <Avatar src="/pfp.jpg" alt="Profile" />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
+            PaperProps={{ sx: { mt: 1, minWidth: 140, borderRadius: 2 } }}
           >
-            <CardContent sx={{ p: 1.5 }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                <Activity className="w-2 h-2 text-gray-500" />
-                <Typography variant="caption" color="text.secondary">
-                  Processing Status
-                </Typography>
-              </Box>
-              <Typography variant="body2" sx={{ fontWeight: "bold", mt: 0.5 }}>
-                No active processing jobs
-              </Typography>
-            </CardContent>
-          </Card>
-
-          {/* Admin Dashboard Button (Transparent with border) */}
-          <Button
-            variant="outlined"
-            startIcon={<SettingsIcon />}
-            sx={{
-              borderRadius: "50px", // oval
-              textTransform: "none",
-              fontSize: "0.85rem", // smaller text
-              px: 2.5,
-              py: 0.8,
-              borderWidth: "0.5px",
-              borderColor: "text.primary", // ✅ adapts to light/dark
-              color: "text.primary", // ✅ adapts text color
-              "& .MuiSvgIcon-root": {
-                color: "text.primary", // ✅ adapts icon color
-                fontSize: "1rem",
-              },
-              "&:hover": {
-                backgroundColor: "action.hover", // ✅ theme hover
-                borderColor: "text.primary",
-              },
-            }}
-          >
-            Admin Dashboard
-          </Button>
+            <MenuItem onClick={handleClose}>View Profile</MenuItem>
+            <MenuItem onClick={() => {
+              localStorage.removeItem("token");
+              window.location.href = "/login";
+              handleClose();
+            }}>Log Out</MenuItem>
+          </Menu>
         </Box>
       </Toolbar>
     </AppBar>

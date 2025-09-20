@@ -1,43 +1,41 @@
 {
   "data": [
     {
-      "name": "iPhone 15 Pro",
-      "value": 15230
+      "name": "Data1",
+      "value": 124500
     },
     {
-      "name": "Samsung Galaxy S24 Ultra",
-      "value": 13890
+      "name": "Data2",
+      "value": 110200
     },
     {
-      "name": "Google Pixel 8 Pro",
-      "value": 11560
+      "name": "Data3",
+      "value": 87300
     },
     {
-      "name": "OnePlus 12",
-      "value": 10210
+      "name": "Data4",
+      "value": 76500
     },
     {
-      "name": "Xiaomi 14",
-      "value": 9850
+      "name": "Data5",
+      "value": 54200
     },
     {
-      "name": "Asus ROG Phone 8",
-      "value": 8740
+      "name": "Data6",
+      "value": 49800
     }
   ],
-  "title": "Quarterly Smartphone Sales Performance",
-  "titleFontColor": "white",
-  "backgroundImage": "http://localhost:3000/bgimages/colors/bg6.jpg",
+  "title": "My bargraph template",
+  "titleFontColor": "#000000",
+  "backgroundImage": "http://localhost:3000/bgimages/colors/bg1.jpg",
   "accent": "#3B82F6",
-  "subtitle": "Analysis of leading models from Q1 2024",
-  "currency": "",
-  "titleFontSize": 60,
-  "subtitleFontSize": 38,
-  "subtitleColor": "white",
+  "subtitle": "Your subtitle",
+  "titleFontSize": 78,
+  "subtitleFontSize": 50,
   "barHeight": 100,
   "barGap": 36,
   "barLabelFontSize": 36,
   "barValueFontSize": 36,
-  "fontFamily": "Roboto, sans-serif",
+  "fontFamily": "'Bebas Neue', sans-serif",
   "duration": 8
 }

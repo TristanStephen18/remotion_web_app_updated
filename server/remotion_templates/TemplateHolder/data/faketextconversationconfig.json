@@ -8,12 +8,12 @@
   "duckAttackMs": 120,
   "duckReleaseMs": 240,
   "timeShiftSec": 0,
-  "fontFamily": "Inter, sans-serif",
-  "fontSize": 28,
+  "fontFamily": "'Silkscreen', sans-serif",
+  "fontSize": 36,
   "fontColor": "",
-  "chatTheme": "discord",
+  "chatTheme": "whatsapp",
   "avatars": {
-    "left": "http://localhost:3000/images/vectors/v1.jpg",
-    "right": "http://localhost:3000/images/vectors/v8.jpg"
+    "left": "http://localhost:3000/images/people/p1.jpg",
+    "right": "http://localhost:3000/images/vectors/v7.jpg"
   }
 }

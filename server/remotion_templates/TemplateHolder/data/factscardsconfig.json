@@ -1,32 +1,24 @@
 {
   "intro": {
-    "title": "Pulp Fiction Chronicles",
-    "subtitle": "Test your knowledge of Quentin Tarantino's non-linear crime epic."
+    "title": "Your intro title",
+    "subtitle": "Your intro subtitle"
   },
   "outro": {
-    "title": "Pulp Fiction Chronicles",
-    "subtitle": "Test your knowledge of Quentin Tarantino's non-linear crime epic."
+    "title": "Your outro title",
+    "subtitle": "Your outro subtitle"
   },
   "facts": [
     {
-      "title": "The Briefcase Mystery",
-      "description": "The contents of the glowing briefcase in Pulp Fiction are never explicitly revealed, leaving its mystery open to countless fan theories."
-    },
-    {
-      "title": "Uma Thurman's Role",
-      "description": "Quentin Tarantino wrote the character of Mia Wallace specifically for Uma Thurman, though she initially hesitated to take the role."
-    },
-    {
-      "title": "Dance Royale",
-      "description": "The famous dance scene between Mia and Vincent was partly inspired by Federico Fellini's 8½."
+      "title": "Your fact no.1",
+      "description": "The moon is made up of cheese"
     }
   ],
-  "backgroundImage": "http://localhost:3000/bgimages/colors/bg9.jpg",
-  "fontSizeTitle": 68,
-  "fontSizeSubtitle": 49,
-  "fontFamilyTitle": "Roboto, sans-serif",
-  "fontColorTitle": "lightcyan",
-  "fontColorSubtitle": "lightcyan",
-  "fontFamilySubtitle": "Roboto, sans-serif",
+  "backgroundImage": "/bgimages/sceneries/bg6.jpg",
+  "fontSizeTitle": 80,
+  "fontSizeSubtitle": 50,
+  "fontFamilyTitle": "Russo",
+  "fontColorTitle": "white",
+  "fontColorSubtitle": "white",
+  "fontFamilySubtitle": "Russo",
   "duration": 20
 }

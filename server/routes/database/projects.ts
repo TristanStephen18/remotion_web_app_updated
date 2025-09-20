@@ -75,4 +75,78 @@ router.put(
   }
 );
 
+// Get a single project by ID
+router.get("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
+  const { id } = req.params;
+  const userId = req.user?.userId;
+
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const [project] = await db
+    .select()
+    .from(projects)
+    .where(and(eq(projects.userId, userId), eq(projects.id, Number(id))));
+
+  if (!project) {
+    return res.status(404).json({ error: "Project not found" });
+  }
+
+  res.json(project);
+});
+
+// Get all projects for the authenticated user
+router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
+  const userId = req.user?.userId;
+
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  try {
+    const userProjects = await db
+      .select()
+      .from(projects)
+      .where(eq(projects.userId, userId));
+
+    res.json(userProjects);
+  } catch (err: any) {
+    console.error("Error fetching projects:", err);
+    res.status(500).json({ error: "Failed to fetch projects" });
+  }
+});
+
+// Delete a project by ID
+router.delete("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
+  const { id } = req.params;
+  const userId = req.user?.userId;
+
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  try {
+    // Ensure project exists and belongs to the user
+    const [existing] = await db
+      .select()
+      .from(projects)
+      .where(and(eq(projects.userId, userId), eq(projects.id, Number(id))));
+
+    if (!existing) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    // Delete the project
+    await db.delete(projects).where(eq(projects.id, Number(id)));
+
+    res.json({ message: "Project deleted successfully" });
+  } catch (err: any) {
+    console.error("Error deleting project:", err);
+    res.status(500).json({ error: "Failed to delete project" });
+  }
+});
+
+
+
 export default router;
